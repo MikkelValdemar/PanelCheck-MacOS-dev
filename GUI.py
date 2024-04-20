@@ -3256,44 +3256,43 @@ class DropTarget(wx.FileDropTarget):
     def OnGeneralFileOpen(self, fileName):
         """
         Opens a file with a help function from LoadData class
-
         """
-        # self.parent.preloading()
-        # self.parent.statusBar.SetStatusText("Opening file...")
-        # self.parent.summaryFrame.append_text(fileName + "\n")
-        # self.parent.summaryFrame.set_gauge(0)
-        #
-        # # Supported formats
-        # # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
-        # # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
-        # # .txt .dat .*; various text formats
-        # if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
-        #     # Trying to open using Excel method in LoadData.py
-        #     self.parent.delimiter = ''
-        #     newData = Excel(self.parent, fileName, self.parent.summaryFrame)
-        # elif fileName[-4:] == ".csv":
-        #     # Trying to open using PlainText method in LoadData.py
-        #     self.parent.delimiter = ';'
-        #     newData = PlainText(
-        #         self.parent,
-        #         fileName,
-        #         self.parent.summaryFrame,
-        #         ';')
-        # else:
-        #     # Trying to open using PlainText method in LoadData.py
-        #     self.parent.delimiter = '\t'
-        #     newData = PlainText(
-        #         self.parent,
-        #         fileName,
-        #         self.parent.summaryFrame,
-        #         '\t')
-        # if(newData.fileRead):
-        #
-        #     self.parent.summaryFrame.append_text("\nLoading data...\n")
-        #
-        #     self.parent.s_data = newData.s_data
-        #     self.parent.update_tabs()
-        # else:
-        #     print("Failed to load file")
-        #     self.parent.summaryFrame.Destroy()
-        #     self.parent.statusBar.SetStatusText("Failed to load file")
+        self.parent.preloading()
+        self.parent.statusBar.SetStatusText("Opening file...")
+        self.parent.summaryFrame.append_text(fileName + "\n")
+        self.parent.summaryFrame.set_gauge(0)
+
+        # Supported formats
+        # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
+        # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
+        # .txt .dat .*; various text formats
+        if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
+            # Trying to open using Excel method in LoadData.py
+            self.parent.delimiter = ''
+            newData = Excel(self.parent, fileName, self.parent.summaryFrame)
+        elif fileName[-4:] == ".csv":
+            # Trying to open using PlainText method in LoadData.py
+            self.parent.delimiter = ';'
+            newData = PlainText(
+                self.parent,
+                fileName,
+                self.parent.summaryFrame,
+                ';')
+        else:
+            # Trying to open using PlainText method in LoadData.py
+            self.parent.delimiter = '\t'
+            newData = PlainText(
+                self.parent,
+                fileName,
+                self.parent.summaryFrame,
+                '\t')
+        if(newData.fileRead):
+
+            self.parent.summaryFrame.append_text("\nLoading data...\n")
+
+            self.parent.s_data = newData.s_data
+            self.parent.update_tabs()
+        else:
+            print("Failed to load file")
+            self.parent.summaryFrame.Destroy()
+            self.parent.statusBar.SetStatusText("Failed to load file")

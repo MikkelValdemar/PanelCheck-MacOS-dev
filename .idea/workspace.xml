@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="aef80b07-efbb-471a-8c16-8c4e70565a79" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.dat" beforeDir="false" afterPath="$PROJECT_DIR$/session.dat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +92,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1713623765353</updated>
-      <workItem from="1713623766352" duration="15823000" />
+      <workItem from="1713623766352" duration="16284000" />
     </task>
     <servers />
   </component>
@@ -106,6 +105,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PanelCheck_MacOS$GUI.coverage" NAME="GUI Coverage Results" MODIFIED="1713632025894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PanelCheck_MacOS$PanelCheck.coverage" NAME="PanelCheck Coverage Results" MODIFIED="1713632037593" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PanelCheck_MacOS$Run_PanelCheck.coverage" NAME="Run PanelCheck Coverage Results" MODIFIED="1713645783269" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PanelCheck_MacOS$Run_PanelCheck.coverage" NAME="Run PanelCheck Coverage Results" MODIFIED="1713646323954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
