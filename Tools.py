@@ -12,69 +12,69 @@ import codecs
 # from PanelCheck_IO import *
 
 
-# def split_path(abs_path):
-#     """
-#     Returns tuple with: (directory-path, filename, file_extension)
-#     """
-#     if os.name == 'nt':  # windows (same on a 'ce' system?)
-#         match = re.search(r"(.*)/(.*)\.(.*)", abs_path)
-#     else:  # hopefully some unix system (not sure about how it looks on mac)
-#         match = re.search(r"(.*)/(.*)\.(.*)", abs_path)
-#     return match.groups()
-#     # three items in a tuple: ('directory-path', 'filename', 'file-extension')
+def split_path(abs_path):
+    """
+    Returns tuple with: (directory-path, filename, file_extension)
+    """
+    if os.name == 'nt':  # windows (same on a 'ce' system?)
+        match = re.search(r"(.*)/(.*)\.(.*)", abs_path)
+    else:  # hopefully some unix system (not sure about how it looks on mac)
+        match = re.search(r"(.*)/(.*)\.(.*)", abs_path)
+    return match.groups()
+    # three items in a tuple: ('directory-path', 'filename', 'file-extension')
 #
 #
-# def summaryConstructor(self, sampleList, assessorList, replicateList,
-#                        attributeList):
-#     """
-#     Creates summary text of given lists.
-#
-#     @type sampleList:     list
-#     @param sampleList:    Complete list of ALL samples
-#
-#     @type assessorList:     list
-#     @param assessorList:    Complete list of ALL assessors
-#
-#     @type replicateList:    list
-#     @param replicateList:   Complete list of ALL replicates
-#
-#     @type attributeList:    list
-#     @param attributeList:   Complete list of ALL attributes
-#     """
-#     # TODO: Recognition of which plotting methods are possible based on number
-#     # of replicates
-#
-#     infoString = 'Number of assessors:   ' + str(len(assessorList)) + \
-#         '\n=================\n\n'
-#
-#     for assessor in assessorList:
-#         infoString = infoString + str(assessorList.index(assessor) + 1) + \
-#             ': ' + assessor + '\n'
-#
-#     infoString = infoString + '\n\n\n'
-#
-#     infoString = infoString + 'Number of samples:   ' + \
-#         str(len(sampleList)) + '\n================\n\n'
-#
-#     for sample in sampleList:
-#         infoString = infoString + str(sampleList.index(sample) + 1) + \
-#             ': ' + sample + '\n'
-#
-#     infoString = infoString + '\n\n\n'
-#
-#     infoString = infoString + 'Number of replicates:   ' + \
-#         str(len(replicateList)) + '\n================\n\n'
-#
-#     infoString = infoString + '\n\n\n'
-#
-#     infoString = infoString + 'Number of attributes:   ' + \
-#         str(len(attributeList)) + '\n================\n\n'
-#
-#     for attribute in attributeList:
-#         infoString = infoString + str(attributeList.index(attribute) + 1) + \
-#             ': ' + attribute + '\n'
-#
-#     return infoString
+def summaryConstructor(self, sampleList, assessorList, replicateList,
+                       attributeList):
+    """
+    Creates summary text of given lists.
+
+    @type sampleList:     list
+    @param sampleList:    Complete list of ALL samples
+
+    @type assessorList:     list
+    @param assessorList:    Complete list of ALL assessors
+
+    @type replicateList:    list
+    @param replicateList:   Complete list of ALL replicates
+
+    @type attributeList:    list
+    @param attributeList:   Complete list of ALL attributes
+    """
+    # TODO: Recognition of which plotting methods are possible based on number
+    # of replicates
+
+    infoString = 'Number of assessors:   ' + str(len(assessorList)) + \
+        '\n=================\n\n'
+
+    for assessor in assessorList:
+        infoString = infoString + str(assessorList.index(assessor) + 1) + \
+            ': ' + assessor + '\n'
+
+    infoString = infoString + '\n\n\n'
+
+    infoString = infoString + 'Number of samples:   ' + \
+        str(len(sampleList)) + '\n================\n\n'
+
+    for sample in sampleList:
+        infoString = infoString + str(sampleList.index(sample) + 1) + \
+            ': ' + sample + '\n'
+
+    infoString = infoString + '\n\n\n'
+
+    infoString = infoString + 'Number of replicates:   ' + \
+        str(len(replicateList)) + '\n================\n\n'
+
+    infoString = infoString + '\n\n\n'
+
+    infoString = infoString + 'Number of attributes:   ' + \
+        str(len(attributeList)) + '\n================\n\n'
+
+    for attribute in attributeList:
+        infoString = infoString + str(attributeList.index(attribute) + 1) + \
+            ': ' + attribute + '\n'
+
+    return infoString
 
 
 def summaryConstructor2(self, sampleList, assessorList, replicateList,
@@ -280,78 +280,3 @@ def save_dataset(abspath, dataset):
         import traceback
         print(traceback.print_exc())
         return traceback.format_exc()
-#
-#
-# class DelimiterSelector(wx.Dialog):
-#     def __init__(self, prnt, progPathAbs):
-#         wx.Dialog.__init__(
-#             self,
-#             id=wx.NewId(),
-#             name=u'Select delimiter:',
-#             parent=prnt,
-#             title="Select delimiter:",
-#             pos=wx.DefaultPosition,
-#             size=wx.DefaultSize,
-#             style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
-#         #pathname = os.path.dirname(sys.argv[0])
-#         #self.progPath = os.path.abspath(pathname).decode(sys.getfilesystemencoding())
-#         figpath = progPathAbs + u'/fig.ico'
-#         self.SetIcon(wx.Icon(figpath, wx.BITMAP_TYPE_ICO))
-#
-#         s_sizer = wx.BoxSizer(wx.VERTICAL)
-#         panel = wx.Panel(self, id=wx.NewId())
-#
-#         sizer_inner = wx.BoxSizer(wx.VERTICAL)
-#         text = wx.StaticText(
-#             panel,
-#             id=wx.NewId(),
-#             label=u'Select delimiter for current file:')
-#         self.d1 = wx.RadioButton(panel, label="Tab delimited")
-#         self.d2 = wx.RadioButton(panel, label="Comma delimited")
-#         self.d3 = wx.RadioButton(panel, label="Semicolon delimited")
-#         self.d4 = wx.RadioButton(panel, label="Other delimiter:")
-#         self.in_ext = wx.TextCtrl(panel, id=wx.NewId())
-#
-#         sizer_inner.Add(text, 0, wx.ALL, 5)
-#         sizer_inner.Add(self.d1, 0, wx.ALL, 5)
-#         sizer_inner.Add(self.d2, 0, wx.ALL, 5)
-#         sizer_inner.Add(self.d3, 0, wx.ALL, 5)
-#         sizer_inner.Add(self.d4, 0, wx.ALL, 5)
-#         sizer_inner.Add(self.in_ext, 0, wx.ALL, 15)
-#
-#         panel.SetSizer(sizer_inner)
-#
-#         self.d1.SetValue(True)
-#         self.in_ext.SetValue("\t")
-#
-#         self.SetSize((320, 240))
-#
-#         self.id_ok = wx.NewId()
-#         self.ok = wx.Button(self, id=self.id_ok, label=u'Apply')
-#         self.b_panel = wx.Panel(self, id=wx.NewId())
-#         self.b_sizer = wx.BoxSizer(wx.HORIZONTAL)
-#         self.b_sizer.Add(self.b_panel, 1, wx.EXPAND)
-#         self.b_sizer.Add(self.ok, 0, wx.ALIGN_RIGHT | wx.ALL)
-#         #self.Bind(wx.EVT_CLOSE, self.Close)
-#         self.Bind(wx.EVT_BUTTON, self.OnButtonOK, id=self.id_ok)
-#
-#         sizer = wx.BoxSizer(wx.VERTICAL)
-#         sizer.Add(s_sizer, 1, wx.GROW)
-#         sizer.Add(self.b_sizer, 0, wx.EXPAND)
-#         self.SetSizer(sizer)
-#         self.Layout()
-#         self.Refresh()
-#
-#     def OnButtonOK(self, event):
-#
-#         if self.d1.GetValue():
-#             self.EndModal(0)
-#         elif self.d2.GetValue():
-#             self.EndModal(1)
-#         elif self.d3.GetValue():
-#             self.EndModal(2)
-#         elif self.d4.GetValue():
-#             self.delimiter = self.in_ext.GetValue()
-#             self.EndModal(3)
-#         else:
-#             self.Close()

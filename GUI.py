@@ -3,14 +3,14 @@ import subprocess
 import os
 import sys
 import wx.lib.colourdb
-from About import *
+from scripts.About import *
 from LoadData import PlainText, Excel
 from FileOpen_Summary import Summary
 #from PlotFrame import *
 from Export import Export_Images_Dialog # ExportImages, SaveDialog
-from SessionData import SessionData, load_session_data
+from scripts.SessionData import SessionData, load_session_data
 from Tools import summaryConstructor2, save_dataset
-from TabbedPanel import TabPanel, RadioTabPanel
+from scripts.TabbedPanel import TabPanel, RadioTabPanel
 
 #from PanelCheck_Plots import *
 
