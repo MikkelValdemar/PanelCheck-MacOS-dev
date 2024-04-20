@@ -5,19 +5,14 @@ import sys
 import wx.lib.colourdb
 from About import *
 from LoadData import PlainText, Excel
-from FileOpen_Summary import *
+from FileOpen_Summary import Summary
 #from PlotFrame import *
-from Export import *
-#from IO import load_session_data, SessionData
+from Export import Export_Images_Dialog # ExportImages, SaveDialog
 from SessionData import SessionData, load_session_data
 from Tools import summaryConstructor2, save_dataset
 from TabbedPanel import TabPanel, RadioTabPanel
 
-# Plots
 #from PanelCheck_Plots import *
-
-##from IPython.Shell import IPShellEmbed
-##ipshell = IPShellEmbed()
 
 
 def create(parent, filename, delimiter):
@@ -880,15 +875,10 @@ class Main_Frame(wx.Frame):
             self.summaryFrame.append_text(self.fileName + "\n")
             self.summaryFrame.set_gauge(0)
 
-            newData = PlainText(self, self.fileName, self.summaryFrame, ';')
-            if(newData.fileRead):
-
+            new_data = PlainText(self, self.fileName, self.summaryFrame, ';')
+            if new_data.fileRead:
                 self.summaryFrame.append_text("\nLoading data...\n")
-
-                self.s_data = newData.s_data
-
-                # print "min/max:"
-                # print self.NewData.get_MAX_MIN_Values()
+                self.s_data = new_data.s_data
                 self.update_tabs()
             else:
                 print("Failed to load file")
@@ -997,29 +987,29 @@ class Main_Frame(wx.Frame):
         """
         For exporting image files.
         """
-        print("images")
-        if self.s_data is not None:
-            selection_changes = {}
-            if self.menuOptionsSelectAll.IsChecked():
-                selection_changes = self.main_notebook.GetCurrentPage(
-                ).GetCurrentPage().get_selection_ass_att_samp()
-            Export_Images_Dialog(
-                self,
-                self.s_data,
-                saving_ppt_file=False,
-                view_grid=self.menuViewGrid,
-                view_legend=self.menuViewLegend,
-                active_plots=self.export_active_plots,
-                selection_changes=selection_changes,
-                abspath=self.ProgPathAbs)
-        else:
-            dlg = wx.MessageDialog(
-                None,
-                'Open a data set to export the plots.',
-                'Error Message',
-                wx.OK | wx.ICON_INFORMATION)
-            dlg.ShowModal()
-            dlg.Destroy()
+        # print("images")
+        # if self.s_data is not None:
+        #     selection_changes = {}
+        #     if self.menuOptionsSelectAll.IsChecked():
+        #         selection_changes = self.main_notebook.GetCurrentPage(
+        #         ).GetCurrentPage().get_selection_ass_att_samp()
+        #     Export_Images_Dialog(
+        #         self,
+        #         self.s_data,
+        #         saving_ppt_file=False,
+        #         view_grid=self.menuViewGrid,
+        #         view_legend=self.menuViewLegend,
+        #         active_plots=self.export_active_plots,
+        #         selection_changes=selection_changes,
+        #         abspath=self.ProgPathAbs)
+        # else:
+        #     dlg = wx.MessageDialog(
+        #         None,
+        #         'Open a data set to export the plots.',
+        #         'Error Message',
+        #         wx.OK | wx.ICON_INFORMATION)
+        #     dlg.ShowModal()
+        #     dlg.Destroy()
 
     def OnMenuFileExportPPT_Menu(self, event):
         """
@@ -1197,55 +1187,55 @@ class Main_Frame(wx.Frame):
         """
         Initializes start variables.
         """
-        # self.figureList = []
-        # self.menuViewGrid = False
-        # self.menuViewLegend = True
-        # self.summaryFrame = None
-        # self.s_data = None
-        #
-        # self.disabledItems = {}
-        # self.disabledAssessors = {}
-        #
-        # self.numberOfWindow = 0
-        # self.statusBar.SetStatusText("Ready")
-        #
-        # self.colourList = wx.lib.colourdb.getColourList()
-        # wx.lib.colourdb.updateColourDB()
-        #
-        # self.session_data = load_session_data(
-        #     filename=self.ProgPathAbs + "/session.dat")
-        # if self.session_data is not None:
-        #     try:
-        #         print("Session data loaded")
-        #         self.menuViewGrid = self.session_data.view["grid"]
-        #         self.menuViewLegend = self.session_data.view["legend"]
-        #         self.s_data = self.session_data.sensory_data
-        #         if self.s_data is not None:
-        #             self.update_tabs(setting_limits=False)
-        #             self.statusBar.SetStatusText(self.s_data.abspath)
-        #
-        #         self.add_recent_files()
-        #
-        #         self.menuOptionsSelectAll.Check(
-        #             self.session_data.view["selection"])
-        #         self.menuOptionsLegend.Check(self.session_data.view["legend"])
-        #         self.menuOptionsGrid.Check(self.session_data.view["grid"])
-        #
-        #         self.image_save_path = self.session_data.image_save_path
-        #         self.export_active_plots = self.session_data.export_active_plots
-        #
-        #         # print self.session_data.recent_files
-        #     except BaseException:
-        #         print("Error during load of session file.")
-        #         print("New session data")
-        #         self.session_data = SessionData()
-        #
-        # else:
-        #     print("New session data")
-        #     self.session_data = SessionData()
-        #
-        # # plot data storage:
-        # self.init_plot_data()
+        self.figureList = []
+        self.menuViewGrid = False
+        self.menuViewLegend = True
+        self.summaryFrame = None
+        self.s_data = None
+
+        self.disabledItems = {}
+        self.disabledAssessors = {}
+
+        self.numberOfWindow = 0
+        self.statusBar.SetStatusText("Ready")
+
+        self.colourList = wx.lib.colourdb.getColourList()
+        wx.lib.colourdb.updateColourDB()
+
+        self.session_data = load_session_data(
+            filename=self.ProgPathAbs + "/session.dat")
+        if self.session_data is not None:
+            try:
+                print("Session data loaded")
+                self.menuViewGrid = self.session_data.view["grid"]
+                self.menuViewLegend = self.session_data.view["legend"]
+                self.s_data = self.session_data.sensory_data
+                if self.s_data is not None:
+                    self.update_tabs(setting_limits=False)
+                    self.statusBar.SetStatusText(self.s_data.abspath)
+
+                self.add_recent_files()
+
+                self.menuOptionsSelectAll.Check(
+                    self.session_data.view["selection"])
+                self.menuOptionsLegend.Check(self.session_data.view["legend"])
+                self.menuOptionsGrid.Check(self.session_data.view["grid"])
+
+                self.image_save_path = self.session_data.image_save_path
+                self.export_active_plots = self.session_data.export_active_plots
+
+                # print self.session_data.recent_files
+            except BaseException:
+                print("Error during load of session file.")
+                print("New session data")
+                self.session_data = SessionData()
+
+        else:
+            print("New session data")
+            self.session_data = SessionData()
+
+        # plot data storage:
+        self.init_plot_data()
 
     def init_plot_data(self):
         # plot data storage:
@@ -1286,8 +1276,8 @@ class Main_Frame(wx.Frame):
         To be used at beginning of each file loading.
         """
         # initializing summary frame
-        # self.summaryFrame = Summary(self, self.ProgPathAbs)
-        # self.summaryFrame.set_text("Opening file...\n")
+        self.summaryFrame = Summary(self, self.ProgPathAbs)
+        self.summaryFrame.set_text("Opening file...\n")
 
     def update_tabs(self, setting_limits=True):
         """
@@ -3181,80 +3171,80 @@ class Main_Frame(wx.Frame):
 #                 self.figureList[len(self.figureList) - 1].Show()
 #     ###########NECESSARY_CUSTOM_METHODS_END###########
 #
-    def OnGeneralFileOpen(self, fileName, delimiter):
-        """
-        Opens a file with a help function from LoadData class
-
-        """
-        self.preloading()
-        self.statusBar.SetStatusText("Opening file...")
-        self.summaryFrame.append_text(fileName + "\n")
-        self.summaryFrame.set_gauge(0)
-
-        # Supported formats
-        # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
-        # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
-        # .txt .dat .*; various text formats
-        if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
-            # Trying to open using Excel method in LoadData.py
-            self.delimiter = delimiter
-            newData = Excel(self, fileName, self.summaryFrame)
-        else:
-            # Trying to open using PlainText method in LoadData.py
-            self.delimiter = delimiter
-            newData = PlainText(self, fileName, self.summaryFrame, delimiter)
-
-        if(newData.fileRead):
-
-            self.summaryFrame.append_text("\nLoading data...\n")
-
-            self.s_data = newData.s_data
-            self.update_tabs()
-        else:
-            print("Failed to load file")
-            self.summaryFrame.Destroy()
-            self.statusBar.SetStatusText("Failed to load file")
-
-    def OnGeneralFileOpenRecent(self, event):
-        """
-        Opens a file with a help function from LoadData class
-
-        """
-
-        recent_ind = self.recent_inds.index(event.GetId())
-        fileName = self.session_data.recent_files[recent_ind][0]
-        delimiter = self.session_data.recent_files[recent_ind][1]
-
-        self.preloading()
-        self.statusBar.SetStatusText("Opening file...")
-        self.summaryFrame.append_text(fileName + "\n")
-        self.summaryFrame.set_gauge(0)
-
-        # Supported formats
-        # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
-        # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
-        # .txt .dat .*; various text formats
-        if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
-            # Trying to open using Excel method in LoadData.py
-            self.delimiter = delimiter
-            newData = Excel(self, fileName, self.summaryFrame)
-        else:
-            # Trying to open using PlainText method in LoadData.py
-            self.delimiter = delimiter
-            newData = PlainText(self, fileName, self.summaryFrame, delimiter)
-
-        if(newData.fileRead):
-
-            self.summaryFrame.append_text("\nLoading data...\n")
-
-            self.s_data = newData.s_data
-            self.update_tabs()
-        else:
-            print("Failed to load file")
-            self.summaryFrame.Destroy()
-            self.statusBar.SetStatusText("Failed to load file")
-
-
+#     def OnGeneralFileOpen(self, fileName, delimiter):
+#         """
+#         Opens a file with a help function from LoadData class
+#
+#         """
+#         self.preloading()
+#         self.statusBar.SetStatusText("Opening file...")
+#         self.summaryFrame.append_text(fileName + "\n")
+#         self.summaryFrame.set_gauge(0)
+#
+#         # Supported formats
+#         # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
+#         # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
+#         # .txt .dat .*; various text formats
+#         if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
+#             # Trying to open using Excel method in LoadData.py
+#             self.delimiter = delimiter
+#             newData = Excel(self, fileName, self.summaryFrame)
+#         else:
+#             # Trying to open using PlainText method in LoadData.py
+#             self.delimiter = delimiter
+#             newData = PlainText(self, fileName, self.summaryFrame, delimiter)
+#
+#         if(newData.fileRead):
+#
+#             self.summaryFrame.append_text("\nLoading data...\n")
+#
+#             self.s_data = newData.s_data
+#             self.update_tabs()
+#         else:
+#             print("Failed to load file")
+#             self.summaryFrame.Destroy()
+#             self.statusBar.SetStatusText("Failed to load file")
+#
+#     def OnGeneralFileOpenRecent(self, event):
+#         """
+#         Opens a file with a help function from LoadData class
+#
+#         """
+#
+#         recent_ind = self.recent_inds.index(event.GetId())
+#         fileName = self.session_data.recent_files[recent_ind][0]
+#         delimiter = self.session_data.recent_files[recent_ind][1]
+#
+#         self.preloading()
+#         self.statusBar.SetStatusText("Opening file...")
+#         self.summaryFrame.append_text(fileName + "\n")
+#         self.summaryFrame.set_gauge(0)
+#
+#         # Supported formats
+#         # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
+#         # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
+#         # .txt .dat .*; various text formats
+#         if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
+#             # Trying to open using Excel method in LoadData.py
+#             self.delimiter = delimiter
+#             newData = Excel(self, fileName, self.summaryFrame)
+#         else:
+#             # Trying to open using PlainText method in LoadData.py
+#             self.delimiter = delimiter
+#             newData = PlainText(self, fileName, self.summaryFrame, delimiter)
+#
+#         if(newData.fileRead):
+#
+#             self.summaryFrame.append_text("\nLoading data...\n")
+#
+#             self.s_data = newData.s_data
+#             self.update_tabs()
+#         else:
+#             print("Failed to load file")
+#             self.summaryFrame.Destroy()
+#             self.statusBar.SetStatusText("Failed to load file")
+#
+#
 class DropTarget(wx.FileDropTarget):
     def __init__(self, parent):
         wx.FileDropTarget.__init__(self)
@@ -3268,42 +3258,42 @@ class DropTarget(wx.FileDropTarget):
         Opens a file with a help function from LoadData class
 
         """
-        self.parent.preloading()
-        self.parent.statusBar.SetStatusText("Opening file...")
-        self.parent.summaryFrame.append_text(fileName + "\n")
-        self.parent.summaryFrame.set_gauge(0)
-
-        # Supported formats
-        # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
-        # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
-        # .txt .dat .*; various text formats
-        if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
-            # Trying to open using Excel method in LoadData.py
-            self.parent.delimiter = ''
-            newData = Excel(self.parent, fileName, self.parent.summaryFrame)
-        elif fileName[-4:] == ".csv":
-            # Trying to open using PlainText method in LoadData.py
-            self.parent.delimiter = ';'
-            newData = PlainText(
-                self.parent,
-                fileName,
-                self.parent.summaryFrame,
-                ';')
-        else:
-            # Trying to open using PlainText method in LoadData.py
-            self.parent.delimiter = '\t'
-            newData = PlainText(
-                self.parent,
-                fileName,
-                self.parent.summaryFrame,
-                '\t')
-        if(newData.fileRead):
-
-            self.parent.summaryFrame.append_text("\nLoading data...\n")
-
-            self.parent.s_data = newData.s_data
-            self.parent.update_tabs()
-        else:
-            print("Failed to load file")
-            self.parent.summaryFrame.Destroy()
-            self.parent.statusBar.SetStatusText("Failed to load file")
+        # self.parent.preloading()
+        # self.parent.statusBar.SetStatusText("Opening file...")
+        # self.parent.summaryFrame.append_text(fileName + "\n")
+        # self.parent.summaryFrame.set_gauge(0)
+        #
+        # # Supported formats
+        # # .wk1 .wk3 .wk4; Lotus Worksheets. Can often be converted by Excel.
+        # # .xls .xlw; Microsoft Excel Spreadsheet, Excel Workbook
+        # # .txt .dat .*; various text formats
+        # if(fileName[-4:] == ".xls" or fileName[-5:] == ".xlsx" or fileName[-4:] == ".xlw" or fileName[-4:] == ".wk1" or fileName[-4:] == ".wk3" or fileName[-4:] == ".wk4"):
+        #     # Trying to open using Excel method in LoadData.py
+        #     self.parent.delimiter = ''
+        #     newData = Excel(self.parent, fileName, self.parent.summaryFrame)
+        # elif fileName[-4:] == ".csv":
+        #     # Trying to open using PlainText method in LoadData.py
+        #     self.parent.delimiter = ';'
+        #     newData = PlainText(
+        #         self.parent,
+        #         fileName,
+        #         self.parent.summaryFrame,
+        #         ';')
+        # else:
+        #     # Trying to open using PlainText method in LoadData.py
+        #     self.parent.delimiter = '\t'
+        #     newData = PlainText(
+        #         self.parent,
+        #         fileName,
+        #         self.parent.summaryFrame,
+        #         '\t')
+        # if(newData.fileRead):
+        #
+        #     self.parent.summaryFrame.append_text("\nLoading data...\n")
+        #
+        #     self.parent.s_data = newData.s_data
+        #     self.parent.update_tabs()
+        # else:
+        #     print("Failed to load file")
+        #     self.parent.summaryFrame.Destroy()
+        #     self.parent.statusBar.SetStatusText("Failed to load file")
