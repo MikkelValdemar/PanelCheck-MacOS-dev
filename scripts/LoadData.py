@@ -4,8 +4,7 @@ import sys
 import codecs
 import wx
 import os
-from SensoryData import SensoryData
-#import mvt
+from scripts.SensoryData import SensoryData
 import xlrd
 
 

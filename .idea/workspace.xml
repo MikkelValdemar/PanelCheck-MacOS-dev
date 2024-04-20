@@ -5,21 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aef80b07-efbb-471a-8c16-8c4e70565a79" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/scripts/About.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/SessionData.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/TabbedPanel.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/mvt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/FileOpen_Summary.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/LoadData.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/SensoryData.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/About.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FileOpen_Summary.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SessionData.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TabbedPanel.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoadData.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SensoryData.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/python312.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/python312.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/MacOS/PanelCheck" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/MacOS/PanelCheck" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/Resources/lib/python312.zip" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/Resources/lib/python312.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/_CodeSignature/CodeResources" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/_CodeSignature/CodeResources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvt.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +103,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1713623765353</updated>
-      <workItem from="1713623766352" duration="17871000" />
+      <workItem from="1713623766352" duration="18520000" />
     </task>
     <servers />
   </component>
@@ -119,6 +116,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PanelCheck_MacOS$GUI.coverage" NAME="GUI Coverage Results" MODIFIED="1713632025894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PanelCheck_MacOS$PanelCheck.coverage" NAME="PanelCheck Coverage Results" MODIFIED="1713632037593" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PanelCheck_MacOS$Run_PanelCheck.coverage" NAME="Run PanelCheck Coverage Results" MODIFIED="1713647744205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PanelCheck_MacOS$Run_PanelCheck.coverage" NAME="Run PanelCheck Coverage Results" MODIFIED="1713648463080" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
