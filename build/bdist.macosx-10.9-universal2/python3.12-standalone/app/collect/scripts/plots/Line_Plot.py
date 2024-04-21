@@ -5,7 +5,10 @@ import wx
 import os
 import sys
 import numpy as np
-
+from matplotlib.figure import Figure
+from matplotlib.collections import LineCollection
+from matplotlib.lines import Line2D
+from scripts.Plot_Tools import num2str, set_xlabeling, axes_create, assign_colors, check_point, axes_setup, set_xlabeling_rotation, raw_data_grid
 
 
 ##from IPython.Shell import IPShellEmbed
@@ -108,7 +111,7 @@ def SampleLinePlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **
     # that is shown in "Raw Data" when pushing the button in the plot
     emptyLine = ['']
 
-    #rawDataList = raw_data_grid(s_data, plot_data, active_samples=[itemID[0]])
+    rawDataList = raw_data_grid(s_data, plot_data, active_samples=[itemID[0]])
 
     # print dimensions
 
@@ -133,246 +136,246 @@ def SampleLinePlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **
     yMax_values = []
     ySTD_values = []
 
-#     for eachAttribute in range(dimensions[1]):
-#         column = take(plottingMatrix, (eachAttribute,), 1)
-#         # print column
-#         #deviation = round(std(column), 3)
-#         ##        yMin_values = concatenate((yMin_values, (min(column))))
-#         ##        yMax_values = concatenate((yMax_values, (max(column))))
-#         ##        ySTD_values = concatenate((ySTD_values, (std(column))))
-#
-#         lowestValue = min(column)
-#         highestValue = max(column)
-#         deviation = round(std(column), 3)
-#         yMin_values.append(lowestValue[0])
-#         yMax_values.append(highestValue[0])
-#         ySTD_values.append(deviation)
-#
-#     # print yMin_values
-#     # print yMax_values
-#
-#     # Vectors that plot the average values of all sensors
-#     x_values = arange(1, dimensions[1] + 1)
-#     y_values = meanVector
-#
-#     # Starting generation of the list that contains the data
-#     # that is shown in "Show Data"
-#     resultList = []
-#     sampleHeaderLine = ['Sample: ']
-#     sampleHeaderLine.extend(itemID)
-#     resultList.append(sampleHeaderLine)
-#     resultList.append(emptyLine)
-#     attributeLineNumericalResults = ['']
-#     attributeLineNumericalResults.extend(activeAttributesList)
-#     resultList.append(attributeLineNumericalResults)
-#
-#     # Adding the mean, max value, min value and std for each
-#     # attribute to the data grid
-#     _line = ['PANEL MEAN']
-#     for x in meanVector:
-#         _line.append(num2str(x, fmt="%.2f"))
-#     resultList.append(_line)
-#
-#     _line = ['MIN']
-#     for x in yMin_values:
-#         _line.append(num2str(x, fmt="%.2f"))
-#     resultList.append(_line)
-#
-#     _line = ['MAX']
-#     for x in yMax_values:
-#         _line.append(num2str(x, fmt="%.2f"))
-#     resultList.append(_line)
-#
-#     _line = ['STD']
-#     for x in ySTD_values:
-#         _line.append(num2str(x, fmt="%.2f"))
-#     resultList.append(_line)
-#
-#     # ipshell()
-#
-#     # Figure
-#     replot = False
-#     subplot = plot_data.overview_plot
-#     scatter_width = 35
-#     if plot_data.fig is not None:
-#         replot = True
-#     else:
-#         plot_data.fig = Figure(None)
-#     if subplot:  # is subplot
-#         plot_data.ax = plot_data.fig.add_subplot(
-#             num_subplot[0], num_subplot[1], num_subplot[2])
-#         scatter_width = 15
-#     else:
-#         plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
-#     ax = plot_data.ax
-#     fig = plot_data.fig
-#
-#     # From here the matplotlib plotting procedure starts
-#     # symbolList = ['ro', 'go', 'co', 'mo', 'yo', 'ko', 'bo', 'wo']#, 'rs',
-#     # 'gs','cs', 'ms']
-#
-#     # This is the new symbolList that allows more nuanced colours than the
-#     # default colours.
-#     # Check out 'http://www.visibone.com/colorlab/' for HTML colour codes
-#     symbolList = [['r', 'o'], ['g', 'o'], ['c', 'o'], ['m', 'o'], ['y', 'o'],
-#                   ['k', 'o'], ['b', 'o'], ['#666666', 'o'], ['#00FF00', 'o'],
-#                   ['#00FFFF', 'o'], ['#999999', 'o'], ['#993333', 'o'],
-#                   ['#CCCCFF', 'o'], ['#FF3300', 'o'], ['#00FFCC', 'o'],
-#                   ['#00CCFF', 'o'], ['#009999', 'o'], ['#660033', 'o'],
-#                   ['#CC00FF', 'o'], ['#CC3300', 'o'], ['#00CCCC', 'o']]
-#
-#     # The following 2 lines of code make it possible to open a
-#     # new window every time an item on the wxTreeCtrl is
-#     # double-clicked
-#
-#     # Plots the line with average values for all enabled assessors
-#     ax.plot(x_values, y_values, '-')
-#
-#     # This plots the vertical lines using the minimum and maximum values from
-#     # the plottingMatrix
-#     vertices = []
-#     for atts in range(dimensions[1]):
-#         #ax.vlines([x_values[atts]], [yMin_values[atts]], [yMax_values[atts]], fmt='b')
-#         vertices.append(
-#             ((x_values[atts], yMin_values[atts]), (x_values[atts], yMax_values[atts])))
-#
-#     lc = LineCollection(vertices, colors='#0000FF')
-#     plot_data.ax.add_collection(lc)
-#
-#
-# # This plots all the assessors scores in the line plot with
-# # different colours/symbols for each assessor.
-# # First
-# ##    enableds_data.AssessorList = []
-# # for item in plottings_data.SparseMatrix:
-# # if item[0] not in enableds_data.AssessorList:
-# # enableds_data.AssessorList.append(item[0])
-# ##
-# # enableds_data.AssessorList.sort()
-#
-#     # The following code handles the labelling for mouse-pointing over
-#     # certain points in the plot. Implemented by Henning and sligtly
-#     # modified by Oli.
-#     plotList = []
-#     # One element in the pointAndLabelList will always contain 3 items [x, y,
-#     # label]
-#     pointAndLabelList = []
-#
-#     # epsilon = 1% of edge length, a cirka diameter of one plot circle, this
-#     # depends on figure resolution
-#     epsilon = (plot_data.limits[1]) * 0.01
-#     # the accurate amount of room between each attribute line -1, with plot circle diameter of 1%
-#     # zero division will not happen, because with no chosen attributes:
-#     # drawSettings[3][1] = 1
-#     maxPlotsBesideEachother = int(floor((100 / plot_data.limits[1]) - 1))
-#     print(
-#         "Max number of plottings beside eachother: " +
-#         str(maxPlotsBesideEachother))
-#
-#     coloring_list = s_data.AssessorList
-#     # if "coloring" in plot_data.special_opts:
-#     #    if plot_data.special_opts["coloring"] == "samples":
-#     #        coloring_list = s_data.SampleList
-#
-#     colors = assign_colors(coloring_list, s_data.ReplicateList)
-#
-#     #plottings_data.AssessorList = zip(enableds_data.AssessorList,symbolList)
-#     # for items in plottings_data.AssessorList:
-#     for items in activeAssessorsList:
-#         checkBox = 0
-#         for replicate in s_data.ReplicateList:
-#             key = (items, itemID[0], replicate)
-#
-#             if plottingSparseMatrix.__contains__(key):
-#                 # print 'yes', plottings_data.SparseMatrix[key]
-#                 y_samples = []
-#                 x_samples = []
-#                 for value in range(len(plottingSparseMatrix[key])):
-#                     ySampleValue = float(plottingSparseMatrix[key][value])
-#                     y_samples.append(ySampleValue)
-#                     label = items + \
-#                         ' (' + activeAttributesList[value] + ': ' + replicate + ')'
-#
-#                     xSampleValue = value + 1
-#                     # print xSampleValue, ySampleValue
-#                     xSampleValue = check_point(
-#                         xSampleValue,
-#                         ySampleValue,
-#                         epsilon,
-#                         pointAndLabelList,
-#                         maxPlotsBesideEachother)
-#                     pointAndLabelList.append(
-#                         [xSampleValue, ySampleValue, label, 1])
-#                     if not checkBox:
-#                         #plotList.append(ax.scatter([xSampleValue], [ySampleValue], s = 30, color = symbolList[symItem][0], marker = 'o'))
-#                         plotList.append(
-#                             ax.scatter(
-#                                 [xSampleValue],
-#                                 [ySampleValue],
-#                                 s=scatter_width,
-#                                 color=colors[(items, replicate)][0],
-#                                 marker=colors[(items, replicate)][1]))
-#                         checkBox = 1
-#
-#                     x_samples.append(xSampleValue)
-#                 ax.scatter(x_samples, y_samples, s=scatter_width,
-#                            color=colors[(items, replicate)][0],
-#                            marker=colors[(items, replicate)][1])
-#
-#     # print pointAndLabelList
-#
-#     # Setting the axis parameters
-#     #axis([x_start, x_end, yMin, yMax])
-#
-#     ax.grid(plot_data.view_grid)
-#     if plot_data.view_legend:
-#         plotList = []
-#         i = 0
-#         for a in activeAssessorsList:
-#             #p = Patch(facecolor = colors[(a, s_data.ReplicateList[0])][0])
-#             # plotList.append(p)
-#
-#             plotList.append(
-#                 Line2D(
-#                     [],
-#                     [],
-#                     color=colors[(a, s_data.ReplicateList[0])]
-#                                 [0],
-#                     linewidth=5))
-#             i += 1
-#         # CircleLegend(fig, [['#FF0000', '#00FF00', '#0000FF'], ['dommer1',
-#         # 'dommer2', 'dommer3']])
-#         fig.legend(plotList, activeAssessorsList, loc='upper right')
-#
-#     myTitle = 'Sample line plot: ' + itemID[0]
-#     if not subplot:
-#         axes_setup(ax, 'Attributes', 'Score', myTitle, plot_data.limits)
-#         set_xlabeling(ax, activeAttributesList)
-#         if len(activeAttributesList) > 7:
-#             #set_xlabeling_rotation(ax, 'vertical')
-#             set_xlabeling_rotation(ax, 45)
-#     else:
-#         axes_setup(ax, '', '', myTitle, plot_data.limits, font_size=10)
-#
-#     # These four lines are for setting the maximum-value of the X-axis back
-#     # to its original value . Check back with code at around line 70
-#     try:
-#         plot_data.limits[1] = originalX_AxeValue
-#
-#     # UnboundLocalError occurs when the number of attributes was set at
-#     # maximum
-#     except UnboundLocalError:
-#         pass
-#
-#     # update plot-data variables:
-#     plot_data.point_lables = pointAndLabelList
-#     plot_data.raw_data = rawDataList
-#     plot_data.numeric_data = resultList
-#     plot_data.plot_type = "line_samp"
-#     plot_data.point_lables_type = 0
-#
-#     # Frame draw, for standard Matplotlib frame only use show()
-#     return plot_data
+    for eachAttribute in range(dimensions[1]):
+        column = np.take(plottingMatrix, (eachAttribute,), 1)
+        # print column
+        #deviation = round(std(column), 3)
+        ##        yMin_values = concatenate((yMin_values, (min(column))))
+        ##        yMax_values = concatenate((yMax_values, (max(column))))
+        ##        ySTD_values = concatenate((ySTD_values, (std(column))))
+
+        lowestValue = min(column)
+        highestValue = max(column)
+        deviation = round(np.std(column), 3)
+        yMin_values.append(lowestValue[0])
+        yMax_values.append(highestValue[0])
+        ySTD_values.append(deviation)
+
+    # print yMin_values
+    # print yMax_values
+
+    # Vectors that plot the average values of all sensors
+    x_values = np.arange(1, dimensions[1] + 1)
+    y_values = meanVector
+
+    # Starting generation of the list that contains the data
+    # that is shown in "Show Data"
+    resultList = []
+    sampleHeaderLine = ['Sample: ']
+    sampleHeaderLine.extend(itemID)
+    resultList.append(sampleHeaderLine)
+    resultList.append(emptyLine)
+    attributeLineNumericalResults = ['']
+    attributeLineNumericalResults.extend(activeAttributesList)
+    resultList.append(attributeLineNumericalResults)
+
+    # Adding the mean, max value, min value and std for each
+    # attribute to the data grid
+    _line = ['PANEL MEAN']
+    for x in meanVector:
+        _line.append(num2str(x, fmt="%.2f"))
+    resultList.append(_line)
+
+    _line = ['MIN']
+    for x in yMin_values:
+        _line.append(num2str(x, fmt="%.2f"))
+    resultList.append(_line)
+
+    _line = ['MAX']
+    for x in yMax_values:
+        _line.append(num2str(x, fmt="%.2f"))
+    resultList.append(_line)
+
+    _line = ['STD']
+    for x in ySTD_values:
+        _line.append(num2str(x, fmt="%.2f"))
+    resultList.append(_line)
+
+    # ipshell()
+
+    # Figure
+    replot = False
+    subplot = plot_data.overview_plot
+    scatter_width = 35
+    if plot_data.fig is not None:
+        replot = True
+    else:
+        plot_data.fig = Figure(None)
+    if subplot:  # is subplot
+        plot_data.ax = plot_data.fig.add_subplot(
+            num_subplot[0], num_subplot[1], num_subplot[2])
+        scatter_width = 15
+    else:
+        plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
+    ax = plot_data.ax
+    fig = plot_data.fig
+
+    # From here the matplotlib plotting procedure starts
+    # symbolList = ['ro', 'go', 'co', 'mo', 'yo', 'ko', 'bo', 'wo']#, 'rs',
+    # 'gs','cs', 'ms']
+
+    # This is the new symbolList that allows more nuanced colours than the
+    # default colours.
+    # Check out 'http://www.visibone.com/colorlab/' for HTML colour codes
+    symbolList = [['r', 'o'], ['g', 'o'], ['c', 'o'], ['m', 'o'], ['y', 'o'],
+                  ['k', 'o'], ['b', 'o'], ['#666666', 'o'], ['#00FF00', 'o'],
+                  ['#00FFFF', 'o'], ['#999999', 'o'], ['#993333', 'o'],
+                  ['#CCCCFF', 'o'], ['#FF3300', 'o'], ['#00FFCC', 'o'],
+                  ['#00CCFF', 'o'], ['#009999', 'o'], ['#660033', 'o'],
+                  ['#CC00FF', 'o'], ['#CC3300', 'o'], ['#00CCCC', 'o']]
+
+    # The following 2 lines of code make it possible to open a
+    # new window every time an item on the wxTreeCtrl is
+    # double-clicked
+
+    # Plots the line with average values for all enabled assessors
+    ax.plot(x_values, y_values, '-')
+
+    # This plots the vertical lines using the minimum and maximum values from
+    # the plottingMatrix
+    vertices = []
+    for atts in range(dimensions[1]):
+        #ax.vlines([x_values[atts]], [yMin_values[atts]], [yMax_values[atts]], fmt='b')
+        vertices.append(
+            ((x_values[atts], yMin_values[atts]), (x_values[atts], yMax_values[atts])))
+
+    lc = LineCollection(vertices, colors='#0000FF')
+    plot_data.ax.add_collection(lc)
+
+
+# This plots all the assessors scores in the line plot with
+# different colours/symbols for each assessor.
+# First
+##    enableds_data.AssessorList = []
+# for item in plottings_data.SparseMatrix:
+# if item[0] not in enableds_data.AssessorList:
+# enableds_data.AssessorList.append(item[0])
+##
+# enableds_data.AssessorList.sort()
+
+    # The following code handles the labelling for mouse-pointing over
+    # certain points in the plot. Implemented by Henning and sligtly
+    # modified by Oli.
+    plotList = []
+    # One element in the pointAndLabelList will always contain 3 items [x, y,
+    # label]
+    pointAndLabelList = []
+
+    # epsilon = 1% of edge length, a cirka diameter of one plot circle, this
+    # depends on figure resolution
+    epsilon = (plot_data.limits[1]) * 0.01
+    # the accurate amount of room between each attribute line -1, with plot circle diameter of 1%
+    # zero division will not happen, because with no chosen attributes:
+    # drawSettings[3][1] = 1
+    maxPlotsBesideEachother = int(np.floor((100 / plot_data.limits[1]) - 1))
+    print(
+        "Max number of plottings beside eachother: " +
+        str(maxPlotsBesideEachother))
+
+    coloring_list = s_data.AssessorList
+    # if "coloring" in plot_data.special_opts:
+    #    if plot_data.special_opts["coloring"] == "samples":
+    #        coloring_list = s_data.SampleList
+
+    colors = assign_colors(coloring_list, s_data.ReplicateList)
+
+    #plottings_data.AssessorList = zip(enableds_data.AssessorList,symbolList)
+    # for items in plottings_data.AssessorList:
+    for items in activeAssessorsList:
+        checkBox = 0
+        for replicate in s_data.ReplicateList:
+            key = (items, itemID[0], replicate)
+
+            if plottingSparseMatrix.__contains__(key):
+                # print 'yes', plottings_data.SparseMatrix[key]
+                y_samples = []
+                x_samples = []
+                for value in range(len(plottingSparseMatrix[key])):
+                    ySampleValue = float(plottingSparseMatrix[key][value])
+                    y_samples.append(ySampleValue)
+                    label = items + \
+                        ' (' + activeAttributesList[value] + ': ' + replicate + ')'
+
+                    xSampleValue = value + 1
+                    # print xSampleValue, ySampleValue
+                    xSampleValue = check_point(
+                        xSampleValue,
+                        ySampleValue,
+                        epsilon,
+                        pointAndLabelList,
+                        maxPlotsBesideEachother)
+                    pointAndLabelList.append(
+                        [xSampleValue, ySampleValue, label, 1])
+                    if not checkBox:
+                        #plotList.append(ax.scatter([xSampleValue], [ySampleValue], s = 30, color = symbolList[symItem][0], marker = 'o'))
+                        plotList.append(
+                            ax.scatter(
+                                [xSampleValue],
+                                [ySampleValue],
+                                s=scatter_width,
+                                color=colors[(items, replicate)][0],
+                                marker=colors[(items, replicate)][1]))
+                        checkBox = 1
+
+                    x_samples.append(xSampleValue)
+                ax.scatter(x_samples, y_samples, s=scatter_width,
+                           color=colors[(items, replicate)][0],
+                           marker=colors[(items, replicate)][1])
+
+    # print pointAndLabelList
+
+    # Setting the axis parameters
+    #axis([x_start, x_end, yMin, yMax])
+
+    ax.grid(plot_data.view_grid)
+    if plot_data.view_legend:
+        plotList = []
+        i = 0
+        for a in activeAssessorsList:
+            #p = Patch(facecolor = colors[(a, s_data.ReplicateList[0])][0])
+            # plotList.append(p)
+
+            plotList.append(
+                Line2D(
+                    [],
+                    [],
+                    color=colors[(a, s_data.ReplicateList[0])]
+                                [0],
+                    linewidth=5))
+            i += 1
+        # CircleLegend(fig, [['#FF0000', '#00FF00', '#0000FF'], ['dommer1',
+        # 'dommer2', 'dommer3']])
+        fig.legend(plotList, activeAssessorsList, loc='upper right')
+
+    myTitle = 'Sample line plot: ' + itemID[0]
+    if not subplot:
+        axes_setup(ax, 'Attributes', 'Score', myTitle, plot_data.limits)
+        set_xlabeling(ax, activeAttributesList)
+        if len(activeAttributesList) > 7:
+            #set_xlabeling_rotation(ax, 'vertical')
+            set_xlabeling_rotation(ax, 45)
+    else:
+        axes_setup(ax, '', '', myTitle, plot_data.limits, font_size=10)
+
+    # These four lines are for setting the maximum-value of the X-axis back
+    # to its original value . Check back with code at around line 70
+    try:
+        plot_data.limits[1] = originalX_AxeValue
+
+    # UnboundLocalError occurs when the number of attributes was set at
+    # maximum
+    except UnboundLocalError:
+        pass
+
+    # update plot-data variables:
+    plot_data.point_lables = pointAndLabelList
+    plot_data.raw_data = rawDataList
+    plot_data.numeric_data = resultList
+    plot_data.plot_type = "line_samp"
+    plot_data.point_lables_type = 0
+
+    # Frame draw, for standard Matplotlib frame only use show()
+    return plot_data
 
 
 # def AssessorLinePlotter(
