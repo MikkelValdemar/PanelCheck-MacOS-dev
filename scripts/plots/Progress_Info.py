@@ -14,7 +14,7 @@ class Progress(wx.Dialog):
 
         #pathname = os.path.dirname(sys.argv[0])
         #self.progPath = os.path.abspath(pathname)
-        figpath = abspath + '/fig.ico'
+        figpath = './resources/fig.ico'
         self.SetIcon(wx.Icon(figpath, wx.BITMAP_TYPE_ICO))
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.textSummary = wx.TextCtrl(

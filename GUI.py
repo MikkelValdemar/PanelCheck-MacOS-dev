@@ -12,6 +12,9 @@ from scripts.SessionData import SessionData, load_session_data
 from Tools import summaryConstructor2, save_dataset
 from scripts.TabbedPanel import TabPanel, RadioTabPanel
 
+from scripts.plots.Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPlotter, AssessorLinePlotter, \
+    SampleLineOverviewPlotter, SampleLinePlotter
+
 from scripts.Math_Tools import *
 from scripts.PanelCheck_Plots import *
 
@@ -2213,45 +2216,45 @@ class Main_Frame(wx.Frame):
         # ALL PLOT METHODS RETURNS A MODIFIED PLOTDATA OBJECT
 
         plot_title = ""
-    #
-    #         # When line plot tab is active plot line plots
-    #         # --------------------------------------------
-    #         if tab_panel == self.line_panel:
-    #             plot_title = "Line Plot"
-    #
-    #             plot_data = PlotData(
-    #                 activeAssessors_List,
-    #                 activeAttributes_List,
-    #                 activeSamples_List,
-    #                 pydata,
-    #                 self.menuViewGrid,
-    #                 self.menuViewLegend)
-    #             plot_data.set_limits(self.s_data.scale_limits)
-    #
-    #             if pydata[0] == "Overview Plot":
-    #                 res = SampleLineOverviewPlotter(
-    #                     self.s_data, plot_data, self.ProgPathAbs)
-    #                 overview_plot = True
-    #             elif len(pydata) > 1 and pydata[1] == "Overview Plot":
-    #                 plot_data.view_legend = False
-    #                 res = AssessorLineOverviewPlotter(
-    #                     self.s_data, plot_data, self.ProgPathAbs)
-    #                 overview_plot = True
-    #             elif len(pydata) == 3:
-    #                 res = ReplicateLinePlotter(
-    #                     self.s_data, plot_data, self.ProgPathAbs)
-    #             # print pydata
-    #             elif len(pydata) == 2:
-    #                 res = AssessorLinePlotter(
-    #                     self.s_data, plot_data, self.ProgPathAbs)
-    #             # print pydata
-    #             elif len(pydata) == 1:
-    #                 res = SampleLinePlotter(
-    #                     self.s_data, plot_data, self.ProgPathAbs)
-    #             # print pydata
-    #             else:
-    #                 print("The root!!!")
-    #
+
+        # When line plot tab is active plot line plots
+        # --------------------------------------------
+        if tab_panel == self.line_panel:
+            plot_title = "Line Plot"
+
+            plot_data = PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            plot_data.set_limits(self.s_data.scale_limits)
+
+            if pydata[0] == "Overview Plot":
+                res = SampleLineOverviewPlotter(
+                    self.s_data, plot_data, self.ProgPathAbs)
+                overview_plot = True
+            elif len(pydata) > 1 and pydata[1] == "Overview Plot":
+                plot_data.view_legend = False
+                res = AssessorLineOverviewPlotter(
+                    self.s_data, plot_data, self.ProgPathAbs)
+                overview_plot = True
+            elif len(pydata) == 3:
+                res = ReplicateLinePlotter(
+                    self.s_data, plot_data, self.ProgPathAbs)
+            # print pydata
+            elif len(pydata) == 2:
+                res = AssessorLinePlotter(
+                    self.s_data, plot_data, self.ProgPathAbs)
+            # print pydata
+            elif len(pydata) == 1:
+                res = SampleLinePlotter(
+                    self.s_data, plot_data, self.ProgPathAbs)
+            # print pydata
+            else:
+                print("The root!!!")
+
     #         # When mean & std plot tab is active plot:
     #         # ----------------------------------------------------------
     #         elif tab_panel == self.mean_std_panel:
@@ -3132,45 +3135,45 @@ class Main_Frame(wx.Frame):
     #                         self.figureList[len(self.figureList) - 1].Show()
     #                         return
     #
-    #         if plot:
-    #             # try:
-    #             _title = {"fig": "Fig. " +
-    #                       str(self.numberOfWindow), "plot": plot_title}
-    #
-    #             self.statusBar.SetStatusText(self.s_data.abspath)
-    #
-    #             if res is None:
-    #                 print(
-    #                     "Plotting failed!",
-    #                     self.statusBar.SetStatusText("Plotting failed!"))
-    #             else:
-    #                 print(self.s_data)
-    #                 self.figureList.append(
-    #                     PlotFrame(
-    #                         None,
-    #                         _title,
-    #                         self.s_data,
-    #                         res,
-    #                         self,
-    #                         self.ProgPathAbs))
-    #                 if self.figureList[len(self.figureList) - 1] is not None:
-    #                     self.figureList[len(self.figureList) - 1].Show()
-    #             # except:
-    #             #    print "Plotting failed!"
-    #
-    #         else:
-    #             print(self.ProgPathAbs)
-    #             self.figureList.append(
-    #                 GridFrame(
-    #                     self,
-    #                     frame_name,
-    #                     result_list,
-    #                     config=grid_config,
-    #                     abspath=self.ProgPathAbs))
-    #             if self.figureList[len(self.figureList) - 1] is not None:
-    #                 self.figureList[len(self.figureList) - 1].Show()
-    #     ###########NECESSARY_CUSTOM_METHODS_END###########
-    #
+            if plot:
+                # try:
+                _title = {"fig": "Fig. " +
+                          str(self.numberOfWindow), "plot": plot_title}
+
+                self.statusBar.SetStatusText(self.s_data.abspath)
+
+                if res is None:
+                    print(
+                        "Plotting failed!",
+                        self.statusBar.SetStatusText("Plotting failed!"))
+                else:
+                    print(self.s_data)
+                    self.figureList.append(
+                        PlotFrame(
+                            None,
+                            _title,
+                            self.s_data,
+                            res,
+                            self,
+                            self.ProgPathAbs))
+                    if self.figureList[len(self.figureList) - 1] is not None:
+                        self.figureList[len(self.figureList) - 1].Show()
+                # except:
+                #    print "Plotting failed!"
+
+            # else:
+            #     print(self.ProgPathAbs)
+            #     self.figureList.append(
+            #         GridFrame(
+            #             self,
+            #             frame_name,
+            #             result_list,
+            #             config=grid_config,
+            #             abspath=self.ProgPathAbs))
+            #     if self.figureList[len(self.figureList) - 1] is not None:
+            #         self.figureList[len(self.figureList) - 1].Show()
+        ###########NECESSARY_CUSTOM_METHODS_END###########
+
     def OnGeneralFileOpen(self, fileName, delimiter):
         """
         Opens a file with a help function from LoadData class

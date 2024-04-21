@@ -272,7 +272,7 @@ class PlotFrame(wx.Frame):
         # setting the icon for frame
         #pathname = os.path.dirname(sys.argv[0])
         #abspath = os.path.abspath(pathname)
-        self.icon = wx.Icon(self.ProgPathAbs + "/fig.ico", wx.BITMAP_TYPE_ICO)
+        self.icon = wx.Icon(self.ProgPathAbs + "/resources/fig.ico", wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
 
         # gui elements
@@ -338,7 +338,7 @@ class PlotFrame(wx.Frame):
         self.button_copy_clip = wx.BitmapButton(
             bitmap=wx.Bitmap(
                 self.ProgPathAbs +
-                u'/gfx/_ctrl_copy.gif',
+                u'/resources/gfx/_ctrl_copy.gif',
                 wx.BITMAP_TYPE_GIF),
             parent=self.button_panel,
             size=wx.Size(
@@ -350,7 +350,7 @@ class PlotFrame(wx.Frame):
         self.button_save = wx.BitmapButton(
             bitmap=wx.Bitmap(
                 self.ProgPathAbs +
-                u'/gfx/_ctrl_save.gif',
+                u'/resources/gfx/_ctrl_save.gif',
                 wx.BITMAP_TYPE_GIF),
             parent=self.button_panel,
             size=wx.Size(
@@ -363,7 +363,7 @@ class PlotFrame(wx.Frame):
         self.butt_zoom_reset = wx.BitmapButton(
             bitmap=wx.Bitmap(
                 self.ProgPathAbs +
-                u'/gfx/_nav_home.gif',
+                u'/resources/gfx/_nav_home.gif',
                 wx.BITMAP_TYPE_GIF),
             name=u'butt_zoom_reset',
             parent=self.button_panel,
@@ -379,7 +379,7 @@ class PlotFrame(wx.Frame):
             id=butt_zoom_id,
             bitmap=wx.Bitmap(
                 self.ProgPathAbs +
-                u'/gfx/_nav_zoom.gif',
+                u'/resources/gfx/_nav_zoom.gif',
                 wx.BITMAP_TYPE_GIF),
             size=wx.Size(
                 24,
@@ -391,7 +391,7 @@ class PlotFrame(wx.Frame):
             id=butt_pan_id,
             bitmap=wx.Bitmap(
                 self.ProgPathAbs +
-                u'/gfx/_nav_pan.gif',
+                u'/resources/gfx/_nav_pan.gif',
                 wx.BITMAP_TYPE_GIF),
             size=wx.Size(
                 24,
@@ -415,7 +415,7 @@ class PlotFrame(wx.Frame):
             self.buttUp = wx.BitmapButton(
                 bitmap=wx.Bitmap(
                     self.ProgPathAbs +
-                    u'/gfx/_pc_pointer_up.gif',
+                    u'/resources/gfx/_pc_pointer_up.gif',
                     wx.BITMAP_TYPE_GIF),
                 name=u'buttUp',
                 parent=self.button_panel,
@@ -429,7 +429,7 @@ class PlotFrame(wx.Frame):
             self.buttDown = wx.BitmapButton(
                 bitmap=wx.Bitmap(
                     self.ProgPathAbs +
-                    u'/gfx/_pc_pointer_down.gif',
+                    u'/resources/gfx/_pc_pointer_down.gif',
                     wx.BITMAP_TYPE_GIF),
                 name=u'buttDown',
                 parent=self.button_panel,
@@ -443,7 +443,7 @@ class PlotFrame(wx.Frame):
             self.buttReset = wx.BitmapButton(
                 bitmap=wx.Bitmap(
                     self.ProgPathAbs +
-                    u'/gfx/_pc_circle.gif',
+                    u'/resources/gfx/_pc_circle.gif',
                     wx.BITMAP_TYPE_GIF),
                 name=u'buttReset',
                 parent=self.button_panel,
@@ -457,7 +457,7 @@ class PlotFrame(wx.Frame):
             self.buttLeft = wx.BitmapButton(
                 bitmap=wx.Bitmap(
                     self.ProgPathAbs +
-                    u'/gfx/_pc_pointer_left.gif',
+                    u'/resources/gfx/_pc_pointer_left.gif',
                     wx.BITMAP_TYPE_GIF),
                 name=u'buttLeft',
                 parent=self.button_panel,
@@ -471,7 +471,7 @@ class PlotFrame(wx.Frame):
             self.buttRight = wx.BitmapButton(
                 bitmap=wx.Bitmap(
                     self.ProgPathAbs +
-                    u'/gfx/_pc_pointer_right.gif',
+                    u'/resources/gfx/_pc_pointer_right.gif',
                     wx.BITMAP_TYPE_GIF),
                 name=u'buttRight',
                 parent=self.button_panel,

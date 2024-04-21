@@ -5,14 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aef80b07-efbb-471a-8c16-8c4e70565a79" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/AUTHORS" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/REQUESTED" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/rpy2-3.5.16.dist-info/top_level.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/scripts/plots/Line_Plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/scripts/plots/Line_Plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/scripts/plots/Progress_Info.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/collect/scripts/plots/Progress_Info.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/python312.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/bdist.macosx-10.9-universal2/python3.12-standalone/app/python312.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/MacOS/PanelCheck" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/MacOS/PanelCheck" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/Resources/__boot__.py" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/Resources/__boot__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/Resources/lib/python312.zip" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/Resources/lib/python312.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/_CodeSignature/CodeResources" beforeDir="false" afterPath="$PROJECT_DIR$/dist/PanelCheck.app/Contents/_CodeSignature/CodeResources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/PanelCheck_Plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/PanelCheck_Plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/PlotFrame.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/PlotFrame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Plot_Tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Plot_Tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Progress_Info.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Progress_Info.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/plots/Line_Plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/plots/Line_Plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/plots/Progress_Info.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/plots/Progress_Info.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +120,7 @@
       <option name="presentableId" value="Default" />
       <updated>1713623765353</updated>
       <workItem from="1713623766352" duration="20877000" />
-      <workItem from="1713688840339" duration="2146000" />
+      <workItem from="1713688840339" duration="7159000" />
     </task>
     <servers />
   </component>
@@ -119,6 +133,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PanelCheck_MacOS$GUI.coverage" NAME="GUI Coverage Results" MODIFIED="1713632025894" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PanelCheck_MacOS$PanelCheck.coverage" NAME="PanelCheck Coverage Results" MODIFIED="1713632037593" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PanelCheck_MacOS$Run_PanelCheck.coverage" NAME="Run PanelCheck Coverage Results" MODIFIED="1713690690275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/PanelCheck_MacOS$Run_PanelCheck.coverage" NAME="Run PanelCheck Coverage Results" MODIFIED="1713717398989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
