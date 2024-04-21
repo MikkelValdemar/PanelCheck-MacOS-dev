@@ -2179,39 +2179,39 @@ class Main_Frame(wx.Frame):
 
         # default values:
 
-    #         res = None
-    #         plot = True  # show plot
-    #         grid = False  # not grid
-    #         grid_config = None  # grid_config
-    #         overview_plot = False  # not overview plot
-    #
-    #         # print pydata
-    #
-    #         # This variable needs to be increased every time before a new
-    #         # plot is created. Reason for this is that a new window is plotted
-    #         # every time like figure(x)
-    #         self.numberOfWindow += 1
-    #
-    #         # figure draw settings: (grid, legend, legend location, limits)
-    #         #drawSettings = [self.menuViewGrid, self.menuViewLegend, 'upper right', self.s_data.scale_limits]
-    #
-    #         activeAssessors_List = []
-    #         active_ass_inds = tab_panel.get_active_assessors()
-    #         for ind in active_ass_inds:
-    #             activeAssessors_List.append(self.AssessorList[ind])
-    #
-    #         activeAttributes_List = []
-    #         active_att_inds = tab_panel.get_active_attributes()
-    #         for ind in active_att_inds:
-    #             activeAttributes_List.append(self.AttributeList[ind])
-    #
-    #         activeSamples_List = []
-    #         active_samp_inds = tab_panel.get_active_samples()
-    #         for ind in active_samp_inds:
-    #             activeSamples_List.append(self.SampleList[ind])
-    #         # ALL PLOT METHODS RETURNS A MODIFIED PLOTDATA OBJECT
-    #
-    #         plot_title = ""
+        res = None
+        plot = True  # show plot
+        grid = False  # not grid
+        grid_config = None  # grid_config
+        overview_plot = False  # not overview plot
+
+        # print pydata
+
+        # This variable needs to be increased every time before a new
+        # plot is created. Reason for this is that a new window is plotted
+        # every time like figure(x)
+        self.numberOfWindow += 1
+
+        # figure draw settings: (grid, legend, legend location, limits)
+        #drawSettings = [self.menuViewGrid, self.menuViewLegend, 'upper right', self.s_data.scale_limits]
+
+        activeAssessors_List = []
+        active_ass_inds = tab_panel.get_active_assessors()
+        for ind in active_ass_inds:
+            activeAssessors_List.append(self.AssessorList[ind])
+
+        activeAttributes_List = []
+        active_att_inds = tab_panel.get_active_attributes()
+        for ind in active_att_inds:
+            activeAttributes_List.append(self.AttributeList[ind])
+
+        activeSamples_List = []
+        active_samp_inds = tab_panel.get_active_samples()
+        for ind in active_samp_inds:
+            activeSamples_List.append(self.SampleList[ind])
+        # ALL PLOT METHODS RETURNS A MODIFIED PLOTDATA OBJECT
+
+        plot_title = ""
     #
     #         # When line plot tab is active plot line plots
     #         # --------------------------------------------
