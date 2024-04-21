@@ -6,8 +6,8 @@ Plot tools module
 from copy import deepcopy, copy
 from scripts.Math_Tools import *
 from numpy import transpose
-from PlotData import *
-from Progress_Info import Progress
+from scripts.PlotData import PlotData, CollectionCalcPlotData, MM_ANOVA_PlotData
+from scripts.Progress_Info import Progress
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch, Polygon, Rectangle, Circle, bbox_artist, draw_bbox
 from matplotlib.ticker import FixedLocator
@@ -704,7 +704,7 @@ def check_columns(X):
 ############### R script (attribute significance) ###############
 
 def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
-    from MM_ANOVA_Plot import load_mm_anova_data
+    from scripts.plots.MM_ANOVA_Plot import load_mm_anova_data
     activeAssessorsList = plot_data.activeAssessorsList
     activeAttributesList = plot_data.activeAttributesList
     activeSamplesList = plot_data.activeSamplesList
