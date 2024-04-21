@@ -6,15 +6,7 @@ from scripts.Plot_Tools import *
 ##ipshell = IPShellEmbed()
 
 
-def SampleLinePlotter(
-        s_data,
-        plot_data,
-        num_subplot=[
-            1,
-            1,
-            1],
-    abspath=None,
-        **kwargs):
+def SampleLinePlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
     """
     This function generates the line plot for a specific sample. The number
     of assessors and attributes can be chosen in the checkListBoxes in the

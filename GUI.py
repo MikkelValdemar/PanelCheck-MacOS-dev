@@ -6,12 +6,13 @@ import wx.lib.colourdb
 from scripts.About import *
 from scripts.LoadData import PlainText, Excel
 from scripts.FileOpen_Summary import Summary
-#from PlotFrame import *
+from scripts.PlotFrame import *
 from Export import Export_Images_Dialog  # ExportImages, SaveDialog
 from scripts.SessionData import SessionData, load_session_data
 from Tools import summaryConstructor2, save_dataset
 from scripts.TabbedPanel import TabPanel, RadioTabPanel
 
+from scripts.Math_Tools import *
 from scripts.PanelCheck_Plots import *
 
 

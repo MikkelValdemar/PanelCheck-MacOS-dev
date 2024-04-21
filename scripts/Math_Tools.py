@@ -16,7 +16,7 @@ from numpy import array, ndarray, arange, average, concatenate, floor, ceil, sqr
 from scipy.linalg import svd
 
 # PCA related methods:
-from pca_module import mean_center, standardization, PCA_nipals2, PCA_svd, CorrelationLoadings
+from scripts.plots.pca_module import mean_center, standardization, PCA_nipals2, PCA_svd, CorrelationLoadings
 
 
 #################### PREPROCESSING OF DATA-SETS ####################

@@ -4,8 +4,9 @@ import wx
 import time
 import wx.lib.buttons as buttons
 
-from PlotPanel import *
-from PanelCheck_Tools import *
+from scripts.PlotPanel import *
+from Tools import *
+from scripts.PlotData import PlotData
 
 #import wx.lib.dialogs
 import os
@@ -41,7 +42,7 @@ from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEve
 from numpy import array
 
 # Plots
-from PanelCheck_Plots import *
+from scripts.PanelCheck_Plots import *
 
 """
 
