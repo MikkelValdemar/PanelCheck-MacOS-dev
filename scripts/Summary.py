@@ -2,11 +2,6 @@ import wx
 import sys
 import os
 
-
-#def create(parent):
-#    return SummaryFrame(parent)
-
-
 [wxID_SUMMARYFRAME, wxID_SUMMARYFRAMEBUTTON_OK, wxID_SUMMARYFRAMEPANEL,
  wxID_SUMMARYFRAMETEXT, wxID_SUMMARYFRAMEBUTTONPANEL,
  ] = [wx.NewId() for _init_ctrls in range(5)]
