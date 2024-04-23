@@ -11,58 +11,6 @@ def _reset_sys_path():
 _reset_sys_path()
 
 
-def _site_packages(prefix, real_prefix, global_site_packages):
-    import os
-    import site
-    import sys
-
-    paths = []
-
-    paths.append(
-        os.path.join(
-            prefix, "lib", "python%d.%d" % (sys.version_info[:2]), "site-packages"
-        )
-    )
-    if os.path.join(".framework", "") in os.path.join(prefix, ""):
-        home = os.environ.get("HOME")
-        if home:
-            paths.append(
-                os.path.join(
-                    home,
-                    "Library",
-                    "Python",
-                    "%d.%d" % (sys.version_info[:2]),
-                    "site-packages",
-                )
-            )
-
-    # Work around for a misfeature in setuptools: easy_install.pth places
-    # site-packages way to early on sys.path and that breaks py2app bundles.
-    # NOTE: this is hacks into an undocumented feature of setuptools and
-    # might stop to work without warning.
-    sys.__egginsert = len(sys.path)
-
-    for path in paths:
-        site.addsitedir(path)
-
-    # Ensure that the global site packages get placed on sys.path after
-    # the site packages from the virtual environment (this functionality
-    # is also in virtualenv)
-    sys.__egginsert = len(sys.path)
-
-    if global_site_packages:
-        site.addsitedir(
-            os.path.join(
-                real_prefix,
-                "lib",
-                "python%d.%d" % (sys.version_info[:2]),
-                "site-packages",
-            )
-        )
-
-
-_site_packages('/Users/mikkelvaldemarkoch/mvk/Projects/PanelCheck_MacOS/.venv', '/usr/local', 0)
-
 def _chdir_resource():
     import os
 
@@ -72,25 +20,17 @@ def _chdir_resource():
 _chdir_resource()
 
 
-def _setup_ctypes():
-    import os
-    from ctypes.macholib import dyld
+def _disable_linecache():
+    import linecache
 
-    frameworks = os.path.join(os.environ["RESOURCEPATH"], "..", "Frameworks")
-    dyld.DEFAULT_FRAMEWORK_FALLBACK.insert(0, frameworks)
-    dyld.DEFAULT_LIBRARY_FALLBACK.insert(0, frameworks)
+    def fake_getline(*args, **kwargs):
+        return ""
 
-
-_setup_ctypes()
+    linecache.orig_getline = linecache.getline
+    linecache.getline = fake_getline
 
 
-def _path_inject(paths):
-    import sys
-
-    sys.path[:0] = paths
-
-
-_path_inject(['/Users/mikkelvaldemarkoch/mvk/Projects/PanelCheck_MacOS'])
+_disable_linecache()
 
 
 import re
@@ -120,32 +60,153 @@ def _run():
     import site  # noqa: F401
 
     sys.frozen = "macosx_app"
+    base = os.environ["RESOURCEPATH"]
 
     argv0 = os.path.basename(os.environ["ARGVZERO"])
     script = SCRIPT_MAP.get(argv0, DEFAULT_SCRIPT)  # noqa: F821
 
-    sys.argv[0] = __file__ = script
+    path = os.path.join(base, script)
+    sys.argv[0] = __file__ = path
     if sys.version_info[0] == 2:
-        with open(script, "rU") as fp:
+        with open(path, "rU") as fp:
             source = fp.read() + "\n"
     else:
-        with open(script, "rb") as fp:
+        with open(path, "rb") as fp:
             encoding = guess_encoding(fp)
 
-        with open(script, "r", encoding=encoding) as fp:
+        with open(path, "r", encoding=encoding) as fp:
             source = fp.read() + "\n"
 
         BOM = b"\xef\xbb\xbf".decode("utf-8")
-
         if source.startswith(BOM):
             source = source[1:]
 
-    exec(compile(source, script, "exec"), globals(), globals())
+    exec(compile(source, path, "exec"), globals(), globals())
 
 
-DEFAULT_SCRIPT='/Users/mikkelvaldemarkoch/mvk/Projects/PanelCheck_MacOS/PanelCheck.py'
+def _recipes_pil_prescript(plugins):
+    try:
+        import Image
+
+        have_PIL = False
+    except ImportError:
+        from PIL import Image
+
+        have_PIL = True
+
+    import sys
+
+    def init():
+        if Image._initialized >= 2:
+            return
+
+        if have_PIL:
+            try:
+                import PIL.JpegPresets
+
+                sys.modules["JpegPresets"] = PIL.JpegPresets
+            except ImportError:
+                pass
+
+        for plugin in plugins:
+            try:
+                if have_PIL:
+                    try:
+                        # First try absolute import through PIL (for
+                        # Pillow support) only then try relative imports
+                        m = __import__("PIL." + plugin, globals(), locals(), [])
+                        m = getattr(m, plugin)
+                        sys.modules[plugin] = m
+                        continue
+                    except ImportError:
+                        pass
+
+                __import__(plugin, globals(), locals(), [])
+            except ImportError:
+                print("Image: failed to import")
+
+        if Image.OPEN or Image.SAVE:
+            Image._initialized = 2
+            return 1
+
+    Image.init = init
+
+
+_recipes_pil_prescript(['ImImagePlugin', 'FliImagePlugin', 'DdsImagePlugin', 'GifImagePlugin', 'MspImagePlugin', 'TgaImagePlugin', 'Jpeg2KImagePlugin', 'GbrImagePlugin', 'PsdImagePlugin', 'SgiImagePlugin', 'MpoImagePlugin', 'PcxImagePlugin', 'XbmImagePlugin', 'BufrStubImagePlugin', 'SpiderImagePlugin', 'PixarImagePlugin', 'IcoImagePlugin', 'EpsImagePlugin', 'DcxImagePlugin', 'QoiImagePlugin', 'XVThumbImagePlugin', 'BmpImagePlugin', 'PpmImagePlugin', 'MicImagePlugin', 'Hdf5StubImagePlugin', 'WmfImagePlugin', 'PalmImagePlugin', 'BlpImagePlugin', 'IcnsImagePlugin', 'FpxImagePlugin', 'TiffImagePlugin', 'FitsImagePlugin', 'XpmImagePlugin', 'PngImagePlugin', 'SunImagePlugin', 'GribStubImagePlugin', 'ImtImagePlugin', 'McIdasImagePlugin', 'MpegImagePlugin', 'IptcImagePlugin', 'CurImagePlugin', 'JpegImagePlugin', 'FtexImagePlugin', 'PcdImagePlugin', 'WebPImagePlugin', 'PdfImagePlugin'])
+
+
+def _setup_ctypes():
+    import os
+    from ctypes.macholib import dyld
+
+    frameworks = os.path.join(os.environ["RESOURCEPATH"], "..", "Frameworks")
+    dyld.DEFAULT_FRAMEWORK_FALLBACK.insert(0, frameworks)
+    dyld.DEFAULT_LIBRARY_FALLBACK.insert(0, frameworks)
+
+
+_setup_ctypes()
+
+
+def _boot_multiprocessing():
+    import sys
+    import multiprocessing.spawn
+
+    orig_get_command_line = multiprocessing.spawn.get_command_line
+    def wrapped_get_command_line(**kwargs):
+        orig_frozen = sys.frozen
+        del sys.frozen
+        try:
+            return orig_get_command_line(**kwargs)
+        finally:
+            sys.frozen = orig_frozen
+    multiprocessing.spawn.get_command_line = wrapped_get_command_line
+
+_boot_multiprocessing()
+
+
+import pkg_resources, zipimport, os
+
+def find_eggs_in_zip(importer, path_item, only=False):
+    if importer.archive.endswith('.whl'):
+        # wheels are not supported with this finder
+        # they don't have PKG-INFO metadata, and won't ever contain eggs
+        return
+
+    metadata = pkg_resources.EggMetadata(importer)
+    if metadata.has_metadata('PKG-INFO'):
+        yield Distribution.from_filename(path_item, metadata=metadata)
+    for subitem in metadata.resource_listdir(''):
+        if not only and pkg_resources._is_egg_path(subitem):
+            subpath = os.path.join(path_item, subitem)
+            dists = find_eggs_in_zip(zipimport.zipimporter(subpath), subpath)
+            for dist in dists:
+                yield dist
+        elif subitem.lower().endswith(('.dist-info', '.egg-info')):
+            subpath = os.path.join(path_item, subitem)
+            submeta = pkg_resources.EggMetadata(zipimport.zipimporter(subpath))
+            submeta.egg_info = subpath
+            yield pkg_resources.Distribution.from_location(path_item, subitem, submeta)  # noqa: B950
+
+def _fixup_pkg_resources():
+    pkg_resources.register_finder(zipimport.zipimporter, find_eggs_in_zip)
+    pkg_resources.working_set.entries = []
+    list(map(pkg_resources.working_set.add_entry, sys.path))
+
+_fixup_pkg_resources()
+
+
+
+def _setup_openssl():
+    import os
+    resourcepath = os.environ["RESOURCEPATH"]
+    os.environ["SSL_CERT_FILE"] = os.path.join(
+        resourcepath, "openssl.ca", "no-such-file")
+    os.environ["SSL_CERT_DIR"] = os.path.join(
+        resourcepath, "openssl.ca", "no-such-file")
+
+_setup_openssl()
+
+
+DEFAULT_SCRIPT='PanelCheck.py'
 SCRIPT_MAP={}
-try:
-    _run()
-except KeyboardInterrupt:
-    pass
+_run()

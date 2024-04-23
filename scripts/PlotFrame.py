@@ -40,7 +40,8 @@ from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEve
 # from matplotlib.transforms import Bbox, Point, Value, get_bbox_transform, bbox_all,\
 #     unit_bbox, inverse_transform_bbox, lbwh_to_bbox
 
-#from Summary import SummaryFrame
+from scripts.Summary import SummaryFrame
+from Grid import GridFrame, GridFramePerfInd
 
 from numpy import array
 
