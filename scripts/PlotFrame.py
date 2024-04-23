@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from copy import deepcopy
 
 import wx
 import time
@@ -6,13 +7,14 @@ import wx.lib.buttons as buttons
 
 from scripts.PlotPanel import *
 from Tools import *
-from scripts.PlotData import PlotData
+from scripts.PlotData import PlotData, CollectionCalcPlotData
 
 #import wx.lib.dialogs
 import os
 import sys
 import matplotlib
 # matplotlib.use('WXAgg')
+from scripts.plots.MM_ANOVA_Plot import set_points_in_range
 
 #from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
 from matplotlib.ticker import FixedLocator
@@ -38,11 +40,12 @@ from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEve
 # from matplotlib.transforms import Bbox, Point, Value, get_bbox_transform, bbox_all,\
 #     unit_bbox, inverse_transform_bbox, lbwh_to_bbox
 
+#from Summary import SummaryFrame
 
 from numpy import array
 
 # Plots
-from scripts.PanelCheck_Plots import *
+from scripts.plots.Line_Plot import SampleLinePlotter, AssessorLinePlotter, ReplicateLinePlotter
 
 """
 
@@ -826,65 +829,65 @@ class PlotFrame(wx.Frame):
         elif plot_type == "line_rep":
             return ReplicateLinePlotter
 
-        elif plot_type == "mean_std_ass":
-            return RawDataAssessorPlotter
-
-        elif plot_type == "mean_std_att":
-            return RawDataAttributePlotter
-
-        elif plot_type == "corr":
-            return CorrelationPlotter
-
-        elif plot_type == "profile":
-            return profilePlotter
-
-        elif plot_type == "egg":
-            return EggshellPlotter
-
-        elif plot_type == "f_ass":
-            return FPlotter_Assessor_General
-
-        elif plot_type == "f_att":
-            return FPlotter_Attributes_General
-
-        elif plot_type == "mse_ass":
-            return MSEPlotter_Assessor_General
-
-        elif plot_type == "mse_att":
-            return MSEPlotter_Attributes_General
-
-        elif plot_type == "pmse":
-            return pmsePlotter
-
-        elif plot_type == "tucker1":
-            return Tucker1Plotter
-
-        elif plot_type == "consensus":
-            return PCA_plotter
-
-        elif plot_type == "mm_anova_f_2way1rep":
-            return MixModel_ANOVA_Plotter_2way1rep
-
-        elif plot_type == "mm_anova_lsd_2way1rep":
-            return MixModel_ANOVA_LSD_Plotter_2way1rep
-
-        elif plot_type == "mm_anova_f_2way":
-            return MixModel_ANOVA_Plotter_2way
-
-        elif plot_type == "mm_anova_lsd_2way":
-            return MixModel_ANOVA_LSD_Plotter_2way
-
-        elif plot_type == "mm_anova_f_3way":
-            return MixModel_ANOVA_Plotter_3way
-
-        elif plot_type == "mm_anova_lsd_3way":
-            return MixModel_ANOVA_LSD_Plotter_3way
-
-        elif plot_type == "manhattan_ass" or plot_type == "manhattan_att":
-            return ManhattanPlotter
-
-        elif plot_type == "perf_ind":
-            return perfindPlotter
+        # elif plot_type == "mean_std_ass":
+        #     return RawDataAssessorPlotter
+        #
+        # elif plot_type == "mean_std_att":
+        #     return RawDataAttributePlotter
+        #
+        # elif plot_type == "corr":
+        #     return CorrelationPlotter
+        #
+        # elif plot_type == "profile":
+        #     return profilePlotter
+        #
+        # elif plot_type == "egg":
+        #     return EggshellPlotter
+        #
+        # elif plot_type == "f_ass":
+        #     return FPlotter_Assessor_General
+        #
+        # elif plot_type == "f_att":
+        #     return FPlotter_Attributes_General
+        #
+        # elif plot_type == "mse_ass":
+        #     return MSEPlotter_Assessor_General
+        #
+        # elif plot_type == "mse_att":
+        #     return MSEPlotter_Attributes_General
+        #
+        # elif plot_type == "pmse":
+        #     return pmsePlotter
+        #
+        # elif plot_type == "tucker1":
+        #     return Tucker1Plotter
+        #
+        # elif plot_type == "consensus":
+        #     return PCA_plotter
+        #
+        # elif plot_type == "mm_anova_f_2way1rep":
+        #     return MixModel_ANOVA_Plotter_2way1rep
+        #
+        # elif plot_type == "mm_anova_lsd_2way1rep":
+        #     return MixModel_ANOVA_LSD_Plotter_2way1rep
+        #
+        # elif plot_type == "mm_anova_f_2way":
+        #     return MixModel_ANOVA_Plotter_2way
+        #
+        # elif plot_type == "mm_anova_lsd_2way":
+        #     return MixModel_ANOVA_LSD_Plotter_2way
+        #
+        # elif plot_type == "mm_anova_f_3way":
+        #     return MixModel_ANOVA_Plotter_3way
+        #
+        # elif plot_type == "mm_anova_lsd_3way":
+        #     return MixModel_ANOVA_LSD_Plotter_3way
+        #
+        # elif plot_type == "manhattan_ass" or plot_type == "manhattan_att":
+        #     return ManhattanPlotter
+        #
+        # elif plot_type == "perf_ind":
+        #     return perfindPlotter
 
     def update_gui(self):
         if self.pc_ctrl_on:
