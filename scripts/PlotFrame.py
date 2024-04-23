@@ -47,6 +47,7 @@ from numpy import array
 
 # Plots
 from scripts.plots.Line_Plot import SampleLinePlotter, AssessorLinePlotter, ReplicateLinePlotter
+from scripts.plots.Tucker1_Plot import Tucker1Plotter
 
 """
 

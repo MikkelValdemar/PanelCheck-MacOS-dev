@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+import wx
+import numpy as np
 
-
-from scripts.Plot_Tools import *
-
-##from IPython.Shell import IPShellEmbed
-##ipshell = IPShellEmbed()
+from copy import deepcopy
+from matplotlib.figure import Figure
+from scripts.Math_Tools import PCA
+from scripts.plots.pca_module import CorrelationLoadings
+from scripts.Plot_Tools import equal_lists, raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, OverviewPlotter, significance_legend
 
 
 def getTucker1Matrix(s_data, plot_data, selection):
@@ -17,7 +19,7 @@ def getTucker1Matrix(s_data, plot_data, selection):
         selection = [selection,selection]
     #import pdb; pdb.set_trace()
     if selection[1] == 1:  # model based on sample replicates
-        Tucker1Matrix = zeros(
+        Tucker1Matrix = np.zeros(
             (numberOfSamples,
              numberOfAssessors *
              numberOfAttributes *
@@ -34,14 +36,14 @@ def getTucker1Matrix(s_data, plot_data, selection):
                     active_replicates=[replicate],
                     active_assessor=assessor)
                 # print ass_rep_mat
-                [y_len, x_len] = shape(ass_rep_mat)
+                [y_len, x_len] = np.shape(ass_rep_mat)
                 Tucker1Matrix[:, x_len_tot:(
                     x_len_tot + x_len)] = ass_rep_mat[:, :]
 
                 x_len_tot += x_len
 
     elif selection[1] == 0:  # model based on sample averages
-        Tucker1Matrix = zeros(
+        Tucker1Matrix = np.zeros(
             (numberOfSamples,
              numberOfAssessors *
              numberOfAttributes),
@@ -84,8 +86,8 @@ def getTucker1Matrix(s_data, plot_data, selection):
     if selection[0] == 1:
 
         inputMatrix = Tucker1Matrix.copy()
-        variableMean = average(inputMatrix, 0)
-        standardDev = STD(inputMatrix, 0)
+        variableMean = np.average(inputMatrix, 0)
+        standardDev = np.STD(inputMatrix, 0)
 
         # Go through all values in each column
         # and search for STD = 0
@@ -116,7 +118,7 @@ def getTucker1Matrix(s_data, plot_data, selection):
         if selection[1] == 1:  # model based on sample replicates
             # From here the Tucker-1 matrix is build anew without the specific attributes that cause
             # division error in the standardization process
-            Tucker1Matrix = zeros(
+            Tucker1Matrix = np.zeros(
                 (numberOfSamples,
                  numberOfAssessors *
                  len(newActiveAttributesList) *
@@ -132,7 +134,7 @@ def getTucker1Matrix(s_data, plot_data, selection):
                         active_replicates=[replicate],
                         active_assessor=assessor)
                     # print ass_rep_mat
-                    [y_len, x_len] = shape(ass_rep_mat)
+                    [y_len, x_len] = np.shape(ass_rep_mat)
                     Tucker1Matrix[:, x_len_tot:(
                         x_len_tot + x_len)] = ass_rep_mat[:, :]
 
@@ -142,7 +144,7 @@ def getTucker1Matrix(s_data, plot_data, selection):
 
             # From here the Tucker-1 matrix is build anew without the specific attributes that cause
             # division error in the standardization process
-            Tucker1Matrix = zeros(
+            Tucker1Matrix = np.zeros(
                 (numberOfSamples,
                  numberOfAssessors *
                  len(newActiveAttributesList)),
@@ -409,7 +411,7 @@ def Tucker1Plotter(
             explVar = plot_data.E
 
             corrLoadings = plot_data.CorrLoadings
-            transCorrLoadings = transpose(corrLoadings)
+            transCorrLoadings = np.transpose(corrLoadings)
 
             rawDataList = plot_data.raw_data
 
@@ -428,15 +430,15 @@ def Tucker1Plotter(
 
             corrLoadings = CorrelationLoadings(Tucker1Matrix, scores)
             plot_data.CorrLoadings = corrLoadings
-            transCorrLoadings = transpose(corrLoadings)
+            transCorrLoadings = np.transpose(corrLoadings)
 
             # Continue building resultList
             # Limiting PC's in 'Numeric Results' to 10
-            [PCs, Tucker1Attributes] = shape(corrLoadings)
-            [Samples, PCs] = shape(scores)
+            [PCs, Tucker1Attributes] = np.shape(corrLoadings)
+            [Samples, PCs] = np.shape(scores)
 
             maxPCs = 10
-            [samples, PCs] = shape(scores)
+            [samples, PCs] = np.shape(scores)
             if PCs < maxPCs:
                 maxPCs = PCs
 
@@ -477,7 +479,7 @@ def Tucker1Plotter(
                 for sample in activeSamplesList:
                     sampleRow = [sample]
                     for x in Tucker1Matrix[activeSamplesList.index(sample)]:
-                        sampleRow.append(num2str(x, fmt="%.2f"))
+                        sampleRow.append(np.num2str(x, fmt="%.2f"))
                     resultList1.append(sampleRow)
 
                 resultList1.append(emptyLine)
@@ -532,7 +534,7 @@ def Tucker1Plotter(
                 for sample in activeSamplesList:
                     sampleRow = [sample]
                     for x in Tucker1Matrix[activeSamplesList.index(sample)]:
-                        sampleRow.append(num2str(x, fmt="%.2f"))
+                        sampleRow.append(np.num2str(x, fmt="%.2f"))
                     resultList1.append(sampleRow)
 
                 resultList1.append(emptyLine)
@@ -609,16 +611,16 @@ def Tucker1Plotter(
 
             ax.grid(plot_data.view_grid)
             # Get the first and second column from the scores matrix
-            scoresXCoordinates = take(scores, (pc_x,), 1)
-            scoresYCoordinates = take(scores, (pc_y,), 1)
+            scoresXCoordinates = np.take(scores, (pc_x,), 1)
+            scoresYCoordinates = np.take(scores, (pc_y,), 1)
 
             # Catch max and min values in PC1 and PC2 scores
             # for defining axis-limits in the common scores plot.
-            x_max = ceil(max(scoresXCoordinates))
-            x_min = floor(min(scoresXCoordinates))
+            x_max = np.ceil(max(scoresXCoordinates))
+            x_min = np.floor(min(scoresXCoordinates))
 
-            y_max = ceil(max(scoresYCoordinates))
-            y_min = floor(min(scoresYCoordinates))
+            y_max = np.ceil(max(scoresYCoordinates))
+            y_min = np.floor(min(scoresYCoordinates))
 
             # Defining the titles, axes names, etc
             myTitle = 'Tucker1 - common scores: '
@@ -715,18 +717,18 @@ def Tucker1Plotter(
             ax.grid(plot_data.view_grid)
 
             # Create circles and plot them
-            t = arange(0.0, 2 * pi, 0.01)
+            t = np.arange(0.0, 2 * np.pi, 0.01)
 
             # Compuing the outer circle
-            xcords = cos(t)
-            ycords = sin(t)
+            xcords = np.cos(t)
+            ycords = np.sin(t)
 
             # Plotting outer circle
             ax.plot(xcords, ycords, 'b-')
 
             # Computing inner circle
-            xcords50percent = 0.707 * cos(t)
-            ycords50percent = 0.707 * sin(t)
+            xcords50percent = 0.707 * np.cos(t)
+            ycords50percent = 0.707 * np.sin(t)
 
             # Plotting inner circle
             ax.plot(xcords50percent, ycords50percent, 'b-')
@@ -814,8 +816,9 @@ def Tucker1Plotter(
             elif itemID[0] in activeAttributesList:
 
                 # print itemID[0]
-                frame_colored = colored_frame(
-                    s_data, plot_data, activeAttributesList, itemID[0],abspath=abspath)
+                # TODO MVK: Fix colored frame
+                # frame_colored = colored_frame(
+                #     s_data, plot_data, activeAttributesList, itemID[0],abspath=abspath)
 
                 if selection[1] == 0:
                     # Find out where in the activeAttributeList the selected attribute is.
@@ -994,7 +997,7 @@ def Tucker1Plotter(
             for PC in range(1, maxPCs + 1):
                 PCrow = ['PC ' + str(PC)]
                 # print PC, PCrow
-                PCrow.extend(str_row(corrLoadings[PC - 1], fmt="%.3f"))
+                PCrow.extend(np.str_row(corrLoadings[PC - 1], fmt="%.3f"))
                 resultList.append(PCrow)
 
             resultList.append(emptyLine)
