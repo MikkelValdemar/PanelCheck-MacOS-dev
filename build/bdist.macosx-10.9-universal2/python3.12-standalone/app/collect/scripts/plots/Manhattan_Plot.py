@@ -857,6 +857,7 @@ def ManhattanPlotter(
             plot_data.raw_data = get_raw_data_manhattan(
                 active_list, [current_active], plot_data, s_data)
 
+        # TODO MVK: Fix colored frame
         # frame_colored = colored_frame(
         #     s_data,
         #     plot_data,

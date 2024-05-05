@@ -387,13 +387,14 @@ def profilePlotter(s_data, plot_data, num_subplot=[1, 1, 1],abspath=None, **kwar
 
     pointAndLabelList = []
 
-    frame_colored = colored_frame(
-        s_data,
-        plot_data,
-        plot_data.activeAttributesList,
-        plot_data.tree_path[0],abspath=abspath)
-    if frame_colored:
-        significance_legend(plot_data, pos='lower right')
+    # TODO MVK: Fix colored frame
+    # frame_colored = colored_frame(
+    #     s_data,
+    #     plot_data,
+    #     plot_data.activeAttributesList,
+    #     plot_data.tree_path[0],abspath=abspath)
+    # if frame_colored:
+    #     significance_legend(plot_data, pos='lower right')
 
     print(plot_data.collection_calc_data["p_matr"])
 

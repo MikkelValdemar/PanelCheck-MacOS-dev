@@ -5,8 +5,12 @@
 #              Plotting the assessor mean and assessor STD for one attribute.
 # -------------------------------------------------------------------------------
 
-from scripts.Plot_Tools import *
-
+#from scripts.Plot_Tools import *
+import wx
+import numpy as np
+from matplotlib.figure import Figure
+from scripts.Math_Tools import STD
+from scripts.Plot_Tools import significance_legend, OverviewPlotter, set_xlabeling, num2str, axes_create, assign_colors, check_point, axes_setup, set_xlabeling_rotation, raw_data_grid
 
 def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
 
@@ -59,7 +63,7 @@ def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=Non
 
             # Transforming 'newObject' to matrix (NOT array) to avoid problems
             # with dimensions and vstack.
-            newObject = mat(newObject)
+            newObject = np.mat(newObject)
             tempMatrix = np.vstack((tempMatrix, newObject))
             specSparseMatrix[(itemID[0], sample, replicate)] = np.array(newObject)
 
@@ -322,15 +326,16 @@ def RawDataAttributePlotter(
             ax, '', '', _title, [
                 0, len(activeAssessorsList) + 1, 0, limits[3]], font_size=10)
 
-    frame_colored = colored_frame(
-        s_data,
-        plot_data,
-        activeAttributesList,
-        itemID[0],
-        abspath)
-
-    if frame_colored:
-        significance_legend(plot_data)
+    # TODO MVK: Fix colored frame
+    # frame_colored = colored_frame(
+    #     s_data,
+    #     plot_data,
+    #     activeAttributesList,
+    #     itemID[0],
+    #     abspath)
+    #
+    # if frame_colored:
+    #     significance_legend(plot_data)
 
     # update plot-data variables:
     plot_data.point_label_line_width = width * 0.5

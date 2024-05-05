@@ -491,6 +491,7 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
         if len(samples) > 11:
             set_xlabeling_rotation(ax, 'vertical')
 
+    # TODO MVK: Fix colored frame
     # frame_colored = colored_frame(
     #     s_data,
     #     plot_data,

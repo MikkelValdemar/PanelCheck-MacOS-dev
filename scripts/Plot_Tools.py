@@ -792,7 +792,7 @@ def check_columns(X):
 #     else:
 #         return res[2][6]  # Product Effect p-matrix
 
-
+# TODO MVK: Fix colored frame
 # def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
 #
 #     if len(s_data.ReplicateList) == 1:
