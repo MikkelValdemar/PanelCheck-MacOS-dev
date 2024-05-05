@@ -13,6 +13,9 @@ from scripts.TabbedPanel import TabPanel, RadioTabPanel
 
 from scripts.plots.Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPlotter, AssessorLinePlotter, \
     SampleLineOverviewPlotter, SampleLinePlotter
+from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter, RawDataAssessorOverviewPlotter, RawDataAttributeOverviewPlotter
+
+from scripts.Plot_Tools import CollectionCalcPlotData
 
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
 from scripts.plots.Consensus_Plot import PCA_plotter
@@ -2267,51 +2270,51 @@ class Main_Frame(wx.Frame):
             plot_title = "Mean/STD Plot"
 
             temp_plot_data = self.mean_plot_data
-            #
-            # if temp_plot_data is None:
-            #     new_plot_data = CollectionCalcPlotData(
-            #         activeAssessors_List,
-            #         activeAttributes_List,
-            #         activeSamples_List,
-            #         pydata,
-            #         self.menuViewGrid,
-            #         self.menuViewLegend)
-            # elif temp_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-            #     new_plot_data = CollectionCalcPlotData(
-            #         activeAssessors_List,
-            #         activeAttributes_List,
-            #         activeSamples_List,
-            #         pydata,
-            #         self.menuViewGrid,
-            #         self.menuViewLegend)
-            # else:
-            #     new_plot_data = CollectionCalcPlotData(
-            #         activeAssessors_List,
-            #         activeAttributes_List,
-            #         activeSamples_List,
-            #         pydata,
-            #         self.menuViewGrid,
-            #         self.menuViewLegend)
-            #     # use old calc data:
-            #     new_plot_data.copy_data(temp_plot_data)
-            #     #temp_plot_data = new_plot_data
-            #
-            # self.mean_plot_data = new_plot_data
-            # self.mean_plot_data.set_limits(self.s_data.scale_limits)
-            #
-            # if pydata[0] in self.AssessorList:
-            #     res = RawDataAssessorPlotter(self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
-            # elif pydata[0] in self.AttributeList:
-            #     res = RawDataAttributePlotter(self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
-            # elif pydata[0] == "Overview Plot (assessors)":
-            #     overview_plot = True
-            #     res = RawDataAssessorOverviewPlotter(
-            #         self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
-            #
-            # elif pydata[0] == "Overview Plot (attributes)":
-            #     overview_plot = True
-            #     res = RawDataAttributeOverviewPlotter(
-            #         self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
+
+            if temp_plot_data is None:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            elif temp_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+                # use old calc data:
+                new_plot_data.copy_data(temp_plot_data)
+                #temp_plot_data = new_plot_data
+
+            self.mean_plot_data = new_plot_data
+            self.mean_plot_data.set_limits(self.s_data.scale_limits)
+
+            if pydata[0] in self.AssessorList:
+                res = RawDataAssessorPlotter(self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
+            elif pydata[0] in self.AttributeList:
+                res = RawDataAttributePlotter(self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
+            elif pydata[0] == "Overview Plot (assessors)":
+                overview_plot = True
+                res = RawDataAssessorOverviewPlotter(
+                    self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
+
+            elif pydata[0] == "Overview Plot (attributes)":
+                overview_plot = True
+                res = RawDataAttributeOverviewPlotter(
+                    self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
 
 #         # When correlation plot tab is active plot correlation plots
 #         # ----------------------------------------------------------

@@ -10,7 +10,7 @@ import wx
 import numpy as np
 from matplotlib.figure import Figure
 from scripts.Math_Tools import STD
-from scripts.Plot_Tools import significance_legend, OverviewPlotter, set_xlabeling, num2str, axes_create, assign_colors, check_point, axes_setup, set_xlabeling_rotation, raw_data_grid
+from scripts.Plot_Tools import OverviewPlotter, set_xlabeling, num2str, axes_create, assign_colors, axes_setup, set_xlabeling_rotation, raw_data_grid
 
 def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
 
