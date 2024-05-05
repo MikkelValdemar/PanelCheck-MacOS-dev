@@ -110,56 +110,56 @@ class DataFile:
             self.inputValue = dlg.GetValue()
         dlg.Destroy()
 
-    def safe_uni_dec(self, obj):
-        """
-        returns the decoded unicode representation of obj
-        """
-        try:
-            #uni = self.dec(obj)[0]
-            # print "unicode type string: " + self.enc(uni)[0] # may return: UnicodeEncodeError
-            # return uni
-            return obj
-        except UnicodeDecodeError:  # cannot handle characters with code table
-            # print 'UnicodeDecodeError: trying with "replace"..'
-            return unicode(obj, self.codec, 'replace')
-        except UnicodeDecodeError:  # cannot handle characters with code table
-            # print 'UnicodeDecodeError: trying with "replace" and with
-            # sys.stdin.encoding'
-            self.codec = self.encoding2
-            return unicode(obj, self.codec, 'replace')
-        except UnicodeDecodeError:
-            # print 'UnicodeDecodeError: cannot decode'
-            return str(obj)
-        except UnicodeEncodeError:
-            return self.enc(obj)[0]
-        except BaseException:
-            return obj.encode('ascii', 'ignore')
+    # def safe_uni_dec(self, obj):
+    #     """
+    #     returns the decoded unicode representation of obj
+    #     """
+    #     try:
+    #         #uni = self.dec(obj)[0]
+    #         # print "unicode type string: " + self.enc(uni)[0] # may return: UnicodeEncodeError
+    #         # return uni
+    #         return obj
+    #     except UnicodeDecodeError:  # cannot handle characters with code table
+    #         # print 'UnicodeDecodeError: trying with "replace"..'
+    #         return unicode(obj, self.codec, 'replace')
+    #     except UnicodeDecodeError:  # cannot handle characters with code table
+    #         # print 'UnicodeDecodeError: trying with "replace" and with
+    #         # sys.stdin.encoding'
+    #         self.codec = self.encoding2
+    #         return unicode(obj, self.codec, 'replace')
+    #     except UnicodeDecodeError:
+    #         # print 'UnicodeDecodeError: cannot decode'
+    #         return str(obj)
+    #     except UnicodeEncodeError:
+    #         return self.enc(obj)[0]
+    #     except BaseException:
+    #         return obj.encode('ascii', 'ignore')
 
-    def safe_uni_enc(self, obj):
-        """
-        returns the decoded unicode representation of obj
-        """
-        try:
-            # trying to encode (transform from "natural" into "artificial")
-            # with known encoding 'sys.getfilesystemencoding()'
-            uni = self.enc(obj)[0]
-            # returning decoded (to "natural" unicode representation)
-            return self.dec(uni)[0]
-        except UnicodeEncodeError:  # cannot handle characters with code table
-            # print 'UnicodeEncodeError: trying with "replace"..'
-            uni = obj.encode(self.codec, 'replace')
-            return unicode(uni, self.codec, 'replace')
-        except UnicodeEncodeError:  # cannot handle characters with code table
-            # print 'UnicodeEncodeError: trying with "replace" and with
-            # sys.stdin.encoding'
-            self.codec = self.encoding2
-            uni = obj.encode(self.codec, 'replace')
-            return unicode(uni, self.codec, 'replace')
-        except UnicodeEncodeError:
-            # print 'UnicodeEncodeError: cannot encode'
-            return str(obj)
-        except UnicodeDecodeError:
-            return self.safe_uni_dec(obj)
+    # def safe_uni_enc(self, obj):
+    #     """
+    #     returns the decoded unicode representation of obj
+    #     """
+    #     try:
+    #         # trying to encode (transform from "natural" into "artificial")
+    #         # with known encoding 'sys.getfilesystemencoding()'
+    #         uni = self.enc(obj)[0]
+    #         # returning decoded (to "natural" unicode representation)
+    #         return self.dec(uni)[0]
+    #     except UnicodeEncodeError:  # cannot handle characters with code table
+    #         # print 'UnicodeEncodeError: trying with "replace"..'
+    #         uni = obj.encode(self.codec, 'replace')
+    #         return unicode(uni, self.codec, 'replace')
+    #     except UnicodeEncodeError:  # cannot handle characters with code table
+    #         # print 'UnicodeEncodeError: trying with "replace" and with
+    #         # sys.stdin.encoding'
+    #         self.codec = self.encoding2
+    #         uni = obj.encode(self.codec, 'replace')
+    #         return unicode(uni, self.codec, 'replace')
+    #     except UnicodeEncodeError:
+    #         # print 'UnicodeEncodeError: cannot encode'
+    #         return str(obj)
+    #     except UnicodeDecodeError:
+    #         return self.safe_uni_dec(obj)
 
     def split_path(self, abs_path):
         """
@@ -976,9 +976,11 @@ class DataFile:
                     str_samp += self.norm_str_enc(samp) + ", "
             else:
                 for ass in missing_ass:
-                    str_ass += str(self.safe_uni_dec(ass)) + ", "
+                    # str_ass += str(self.safe_uni_dec(ass)) + ", "
+                    str_ass += str(ass) + ", "
                 for samp in missing_samp:
-                    str_samp += str(self.safe_uni_dec(samp)) + ", "
+                    # str_samp += str(self.safe_uni_dec(samp)) + ", "
+                    str_samp += str(samp) + ", "
 
             str_ass = str_ass[:-2] + ")"
             str_samp = str_samp[:-2] + ")"
@@ -1005,12 +1007,12 @@ class DataFile:
         else:  # balanced data
             self.summaryFrame.append_text("Data set is balanced.\n")
 
-        if encode_text:
-            for items in range(len(firstRow)):
-                firstRow[items] = self.safe_uni_enc(firstRow[items])
-        else:
-            for items in range(len(firstRow)):
-                firstRow[items] = self.safe_uni_dec(firstRow[items])
+        # if encode_text:
+        #     for items in range(len(firstRow)):
+        #         firstRow[items] = self.safe_uni_enc(firstRow[items])
+        # else:
+        #     for items in range(len(firstRow)):
+        #         firstRow[items] = self.safe_uni_dec(firstRow[items])
 
         # Copy attributes into a seperate list. The first 3 strings
         # are 'assessor', 'sample' and 'replicate' and are therefore
@@ -1187,7 +1189,8 @@ class DataFile:
         elif isinstance(obj, float):
             new = str(int(obj))
         else:
-            new = self.safe_uni_enc(obj)
+            # new = self.safe_uni_enc(obj)
+            new = str(obj)
         return new
 
     def norm_str_dec(self, obj):
@@ -1196,7 +1199,8 @@ class DataFile:
         elif isinstance(obj, float):
             new = str(int(obj))
         else:
-            new = self.safe_uni_dec(obj)
+            # new = self.safe_uni_dec(obj)
+            new = str(obj)
         return new
 
 
@@ -1414,7 +1418,8 @@ class Excel(DataFile):
         elif isinstance(obj, float):
             new = str(int(obj))
         else:
-            new = self.safe_uni_enc(obj)
+            # new = self.safe_uni_enc(obj)
+            new = str(obj)
         return new
 
     def get_real_UsedRange_old(self, datasheet):
