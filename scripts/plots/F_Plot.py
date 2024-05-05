@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-from scripts.Plot_Tools import *
+#from scripts.Plot_Tools import *
+import wx
+import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.collections import LineCollection
+from matplotlib.lines import Line2D
+from scripts.Math_Tools import ANOVA
+from scripts.Plot_Tools import OverviewPlotter, set_xlabeling, num2str, axes_create, assign_colors, check_point, axes_setup, set_xlabeling_rotation, raw_data_grid, numerical_data_grid
 
-
-##from IPython.Shell import IPShellEmbed
-##ipshell = IPShellEmbed()
-
-
-def FPlotter_Assessor_General(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], **kwargs):
+def FPlotter_Assessor_General(s_data, plot_data, num_subplot=[1, 1, 1], **kwargs):
     """
     This function generates general F plots, plotting F values from the
     one-way ANOVA analsis. Each attribute has its own colour.

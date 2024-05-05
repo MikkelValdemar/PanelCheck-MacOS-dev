@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
-from scripts.Plot_Tools import *
+import wx
+import numpy as np
+
+from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+
+from scripts.Plot_Tools import axes_create, axes_setup, colors_hex_list, OverviewPlotter, raw_data_grid, num2str
 
 def CorrelationPlotter(s_data, plot_data, num_subplot=[1, 1, 1], **kwargs):
     """
     This is the correlation plot function. In this plot the values of
-    a single assessor are plotted against the average values of the
-    panel in a scatter plot. The plot indicates how a single assessor
+    a np.single assessor are plotted against the average values of the
+    panel in a scatter plot. The plot indicates how a np.single assessor
     performs in relation to the panel.
 
     The panel average is calculated from the assessors that are checked
@@ -114,7 +120,7 @@ def CorrelationPlotter(s_data, plot_data, num_subplot=[1, 1, 1], **kwargs):
 
     # Create a list with active (checked in CheckListBox) assessors/attributes
     # that is chronologically sorted as in original file. Just doing
-    # .keys() and .sort() is not enough, since only alphabetical order
+    # .keys() and .sort() is not enough, np.since only alphabetical order
     # is given.
 
     # Collect data of selected assessors in one list and construct

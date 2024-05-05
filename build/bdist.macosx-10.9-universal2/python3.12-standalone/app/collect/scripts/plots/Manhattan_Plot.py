@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
-
-from scripts.Plot_Tools import *
-#import matplotlib as mpl
-
+from copy import deepcopy
+import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.collections import PolyCollection
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.cm import ScalarMappable
+from scripts.Math_Tools import PCA
+from scripts.plots.pca_module import mean_center, standardization
+from scripts.Plot_Tools import OverviewPlotter, set_xlabeling, num2str, axes_create, axes_setup, set_xlabeling_rotation, raw_data_grid, significance_legend, set_ylabeling, show_err_msg, show_info_msg, colormaps
 
 def ManhattanCalc(X, PCs=14, standardize=False):
     """
@@ -24,7 +29,7 @@ def ManhattanCalc(X, PCs=14, standardize=False):
     @return: Scores (2d numpy array), Loadings (2d numpy array), Explained variable variances (2d numpy array)
     """
 
-    (rows, cols) = shape(X)
+    (rows, cols) = np.shape(X)
 
     # E[0]
     E0 = mean_center(X)
@@ -38,7 +43,7 @@ def ManhattanCalc(X, PCs=14, standardize=False):
 
     # get variable residual variances for E[0] (used for normalization of
     # residual variable variances of E[i])
-    variable_residual_variances_0 = zeros((cols), float)
+    variable_residual_variances_0 = np.zeros((cols), float)
     for var_ind in range(cols):
         variable_residual_variances_0[var_ind] = sum(E0[:, var_ind]**2)
     #tot_residual_variance_0 = sum(tot_variable_residual_variances_0)
@@ -56,13 +61,13 @@ def ManhattanCalc(X, PCs=14, standardize=False):
         X, standardize=standardize, PCs=PCs, E_matrices=True, nipals=True)
     # print "pca done"
 
-    (objects, variables) = shape(E[0])
+    (objects, variables) = np.shape(E[0])
     actual_PCs = len(E)
 
-    explained_variable_variances = zeros((actual_PCs, variables), float)
+    explained_variable_variances = np.zeros((actual_PCs, variables), float)
 
-    variable_residual_variances_i = zeros((variables), float)
-    #variable_cloumn_squares = zeros((objects), float)
+    variable_residual_variances_i = np.zeros((variables), float)
+    #variable_cloumn_squares = np.zeros((objects), float)
 
     # for each PC
     for i in range(actual_PCs):
@@ -90,7 +95,7 @@ def get_leave_out_variables(X):
     @return: list of ints, 2d numpy array
     """
 
-    (rows, cols) = shape(X)
+    (rows, cols) = np.shape(X)
 
     # E[0]
     E0 = mean_center(X)
@@ -107,7 +112,7 @@ def get_leave_out_variables(X):
         print("leave out:")
         print(leave_out_inds)
 
-        X_ = zeros((rows, cols - len(leave_out_inds)))
+        X_ = np.zeros((rows, cols - len(leave_out_inds)))
         ind = 0
         for var_ind in range(cols):
             if var_ind not in leave_out_inds:
@@ -216,7 +221,7 @@ def get_plot_data_matrix(c_data, plot_data, projection_type, current_active):
 
         # get information about calculated data
         if not c_data[active_assessors[0]] is None:
-            (PCs, num_vars) = shape(c_data[active_assessors[0]][2])
+            (PCs, num_vars) = np.shape(c_data[active_assessors[0]][2])
 
         else:
             # print "c_data["+ active_assessors[0] +"] == None"
@@ -226,7 +231,7 @@ def get_plot_data_matrix(c_data, plot_data, projection_type, current_active):
         var_inds = []
         new_active_ass = []
         for ass_ind in range(len(active_assessors)):
-            (temp_PCs, num_vars) = shape(c_data[active_assessors[ass_ind]][2])
+            (temp_PCs, num_vars) = np.shape(c_data[active_assessors[ass_ind]][2])
             if temp_PCs < PCs:
                 PCs = temp_PCs
 
@@ -247,7 +252,7 @@ def get_plot_data_matrix(c_data, plot_data, projection_type, current_active):
 
         # create a data matrix with variable variances for current variable and
         # all active assessors
-        all_current_active_variable_variances = zeros(
+        all_current_active_variable_variances = np.zeros(
             (PCs, len(new_active_ass)), float)
 
         # fetch data:
@@ -396,9 +401,9 @@ def get_numerical_data_manhattan(
         headerline = ['']
         headerline.extend(active_assessors)
         numericDataList.append(headerline)
-        (PCs, num_vars) = shape(c_data[active_assessors[0]][2])
+        (PCs, num_vars) = np.shape(c_data[active_assessors[0]][2])
         for ass_ind in range(len(active_assessors)):
-            (temp_PCs, num_vars) = shape(c_data[active_assessors[ass_ind]][2])
+            (temp_PCs, num_vars) = np.shape(c_data[active_assessors[ass_ind]][2])
             if temp_PCs < PCs:
                 PCs = temp_PCs
 
@@ -513,7 +518,7 @@ def ManhattanPlotImage(s_data, plot_data, m_data, col_list, cmap=None):
 
     """
 
-    (rows, cols) = shape(m_data)
+    (rows, cols) = np.shape(m_data)
 
     dy = 1.0  # height step size
     dx = 1.0  # width step size
@@ -614,7 +619,7 @@ def reverse_colourmap(cmap, name='my_cmap_r'):
         reverse.append(sorted(data))
 
     LinearL = dict(zip(k, reverse))
-    my_cmap_r = mpl.colors.LinearSegmentedColormap(name, LinearL)
+    my_cmap_r = LinearSegmentedColormap(name, LinearL)
     return my_cmap_r
 
 
@@ -637,7 +642,7 @@ def set_manhattan_colorbar(fig, colormap):
     #import pdb; pdb.set_trace()
     colormap_mappable = ScalarMappable(cmap=colormap)
 
-    colormap_mappable.set_array(array([100, 0]))
+    colormap_mappable.set_array(np.array([100, 0]))
     #colormap_mappable.set_clim(vmin=(100, 0))
     colorbar = fig.colorbar(colormap_mappable)
     # flip colorbar vertically
@@ -795,11 +800,11 @@ def ManhattanPlotter(
     plot_data_matrix, active_list = get_plot_data_matrix(
         c_data, plot_data, plot_type, current_active)
 
-    if not isinstance(plot_data_matrix, (ndarray, list)):
+    if not isinstance(plot_data_matrix, (np.ndarray, list)):
         raise(TypeError, "plot_data_matrix is not an array object")
         # return -1 # TypeError of m_data
 
-    (rows, cols) = shape(plot_data_matrix)
+    (rows, cols) = np.shape(plot_data_matrix)
 
     if rows < 1 or cols < 1:
         _msg = "Cannot produce plot. All data has been left out of analysis for " + \
@@ -852,20 +857,20 @@ def ManhattanPlotter(
             plot_data.raw_data = get_raw_data_manhattan(
                 active_list, [current_active], plot_data, s_data)
 
-        frame_colored = colored_frame(
-            s_data,
-            plot_data,
-            c_data["accepted_active_atts"],
-            current_active,
-            abspath=abspath)
-        if frame_colored:
-            significance_legend(plot_data)
+        # frame_colored = colored_frame(
+        #     s_data,
+        #     plot_data,
+        #     c_data["accepted_active_atts"],
+        #     current_active,
+        #     abspath=abspath)
+        # if frame_colored:
+        #     significance_legend(plot_data)
 
     set_plot_adjustments(
         plot_data,
         s_data,
         plot_type,
-        shape(plot_data_matrix),
+        np.shape(plot_data_matrix),
         current_active,
         active_list)
 
@@ -915,7 +920,7 @@ def set_plot_adjustments(
     if projection_type == "manhattan_ass":
         p_type_label = "Attribute"
         # string lists for labeling
-        _range = arange(1, cols + 1)
+        _range = np.arange(1, cols + 1)
         _range = []
         for att in active_list:
             _range.append(s_data.AttributeList.index(att) + 1)
@@ -924,14 +929,14 @@ def set_plot_adjustments(
     elif projection_type == "manhattan_att":
         p_type_label = "Assessor"
         # string lists for labeling
-        _range = arange(1, cols + 1)
+        _range = np.arange(1, cols + 1)
         _range = []
         for ass in active_list:
             _range.append(s_data.AssessorList.index(ass) + 1)
         x_string_list = [str(element) for element in _range]
 
     # lables/ticks adjustmens
-    _range = arange(1, rows + 1)
+    _range = np.arange(1, rows + 1)
     y_string_list = [str(element) for element in _range]
     y_string_list.reverse()
 
@@ -963,8 +968,8 @@ def set_plot_adjustments(
 
         # vertical labeling:
         set_ylabeling(ax, y_string_list)
-        _range = arange(0.5, (rows) + 0.5, 1)
-        #_range = arange(1, (rows)+1, 1)
+        _range = np.arange(0.5, (rows) + 0.5, 1)
+        #_range = np.arange(1, (rows)+1, 1)
         ax.set_yticks(_range)
 
         # colormap: from Plot_Tools
@@ -984,7 +989,7 @@ def set_plot_adjustments(
             font_size=9)
         set_xlabeling(ax, x_string_list, font_size=9)
         set_ylabeling(ax, y_string_list, font_size=9)
-        _range = arange(0.5, (rows) + 0.5, 1)
+        _range = np.arange(0.5, (rows) + 0.5, 1)
         ax.set_yticks(_range)
 
     ax.grid(plot_data.view_grid)

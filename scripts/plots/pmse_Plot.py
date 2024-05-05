@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 
 
-from scripts.Plot_Tools import *
+#from scripts.Plot_Tools import *
+import wx
+from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
 
+from scripts.Math_Tools import ANOVA
+from scripts.Plot_Tools import raw_data_grid, axes_create, axes_setup, numerical_data_grid, colors_hex_list, assign_colors, significance_legend, OverviewPlotter
 
 def pmsePlotter(s_data, plot_data, num_subplot=[1, 1, 1],abspath=None, **kwargs):
     """
@@ -242,8 +247,8 @@ def pmsePlotter(s_data, plot_data, num_subplot=[1, 1, 1],abspath=None, **kwargs)
 
         # If an attribute is selected:
         if itemID[0] in activeAttributesList:
-            frame_colored = colored_frame(
-                s_data, plot_data, activeAttributesList, itemID[0],abspath=abspath)
+            # frame_colored = colored_frame(
+            #     s_data, plot_data, activeAttributesList, itemID[0],abspath=abspath)
             active_att_ind = activeAttributesList.index(itemID[0])
 
             spec_x_values = []
@@ -345,11 +350,11 @@ def pmsePlotter(s_data, plot_data, num_subplot=[1, 1, 1],abspath=None, **kwargs)
                         #c_index += 1
 
                     fig.legend(plotList, activeAssessorsList, loc='upper right')
-                    if frame_colored:
-                        significance_legend(plot_data, pos='lower right')
-                else:
-                    if frame_colored:
-                        significance_legend(plot_data, pos='upper right')
+                #     if frame_colored:
+                #         significance_legend(plot_data, pos='lower right')
+                # else:
+                #     if frame_colored:
+                #         significance_legend(plot_data, pos='upper right')
 
             elif itemID[0] in activeAssessorsList:
                 colors = assign_colors(s_data.AttributeList, ["rep"])

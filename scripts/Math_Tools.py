@@ -31,7 +31,7 @@ def stand(X):  # alias to standardization
 
 def normalize(X, norm_value=1.0):
     # new_X will be normalized to range: [0, norm_value]
-    new_X = zeros(shape(X), float)
+    new_X = np.zeros(shape(X), float)
     X_min = min(X)
     if X_min >= 0:
         X_sum = sum(X) / float(norm_value)
@@ -51,9 +51,9 @@ def STD(Y, selection):
     # First make a copy of input matrix and make it a matrix with float
     # elements
     X = Y.copy()
-    numberOfObjects, numberOfVariables = shape(X)
-    variablesMeans = average(X, 0)
-    objectsMeans = average(X, 1)
+    numberOfObjects, numberOfVariables = np.shape(X)
+    variablesMeans = np.average(X, 0)
+    objectsMeans = np.average(X, 1)
 
     # STD of columns
     if selection == 0:
@@ -66,7 +66,7 @@ def STD(Y, selection):
         X = X * X
         X = sum(X, 0)
         X = X / (numberOfObjects - 1)
-        X = sqrt(X)
+        X = np.sqrt(X)
 
     # STD of rows
     if selection == 1:
@@ -79,7 +79,7 @@ def STD(Y, selection):
         X = X * X
         X = sum(X, 1)
         X = X / (numberOfVariables - 1)
-        X = sqrt(X)
+        X = np.sqrt(X)
 
     return X
 
@@ -102,7 +102,7 @@ def ANOVA(s_data, plot_data, active_data=None):
 
     print("Calculate ANOVA")
 
-    preANOVA_matrix = zeros(
+    preANOVA_matrix = np.zeros(
         (len(
             plot_data.activeAssessorsList), len(
             plot_data.activeAttributesList), len(
@@ -201,7 +201,7 @@ def ANOVA(s_data, plot_data, active_data=None):
 
 #################### MULTIVARIATE: PRINCIPAL COMPONENT ANALYSIS ##########
 def PCA(X, standardize=False, PCs=10, E_matrices=False, nipals=False):
-    #(objects, variables) = shape(X)
+    #(objects, variables) = np.shape(X)
 
     if nipals:
         # nipals using numpy array (fast for large datasets)
@@ -221,9 +221,9 @@ def PCA(X, standardize=False, PCs=10, E_matrices=False, nipals=False):
 
 def rotate_vec2d(vec, angle):  # vector is rotated around origo by the given angle
     angle_rad = angle * (pi / 180.0)
-    vec2 = array([0, 0], float)
-    vec2[0] = cos(angle_rad) * vec[0] - sin(angle_rad) * vec[1]
-    vec2[1] = sin(angle_rad) * vec[0] + cos(angle_rad) * vec[1]
+    vec2 = np.array([0, 0], float)
+    vec2[0] = np.cos(angle_rad) * vec[0] - np.sin(angle_rad) * vec[1]
+    vec2[1] = np.sin(angle_rad) * vec[0] + np.cos(angle_rad) * vec[1]
     return vec2
 
 
@@ -300,7 +300,7 @@ Returns: f-value, probability
     sstot = ss(alldata) - (square_of_sums(alldata) / float(bign))
     ssbn = 0
     for a in ass_arrays:
-        ssbn = ssbn + square_of_sums(array(a)) / float(len(a))
+        ssbn = ssbn + square_of_sums(np.array(a)) / float(len(a))
     ssbn = ssbn - (square_of_sums(alldata) / float(bign))
     sswn = sstot - ssbn
     dfbn = na - 1  # DF assessors/sample
@@ -311,7 +311,7 @@ Returns: f-value, probability
 # print
 
     # Everything in the 'if' part is new. The original formula had no 'if'
-    # test (everything original is found under 'else'). Had to change this, since 'Division
+    # test (everything original is found under 'else'). Had to change this, np.since 'Division
     # by zero' occured when the assessor gave the same value for all samples.
     if msw < 1e-10:
         f = 1e-10

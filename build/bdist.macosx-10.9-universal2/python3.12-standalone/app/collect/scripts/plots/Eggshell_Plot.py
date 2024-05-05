@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 
-from scripts.Plot_Tools import *
-
+#from scripts.Plot_Tools import *
+import wx
+import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.collections import LineCollection
+from matplotlib.lines import Line2D
+from scripts.Plot_Tools import OverviewPlotter, set_xlabeling, axes_create, assign_colors, axes_setup, set_xlabeling_rotation, raw_data_grid, significance_legend
 
 def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
     """
     This is the correlation plot function. In this plot the values of
-    a single assessor are plotted against the average values of the
-    panel in a scatter plot. The plot indicates how a single assessor
+    a np.single assessor are plotted against the average values of the
+    panel in a scatter plot. The plot indicates how a np.single assessor
     performs in relation to the panel.
 
     The panel average is calculated from the assessors that are checked
@@ -96,11 +101,11 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
     numberOfSamples = len(activeSamplesList)
     numberOfReplicates = len(s_data.ReplicateList)
 
-    RankMatrix = zeros((numberOfSamples, numberOfAssessors), float)
+    RankMatrix = np.zeros((numberOfSamples, numberOfAssessors), float)
 
     # This matrix contains the average score (over replicates) that one
     # assessor gives for a particular sample.
-    SampleScoreAverageMatrix = zeros(
+    SampleScoreAverageMatrix = np.zeros(
         (numberOfSamples, numberOfAssessors), float)
 
     # This finds out which attribute was selected using the index
@@ -255,10 +260,10 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
     # That is, the sample with rank 1 should actually be rank = numberOfSamples.
     # The next few lines of code inverse the ranking and put them in the
     # right way. Instead of rewriting the whole ranking algorithm, we do this
-    # since this is a much simplier way to do it.
+    # np.since this is a much simplier way to do it.
     # inversedRank = (numberOfSamples + 1) - rank
 
-    InverseRankMatrix = zeros((numberOfSamples, numberOfAssessors), float)
+    InverseRankMatrix = np.zeros((numberOfSamples, numberOfAssessors), float)
 
     for sample in range(numberOfSamples):
 
@@ -272,14 +277,14 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
     # print
     # print SampleScoreAverageMatrix
 
-    #sampleRankAverage = average(RankMatrix, axis=0, weights=None)
+    #sampleRankAverage = np.average(RankMatrix, axis=0, weights=None)
     # --- only for Masked Arrays
 
     # Transpose the SampleScoreAverageMatrix and get score average for each
     # sample over all assessors
     # print SampleScoreAverageMatrix
     # print SampleScoreAverageMatrix.transpose()
-    sampleRankAverage = average(SampleScoreAverageMatrix.transpose(), 0)
+    sampleRankAverage = np.average(SampleScoreAverageMatrix.transpose(), 0)
     # print sampleRankAverage
     # print
 
@@ -305,7 +310,7 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
 
     # This matrix contains the ranks of each sample for each assessor, however
     # they are sorted according to consensus rank
-    consensusRankedMatrix = zeros((numberOfSamples, numberOfAssessors), float)
+    consensusRankedMatrix = np.zeros((numberOfSamples, numberOfAssessors), float)
     # print
     for sample in range(len(sampleList)):
         indexedSample = sampleList[sample][1]
@@ -319,7 +324,7 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
 
     # This matrix contains the cumulative ranks that are necessary for
     # further calculation
-    cumulativeRankedMatrix = zeros((numberOfSamples, numberOfAssessors), float)
+    cumulativeRankedMatrix = np.zeros((numberOfSamples, numberOfAssessors), float)
 
     for assessor in range(numberOfAssessors):
 
@@ -334,7 +339,7 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
 
     # This matrix contains the final values that are to be plotted in the
     # eggshell plot.
-    eggshellMatrix = zeros((numberOfSamples, numberOfAssessors), float)
+    eggshellMatrix = np.zeros((numberOfSamples, numberOfAssessors), float)
     # print
     for sample in range(1, numberOfSamples + 1):
         equ_i = float((numberOfSamples + 1) * sample) / 2
@@ -370,7 +375,7 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
     plotList = []
 
     # This plots the baseline of the eggshell plot
-    x_values = arange(1, numberOfSamples + 1)
+    x_values = np.arange(1, numberOfSamples + 1)
     y_values = baseline
     ax.plot(x_values, y_values, 'm-', linewidth=2)
 
@@ -486,14 +491,14 @@ def EggshellPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kw
         if len(samples) > 11:
             set_xlabeling_rotation(ax, 'vertical')
 
-    frame_colored = colored_frame(
-        s_data,
-        plot_data,
-        activeAttributesList,
-        itemID[0],
-        abspath)
-    if frame_colored:
-        significance_legend(plot_data, pos='lower right')
+    # frame_colored = colored_frame(
+    #     s_data,
+    #     plot_data,
+    #     activeAttributesList,
+    #     itemID[0],
+    #     abspath)
+    # if frame_colored:
+    #     significance_legend(plot_data, pos='lower right')
 
     # update plot-data variables:
     plot_data.raw_data = rawDataList

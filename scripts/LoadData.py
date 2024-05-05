@@ -1,4 +1,4 @@
-from numpy import array, nan, zeros, shape
+import numpy as np
 import re
 import sys
 import codecs
@@ -217,7 +217,7 @@ class DataFile:
 
         diff = 3  # amount of columns less in Matrix compared to listCollection
         # 3 because of the three first non-score columns
-        self.Matrix = zeros((numRows, numCols - diff), float)
+        self.Matrix = np.zeros((numRows, numCols - diff), float)
 
         # Fill the array with the loaded data from Matrix
         for rows in range(0, numRows):
@@ -309,7 +309,7 @@ class DataFile:
         if self.isEmpty(value):
             return False
 
-        # testing some single characters:
+        # testing some np.single characters:
         if value == '\t' or value == '\n' or value == ' ':
             return False
         return True
@@ -386,10 +386,10 @@ class DataFile:
         returns 2d numpy array with numpy.nan for missing values (if any)
         """
 
-        m_data = zeros((len(datasheet), len(datasheet[0])), float)
+        m_data = np.zeros((len(datasheet), len(datasheet[0])), float)
 
         for pos in positions:
-            m_data[pos[0], pos[1]] = nan
+            m_data[pos[0], pos[1]] = np.nan
 
         for i in range(len(datasheet)):
             for j in range(3, len(datasheet[0])):
@@ -406,7 +406,7 @@ class DataFile:
         return True
 
     def too_many_mv_in_matrix(self, mx):
-        (rows, cols) = shape(mx)
+        (rows, cols) = np.shape(mx)
         for col_ind in range(cols):
             if self.only_mv_in_att_vector(mx[:, col_ind]):
                 return True
@@ -460,21 +460,21 @@ class DataFile:
         mvt_dict = {}
         mv_ass_info = {}
 
-        ass_mat = zeros((rows, cols), float)
+        ass_mat = np.zeros((rows, cols), float)
         for ass in self.AssessorList:
             # print(ass)
-            #ass_mat = zeros((rows, cols), float)
+            #ass_mat = np.zeros((rows, cols), float)
             row_ind = 0
             num_missing = 0
             for samp in self.SampleList:
                 for rep in self.ReplicateList:
                     key = (ass, samp, rep)
                     att_vec = self.s_data.SparseMatrix[key]
-                    ass_row = zeros((cols), float)
+                    ass_row = np.zeros((cols), float)
                     nan_list = []
                     for i in range(len(att_vec)):
                         if att_vec[i] == "NaN":
-                            ass_row[i] = nan
+                            ass_row[i] = np.nan
                             nan_list.append(i)
                         else:
                             # print att_vec[i]
@@ -515,7 +515,7 @@ class DataFile:
             rep_index=2):
         """
         Searches that all assessors exists for all samples, and vice versa.
-        A samples goes as missing if a single replicate is missing.
+        A samples goes as missing if a np.single replicate is missing.
         Returns two lists: missing_assessors, missing_samples
         1. get list of assessors and list of samples
         2. get existing samples for each assessor
@@ -903,7 +903,7 @@ class DataFile:
                 for rep in self.ReplicateList:
                     key = (ass, samp, rep)
                     try:
-                        self.s_data.SparseMatrix[key] = array(
+                        self.s_data.SparseMatrix[key] = np.array(
                             self.s_data.SparseMatrix[key])
                     except KeyError:
                         err_msg = "Error with row identifier. Probably incorret value for assessor, sample or replicate.\n"

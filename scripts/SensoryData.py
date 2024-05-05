@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from numpy import average, array, vstack, zeros, asarray
+import numpy as np
 
 
 class SensoryData:
@@ -53,7 +53,7 @@ class SensoryData:
         """
         if len(self.Matrix) < 1:
             # Get rid of labels in each list collection
-            # Needs to be done since labels can be text
+            # Needs to be done np.since labels can be text
             newListCollection = []
             for eachList in self.ListCollection:
                 newList = eachList[3:]
@@ -65,7 +65,7 @@ class SensoryData:
 
             # Create new array with the size of the loaded data (from file)
             # containing zeros.
-            self.Matrix = zeros((numRows, numCols), float)
+            self.Matrix = np.zeros((numRows, numCols), float)
 
             # Fill the array with the loaded data from Matrix
             for rows in range(0, numRows):
@@ -81,13 +81,13 @@ class SensoryData:
         """
 
         # Get rid of labels in each list collection
-        # Needs to be done since labels can be text
+        # Needs to be done np.since labels can be text
         self.newListCollection = []
         for eachList in self.ListCollection:
             newList = eachList[0:3]
             self.newListCollection.append(newList)
 
-        self.lablesMatrix = asarray(self.newListCollection)
+        self.lablesMatrix = np.asarray(self.newListCollection)
 
         return self.lablesMatrix
 
@@ -102,7 +102,7 @@ class SensoryData:
         if len(samples) < 1:
             samples = self.SampleList
 
-        scores_selected_matrix = zeros((1, len(attributes)), float)
+        scores_selected_matrix = np.zeros((1, len(attributes)), float)
         for assessor in assessors:
             for sample in samples:
                 for replicate in self.ReplicateList:
@@ -113,8 +113,8 @@ class SensoryData:
                     for att in attributes:
                         _index = self.AttributeList.index(att)
                         scoresVectorFloats.append(scoresVector[_index])
-                    scores_selected_matrix = vstack(
-                        (scores_selected_matrix, array(scoresVectorFloats)))
+                    scores_selected_matrix = np.vstack(
+                        (scores_selected_matrix, np.array(scoresVectorFloats)))
 
         return scores_selected_matrix[1:, :]
 
@@ -127,7 +127,7 @@ class SensoryData:
         if len(samples) < 1:
             samples = self.SampleList
 
-        lables_selected_matrix = zeros((1, 3), int)
+        lables_selected_matrix = np.zeros((1, 3), int)
         for assessor in assessors:
             for sample in samples:
                 for replicate in self.ReplicateList:
@@ -135,8 +135,8 @@ class SensoryData:
                     row[self.ass_index] = self.AssessorList.index(assessor)
                     row[self.samp_index] = self.SampleList.index(sample)
                     row[self.rep_index] = self.ReplicateList.index(replicate)
-                    lables_selected_matrix = vstack(
-                        (lables_selected_matrix, array(row, copy=False)))
+                    lables_selected_matrix = np.vstack(
+                        (lables_selected_matrix, np.array(row, copy=False)))
 
         return lables_selected_matrix[1:, :]
 
@@ -249,7 +249,7 @@ class SensoryData:
 
             specMatrixDataList.append(subList)
 
-        specMatrixData = array(specMatrixDataList)
+        specMatrixData = np.array(specMatrixDataList)
 
         return specSparseMatrix, specMatrixData
 
@@ -282,7 +282,7 @@ class SensoryData:
                 numValue = float(values)
                 subList.append(numValue)
             specMatrixDataList.append(subList)
-        specMatrixData = array(specMatrixDataList)
+        specMatrixData = np.array(specMatrixDataList)
         return specSparseMatrix, specMatrixData
 
     def GetReplicateData(self, replicate):
@@ -315,7 +315,7 @@ class SensoryData:
                 numValue = float(values)
                 subList.append(numValue)
             specMatrixDataList.append(subList)
-        specMatrixData = array(specMatrixDataList)
+        specMatrixData = np.array(specMatrixDataList)
 
         return specSparseMatrix, specMatrixData
 
@@ -337,7 +337,7 @@ class SensoryData:
 
             # Create first row with zeros to which sample means will be stacked
             # to vertically (first row will be removed afterwards)
-            sampleObjects = zeros((1, len(self.AttributeList)), float)
+            sampleObjects = np.zeros((1, len(self.AttributeList)), float)
             for assessor in self.AssessorList:
 
                 for replicate in self.ReplicateList:
@@ -351,16 +351,16 @@ class SensoryData:
                         objectWithFloats.append(float(item))
 
                     # Vertically stack object scores to previous array
-                    sampleObjects = vstack((sampleObjects, objectWithFloats))
+                    sampleObjects = np.vstack((sampleObjects, objectWithFloats))
 
             # Average without first row with zeros and append means scores array
             # to consensus list
-            sampleMean = average(sampleObjects[1:, :].copy(), 0)
+            sampleMean = np.average(sampleObjects[1:, :].copy(), 0)
             consensusList.append(sampleMean)
             consensusSparseMatrix[sample] = sampleMean
 
         # Convert list to an array and return
-        consensusMatrix = array(consensusList)
+        consensusMatrix = np.array(consensusList)
 
         return consensusSparseMatrix, consensusMatrix
 
@@ -377,13 +377,13 @@ class SensoryData:
 
         # Create first row with zeros to which sample means will be stacked
         # to vertically (first row will be removed afterwards)
-        sampleObjects = zeros((1, len(self.AttributeList)), float)
+        sampleObjects = np.zeros((1, len(self.AttributeList)), float)
 
         # Iterate through all samples
         for sample in self.SampleList:
 
             # Collect replicates and compute average
-            repObjects = zeros((1, len(self.AttributeList)), float)
+            repObjects = np.zeros((1, len(self.AttributeList)), float)
             for replicate in self.ReplicateList:
 
                 scoresVector = self.SparseMatrix[(assessor, sample, replicate)]
@@ -394,11 +394,11 @@ class SensoryData:
                     item = float(item)
                     scoresVectorFloats.append(item)
 
-                floatsVector = array(scoresVectorFloats)
-                repObjects = vstack((repObjects, floatsVector))
+                floatsVector = np.array(scoresVectorFloats)
+                repObjects = np.vstack((repObjects, floatsVector))
 
-            sampleAverage = average(repObjects[1:, :].copy(), 0)
-            sampleObjects = vstack((sampleObjects, sampleAverage))
+            sampleAverage = np.average(repObjects[1:, :].copy(), 0)
+            sampleObjects = np.vstack((sampleObjects, sampleAverage))
             specSparseMatrix[sample] = sampleAverage
 
         return specSparseMatrix, sampleObjects[1:, :].copy()
@@ -411,8 +411,8 @@ class SensoryData:
         cols = len(active_attributes)
         rows = len(active_samples)
 
-        average_ass_matrix = zeros((rows, cols), float)
-        reduced_rep_scores = zeros((len(self.ReplicateList), cols), float)
+        average_ass_matrix = np.zeros((rows, cols), float)
+        reduced_rep_scores = np.zeros((len(self.ReplicateList), cols), float)
 
         # Iterate through all samples
         samp_ind = 0
@@ -430,7 +430,7 @@ class SensoryData:
 
                 rep_ind += 1
 
-            average_ass_matrix[samp_ind, :] = average(
+            average_ass_matrix[samp_ind, :] = np.average(
                 reduced_rep_scores[:, :], 0)
             samp_ind += 1
 
@@ -450,13 +450,13 @@ class SensoryData:
 
         # Create first row with zeros to which sample means will be stacked
         # to vertically (first row will be removed afterwards)
-        assessorObjects = zeros((1, len(self.AttributeList)), float)
+        assessorObjects = np.zeros((1, len(self.AttributeList)), float)
 
         # Iterate through all assessors
         for assessor in self.AssessorList:
 
             # Collect replicates and compute average
-            repObjects = zeros((1, len(self.AttributeList)), float)
+            repObjects = np.zeros((1, len(self.AttributeList)), float)
             for replicate in self.ReplicateList:
 
                 scoresVector = self.SparseMatrix[(assessor, sample, replicate)]
@@ -467,11 +467,11 @@ class SensoryData:
                     item = float(item)
                     scoresVectorFloats.append(item)
 
-                floatsVector = array(scoresVectorFloats)
-                repObjects = vstack((repObjects, floatsVector))
+                floatsVector = np.array(scoresVectorFloats)
+                repObjects = np.vstack((repObjects, floatsVector))
 
-            assessorAverage = average(repObjects[1:, :].copy(), 0)
-            assessorObjects = vstack((assessorObjects, assessorAverage))
+            assessorAverage = np.average(repObjects[1:, :].copy(), 0)
+            assessorObjects = np.vstack((assessorObjects, assessorAverage))
             specSparseMatrix[assessor] = assessorAverage
 
         return specSparseMatrix, assessorObjects[1:, :].copy()
@@ -492,13 +492,13 @@ class SensoryData:
 
         # Create first row with zeros to which sample means will be stacked
         # to vertically (first row will be removed afterwards)
-        score_matrix = zeros((1, len(activeAttributesList)), float)
+        score_matrix = np.zeros((1, len(activeAttributesList)), float)
 
         # Iterate through all assessors
         for assessor in activeAssessorsList:
 
             # Collect replicates and compute average
-            repObjects = zeros((1, len(activeAttributesList)), float)
+            repObjects = np.zeros((1, len(activeAttributesList)), float)
             for replicate in self.ReplicateList:
                 scoresVector = self.SparseMatrix[(assessor, sample, replicate)]
                 scoresVectorFloats = []
@@ -507,10 +507,10 @@ class SensoryData:
                     _index = self.AttributeList.index(att)
                     scoresVectorFloats.append(scoresVector[_index])
 
-                floatsVector = array(scoresVectorFloats)
-                repObjects = vstack((repObjects[1:, :], floatsVector))
+                floatsVector = np.array(scoresVectorFloats)
+                repObjects = np.vstack((repObjects[1:, :], floatsVector))
 
-            score_matrix = vstack((score_matrix, floatsVector))
+            score_matrix = np.vstack((score_matrix, floatsVector))
 
         return score_matrix[1:, :]  # uppermost row is a zeros row
 
@@ -530,7 +530,7 @@ class SensoryData:
                 attributes.append(
                     self.SparseMatrix[(assessor, sample, replicate)][_index])
 
-        return array(attributes)  # attribute column for given sample
+        return np.array(attributes)  # attribute column for given sample
 
     def GetAssessorDataAs2DARRAY(
             self,
@@ -558,7 +558,7 @@ class SensoryData:
             att_indices.append(self.AttributeList.index(att))
 
         m_data_ind = 0
-        m_data = zeros(
+        m_data = np.zeros(
             (len(active_samples) *
              len(active_replicates),
                 len(active_attributes)),
@@ -616,10 +616,10 @@ class SensoryData:
             # the same order as in self.SparseMatrix:
             att_indices.append(self.AttributeList.index(att))
 
-        m_data = zeros((len(active_samples), len(active_attributes)), float)
+        m_data = np.zeros((len(active_samples), len(active_attributes)), float)
         m_data_ind = 0
 
-        reps_data = zeros(
+        reps_data = np.zeros(
             (len(active_replicates), len(active_attributes)), float)
 
         for samp in active_samples:
@@ -636,9 +636,9 @@ class SensoryData:
                 rep_ind += 1
 
             # print reps_data
-            # print average(reps_data, 0)
+            # print np.average(reps_data, 0)
 
-            m_data[m_data_ind] = average(reps_data, 0)
+            m_data[m_data_ind] = np.average(reps_data, 0)
             m_data_ind += 1
 
         return m_data
@@ -656,13 +656,13 @@ class SensoryData:
 
         # Create first row with zeros to which sample means will be stacked
         # to vertically (first row will be removed afterwards)
-        sampleObjects = zeros((1, len(self.AttributeList)), float)
+        sampleObjects = np.zeros((1, len(self.AttributeList)), float)
 
         # Iterate through all samples
         for sample in self.SampleList:
 
             # Collect replicates and compute average
-            repObjects = zeros((1, len(self.AttributeList)), float)
+            repObjects = np.zeros((1, len(self.AttributeList)), float)
             for replicate in self.ReplicateList:
 
                 scoresVector = self.SparseMatrix[(assessor, sample, replicate)]
@@ -677,11 +677,11 @@ class SensoryData:
                     item = float(item)
                     scoresVectorFloats.append(item)
 
-                floatsVector = array(scoresVectorFloats)
-                repObjects = vstack((repObjects, floatsVector))
+                floatsVector = np.array(scoresVectorFloats)
+                repObjects = np.vstack((repObjects, floatsVector))
 
-            sampleAverage = average(repObjects[1:, :].copy(), 0)
-            sampleObjects = vstack((sampleObjects, sampleAverage))
+            sampleAverage = np.average(repObjects[1:, :].copy(), 0)
+            sampleObjects = np.vstack((sampleObjects, sampleAverage))
             specSparseMatrix[sample] = sampleAverage
 
         return specSparseMatrix, sampleObjects[1:, :].copy()
@@ -720,7 +720,7 @@ class SensoryData:
 
             specMatrixDataList.append(subList)
 
-        specMatrixData = array(specMatrixDataList)
+        specMatrixData = np.array(specMatrixDataList)
 
         return specSparseMatrix, specMatrixData
 
@@ -768,7 +768,7 @@ class SensoryData:
             att_indices.append(self.AttributeList.index(att))
 
         ass_ind = 0
-        m_data = zeros(
+        m_data = np.zeros(
             (len(active_assessors),
              len(active_samples),
                 len(active_replicates),

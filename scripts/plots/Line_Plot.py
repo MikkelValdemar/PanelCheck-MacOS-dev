@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-#from scripts.Plot_Tools import *
 import wx
-import os
-import sys
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.collections import LineCollection
@@ -48,7 +45,7 @@ def SampleLinePlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **
     """
     # Create a list with active (checked in CheckListBox) assessors/attributes
     # that is chronologically sorted as in original file. Just doing
-    # .keys() and .sort() is not enough, since only alphabetical order
+    # .keys() and .sort() is not enough, np.since only alphabetical order
     # is given.
     activeAssessorsList = plot_data.activeAssessorsList
     activeAttributesList = plot_data.activeAttributesList
@@ -123,9 +120,9 @@ def SampleLinePlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **
     # print plottingMatrix
 
     # Finding the maximun and minimum values in the plottingMatrix
-    ##    yMin_values = array([])
-    ##    yMax_values = array([])
-    ##    ySTD_values = array([])
+    ##    yMin_values = np.array([])
+    ##    yMax_values = np.array([])
+    ##    ySTD_values = np.array([])
 
     yMin_values = []
     yMax_values = []
@@ -415,7 +412,7 @@ def AssessorLinePlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, 
 
     # Create a list with active (checked in CheckListBox) attributes
     # that is chronologically sorted as in original file. Just doing
-    # .keys() and .sort() is not enough, since only alphabetical order
+    # .keys() and .sort() is not enough, np.since only alphabetical order
     # is given.
     plottingSparseMatrix = {}
     assessorPlottingSparseMatrix = {}
@@ -751,7 +748,7 @@ def ReplicateLinePlotter(s_data, plot_data, abspath=None, **kwargs):
 
     # Create a list with active (checked in CheckListBox) attributes
     # that is chronologically sorted as in original file. Just doing
-    # .keys() and .sort() is not enough, since only alphabetical order
+    # .keys() and .sort() is not enough, np.since only alphabetical order
     # is given.
     plottingSparseMatrix = {}
     replicatePlottingSparseMatrix = {}
@@ -1056,7 +1053,7 @@ def AssessorLineOverviewPlotter(s_data, plot_data, abspath=None, **kwargs):
     num_of_rep = len(s_data.ReplicateList)
 
 
-    scores_matrix = zeros((num_of_ass*num_of_rep, num_of_att), float)
+    scores_matrix = np.zeros((num_of_ass*num_of_rep, num_of_att), float)
 
 
     y = 0

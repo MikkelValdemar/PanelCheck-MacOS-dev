@@ -1,5 +1,4 @@
 import subprocess
-
 import os
 import sys
 import wx.lib.colourdb
@@ -14,6 +13,10 @@ from scripts.TabbedPanel import TabPanel, RadioTabPanel
 
 from scripts.plots.Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPlotter, AssessorLinePlotter, \
     SampleLineOverviewPlotter, SampleLinePlotter
+
+from scripts.plots.Tucker1_Plot import Tucker1Plotter
+from scripts.plots.Consensus_Plot import PCA_plotter
+
 
 #from Grid import *
 

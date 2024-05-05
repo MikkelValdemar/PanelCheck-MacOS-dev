@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-from numpy import abs, array, average, corrcoef, mat, shape, std, sum, transpose, zeros
+
 from numpy.linalg import svd
 import numpy as np
+
 try:
     import c_nipals
     import_ok = True
@@ -11,9 +12,9 @@ except BaseException:
 
 ################### Preprocessing Methods ###################
 def mean_center(X):
-    (rows, cols) = shape(X)
-    new_X = zeros((rows, cols), float)
-    _averages = average(X, 0)
+    (rows, cols) = np.shape(X)
+    new_X = np.zeros((rows, cols), float)
+    _averages = np.average(X, 0)
 
     for row in range(rows):
         new_X[row, 0:cols] = X[row, 0:cols] - _averages[0:cols]
@@ -22,9 +23,9 @@ def mean_center(X):
 
 def standardization(X):
     #import pdb; pdb.set_trace()
-    (rows, cols) = shape(X)
-    new_X = zeros((rows, cols))
-    _STDs = std(X, 0)+0.1
+    (rows, cols) = np.shape(X)
+    new_X = np.zeros((rows, cols))
+    _STDs = np.std(X, 0)+0.1
 
     for value in _STDs:
         if value == 0:
@@ -40,7 +41,7 @@ def get_column(E):
     """
     returns a column which has a non-zero eigenvalue
     """
-    (rows, cols) = shape(E)
+    (rows, cols) = np.shape(E)
 
     for col_ind in range(cols):
         t = E[:, col_ind]  # extract a column
@@ -63,13 +64,13 @@ def mat_prod(A, x):
     product of:  matrix A (m,n) * vector x (n) = vector b (m)
     """
     #m = A.shape[0]
-    #b = zeros((m), float)
+    #b = np.zeros((m), float)
 
     # calc: Ax = b
     # for i in range(m):
     #    b[i] = sum(A[i,:]*x)
 
-    return array(map(lambda a: sum(a[:] * x), A))
+    return np.array(map(lambda a: sum(a[:] * x), A))
 
 
 def remove_tp_prod(E, t, p):
@@ -116,28 +117,28 @@ def nipals_mat(X, PCs, threshold, E_matrices):
     - Loadings
     - explained_var (explained variance for each PC)
     """
-    (rows, cols) = shape(X)
+    (rows, cols) = np.shape(X)
 
     maxPCs = min(rows, cols)  # max number of PCs is min(objects, variables)
     if maxPCs < PCs:
         PCs = maxPCs  # change to maxPCs if PCs > maxPCs
 
-    Scores = zeros((rows, PCs), float)  # all Scores (T)
-    Loadings = zeros((PCs, cols), float)  # all Loadings (P)
+    Scores = np.zeros((rows, PCs), float)  # all Scores (T)
+    Loadings = np.zeros((PCs, cols), float)  # all Loadings (P)
 
-    E = mat(X.copy())  # E[0]  (should already be mean centered)
+    E = np.mat(X.copy())  # E[0]  (should already be mean centered)
 
     if E_matrices:
         # all Error matrices (E)
-        Error_matrices = zeros((PCs, rows, cols), float)
+        Error_matrices = np.zeros((PCs, rows, cols), float)
     else:
-        explained_var = zeros((PCs))
+        explained_var = np.zeros((PCs))
         tot_explained_var = 0
 
         # total object residual variance for PC[0] (calculating from E[0])
         e_tot0 = 0  # for E[0] the total object residual variance is 100%
         for k in range(rows):
-            e_k = array(E[k, :])**2
+            e_k = np.array(E[k, :])**2
             e_tot0 += sum(e_k)
 
     t = get_column(E)  # extract a column
@@ -146,20 +147,20 @@ def nipals_mat(X, PCs, threshold, E_matrices):
     for i in range(PCs):
         convergence = False
         ready_for_compare = False
-        E_t = transpose(E)
+        E_t = np.transpose(E)
 
         while not convergence:
-            eigenval = float(transpose(t) * t)
+            eigenval = float(np.transpose(t) * t)
             # ........................................... step 1
             p = (E_t * t) / eigenval
 
-            _p = float(transpose(p) * p)
+            _p = float(np.transpose(p) * p)
             # ............................................... step 2
             p = p * _p**(-0.5)
             # ..................................... step 3
-            t = (E * p) / (transpose(p) * p)
+            t = (E * p) / (np.transpose(p) * p)
 
-            eigenval_new = float(transpose(t) * t)
+            eigenval_new = float(np.transpose(t) * t)
             if not ready_for_compare:
                 ready_for_compare = True
             else:  # ready for convergence check
@@ -168,12 +169,12 @@ def nipals_mat(X, PCs, threshold, E_matrices):
                     convergence = True
             eigenval_old = eigenval_new
 
-        p = transpose(p)
+        p = np.transpose(p)
         # ........................................................ step 5
         E = E - (t * p)
 
         # add Scores and Loadings for PC[i] to the collection of all PCs
-        _t = array(t)  # NOT optimal
+        _t = np.array(t)  # NOT optimal
         Scores[:, i] = _t[:, 0]
         Loadings[i, :] = p[0, :]  # co
 
@@ -189,7 +190,7 @@ def nipals_mat(X, PCs, threshold, E_matrices):
             e_tot = 0
 
             for k in range(rows):
-                e_ = zeros((cols), float)
+                e_ = np.zeros((cols), float)
                 for k_col in range(cols):
                     e_[k_col] = E[k, k_col] * E[k, k_col]
                 e_tot += sum(e_)
@@ -214,21 +215,21 @@ def nipals_arr(X, PCs, threshold, E_matrices):
           or
       - E-matrix (for each PC)
     """
-    (rows, cols) = shape(X)
+    (rows, cols) = np.shape(X)
     maxPCs = min(rows, cols)  # max number of PCs is min(objects, variables)
     if maxPCs < PCs:
         PCs = maxPCs  # change to maxPCs if PCs > maxPCs
 
-    Scores = zeros((rows, PCs), float)  # all Scores (T)
-    Loadings = zeros((PCs, cols), float)  # all Loadings (P)
+    Scores = np.zeros((rows, PCs), float)  # all Scores (T)
+    Loadings = np.zeros((PCs, cols), float)  # all Loadings (P)
 
     E = X.copy()  # E[0]  (should already be mean centered)
 
     if E_matrices:
         # all Error matrices (E)
-        Error_matrices = zeros((PCs, rows, cols), float)
+        Error_matrices = np.zeros((PCs, rows, cols), float)
     else:
-        explained_var = zeros((PCs))
+        explained_var = np.zeros((PCs))
         tot_explained_var = 0
 
         # total object residual variance for PC[0] (calculating from E[0])
@@ -238,13 +239,13 @@ def nipals_arr(X, PCs, threshold, E_matrices):
             e_tot0 += sum(e_k)
 
     t = get_column(E)  # extract a column
-    p = zeros((cols), float)
+    p = np.zeros((cols), float)
 
     # do iterations (0, PCs)
     for i in range(PCs):
         convergence = False
         ready_for_compare = False
-        E_t = transpose(E)
+        E_t = np.transpose(E)
 
         while not convergence:
             _temp = eigenvalue_vec(t)
@@ -313,20 +314,20 @@ def nipals_c(X, PCs, threshold, E_matrices):
         raise(ImportError, "could not import c_nipals python extension")
     else:
 
-        (rows, cols) = shape(X)
+        (rows, cols) = np.shape(X)
 
     maxPCs = min(rows, cols)  # max number of PCs is min(objects, variables)
     if maxPCs < PCs:
         PCs = maxPCs  # change to maxPCs if PCs > maxPCs
 
-    Scores = zeros((rows, PCs), float)  # all Scores (T)
-    Loadings = zeros((PCs, cols), float)  # all Loadings (P)
+    Scores = np.zeros((rows, PCs), float)  # all Scores (T)
+    Loadings = np.zeros((PCs, cols), float)  # all Loadings (P)
 
     E = X.copy()  # E[0]  (should already be mean centered)
 
     if E_matrices:
         # all Error matrices (E)
-        Error_matrices = zeros((PCs, rows, cols), float)
+        Error_matrices = np.zeros((PCs, rows, cols), float)
         c_nipals.nipals2(Scores, Loadings, E, Error_matrices, PCs, threshold)
         return Scores, Loadings, Error_matrices
     else:
@@ -388,14 +389,14 @@ def PCA_svd(X, standardize=True):
     if standardize:
         X = standardization(X)
 
-    (rows, cols) = shape(X)
+    (rows, cols) = np.shape(X)
 
-    # Singular Value Decomposition
+    # np.singular Value Decomposition
     [U, S, V] = svd(X)
 
     # adjust if matrix shape does not match:
-    if shape(S)[0] < shape(U)[0]:
-        U = U[:, 0:shape(S)[0]]
+    if np.shape(S)[0] < np.shape(U)[0]:
+        U = U[:, 0:np.shape(S)[0]]
 
     Scores = U * S  # all Scores (T)
     Loadings = V  # all Loadings (P)
@@ -414,9 +415,9 @@ def CorrelationLoadings(X, Scores):
     and X (original variables, not mean centered).
     """
     # Creates empty matrix for correlation loadings
-    PCs = shape(Scores)[1]  # number of PCs
-    rows = shape(X)[1]  # number of objects (rows) in X
-    CorrLoadings = zeros((PCs, rows), float)
+    PCs = np.shape(Scores)[1]  # number of PCs
+    rows = np.shape(X)[1]  # number of objects (rows) in X
+    CorrLoadings = np.zeros((PCs, rows), float)
 
     # Calculates correlation loadings with formula:
     # correlation = cov(x,y)/(std(x)*std(y))
@@ -428,7 +429,7 @@ def CorrelationLoadings(X, Scores):
         # For each variable/attribute in X
         for row in range(rows):
             orig_vars = X[:, row]  # column of variables in X
-            corrs = corrcoef(Scores_PC_i, orig_vars)
+            corrs = np.corrcoef(Scores_PC_i, orig_vars)
             CorrLoadings[i, row] = corrs[0, 1]
 
     return CorrLoadings

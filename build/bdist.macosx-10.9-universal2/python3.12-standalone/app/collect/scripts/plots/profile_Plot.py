@@ -29,10 +29,10 @@ import numpy
         for assessor in f_assessorAveragesList:
             assessorSamples.append(assessor[sample])
 
-        sampleAverage = average(vstack(assessorSamples), 0)
+        sampleAverage = np.average(vstack(assessorSamples), 0)
         sampleAveragesList.append(sampleAverage)
 
-    sampleAveragesArray = array(sampleAveragesList)
+    sampleAveragesArray = np.array(sampleAveragesList)
 
 
     attributeVector = sampleAveragesArray[:, f_selectedAtt]
@@ -108,13 +108,13 @@ def profileCalc(
     else:
         rows = len(active_assessors) * len(s_data.ReplicateList)
 
-    mean_array_sorted = zeros((cols), float)
+    mean_array_sorted = np.zeros((cols), float)
     # each row is scores for one assessor
-    assessors_scores_sorted = zeros((rows, cols), float)
+    assessors_scores_sorted = np.zeros((rows, cols), float)
     samples_sorted = []
 
     # each row is scores for one assessor
-    assessors_scores = zeros((rows, cols), float)
+    assessors_scores = np.zeros((rows, cols), float)
 
     if averages_on:
         for ass_ind in range(len(active_assessors)):
@@ -138,7 +138,7 @@ def profileCalc(
                                                       :, rep_ind, 0]  # Note: only one attribute
                 row_ind += 1
 
-    mean_array = average(assessors_scores, 0)
+    mean_array = np.average(assessors_scores, 0)
     indices_sorted = sort_indices(mean_array)
 
     # print indices_sorted
@@ -191,7 +191,7 @@ def profilePlotter(s_data, plot_data, num_subplot=[1, 1, 1],abspath=None, **kwar
         activeSamplesAveragesList = []
         for sample in plot_data.activeSamplesList:
             activeSamplesAveragesList.append(spAss[sample])
-        activeSamplesAverages = array(vstack(activeSamplesAveragesList))
+        activeSamplesAverages = np.array(vstack(activeSamplesAveragesList))
         assArraysList.append(activeSamplesAverages)
 
 
@@ -247,7 +247,7 @@ def profilePlotter(s_data, plot_data, num_subplot=[1, 1, 1],abspath=None, **kwar
     # Plotting the results (here just for testing purposes; will not be
     # implemented like this in PanelCheck)
 
-    _range = arange(0, len(samples))
+    _range = np.arange(0, len(samples))
     # Fist plot the ranked samples mean for the selected attribute as a thick
     # black line
     ax.plot(_range + 0.5, mean, 'k-', label='mean', linewidth=3)

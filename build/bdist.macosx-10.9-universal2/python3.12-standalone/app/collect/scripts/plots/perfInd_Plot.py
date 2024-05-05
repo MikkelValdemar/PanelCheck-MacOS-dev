@@ -17,6 +17,7 @@ import numpy as np
 #import statTools as st
 #import pyper
 import math
+from matplotlib.figure import Figure
 
 #import scipy.stats as scist
 import random as rnd
@@ -48,27 +49,27 @@ class PerfIndData:
             self.att_coll = res['REP att coll']
 
         if comp == "RV":
-            self.sign_val_1 = pid.get_sign_level(
-                pid.RV1_1, numberOfSamples, numberOfAttributes)
-            self.sign_val_5 = pid.get_sign_level(
-                pid.RV1_5, numberOfSamples, numberOfAttributes)
-            self.sign_val_10 = pid.get_sign_level(
-                pid.RV1_10, numberOfSamples, numberOfAttributes)
+            self.sign_val_1 = np.pid.get_sign_level(
+                np.pid.RV1_1, numberOfSamples, numberOfAttributes)
+            self.sign_val_5 = np.pid.get_sign_level(
+                np.pid.RV1_5, numberOfSamples, numberOfAttributes)
+            self.sign_val_10 = np.pid.get_sign_level(
+                np.pid.RV1_10, numberOfSamples, numberOfAttributes)
         else:
-            self.sign_val_1 = pid.get_sign_level(
-                pid.RV2_1, numberOfSamples, numberOfAttributes)
-            self.sign_val_5 = pid.get_sign_level(
-                pid.RV2_5, numberOfSamples, numberOfAttributes)
-            self.sign_val_10 = pid.get_sign_level(
-                pid.RV2_10, numberOfSamples, numberOfAttributes)
+            self.sign_val_1 = np.pid.get_sign_level(
+                np.pid.RV2_1, numberOfSamples, numberOfAttributes)
+            self.sign_val_5 = np.pid.get_sign_level(
+                np.pid.RV2_5, numberOfSamples, numberOfAttributes)
+            self.sign_val_10 = np.pid.get_sign_level(
+                np.pid.RV2_10, numberOfSamples, numberOfAttributes)
 
         self.average_prod = np.average(self.prod)
-        self.std_prod = np.std(self.prod, ddof=1)
+        self.std_prod = STD(self.prod, ddof=1)
         self.std_prod_upper = self.average_prod + self.std_prod
         self.std_prod_lower = self.average_prod - self.std_prod
 
         self.average_att = np.average(self.att)
-        self.std_att = np.std(self.att)
+        self.std_att = STD(self.att)
         self.std_att_upper = self.average_att + self.std_att
         self.std_att_lower = self.average_att - self.std_att
 
@@ -743,11 +744,11 @@ def set_sign_level_numeric_data(
         plot_data,
         samples_count,
         attributes_count):
-    data = pid.get_sign_level_data(sign_type)
+    data = np.pid.get_sign_level_data(sign_type)
     if data is None:
         show_err_msg("No data set for type: " + sign_type)
         return
-    val = pid.get_sign_level(sign_type, samples_count, attributes_count)
+    val = np.pid.get_sign_level(sign_type, samples_count, attributes_count)
     if val is None:
         show_err_msg(
             "Number of samples or number of attributes is not within acctable range [3, 50].")
@@ -765,13 +766,13 @@ def set_sign_level_numeric_data(
     dataline = []
     dataline.append('')
     dataline.append('')
-    for i in range(pid.MIN_COUNT_ATTRIBUTES, pid.MAX_COUNT_ATTRIBUTES + 1):
+    for i in range(pid.MIN_COUNT_ATTRIBUTES, np.pid.MAX_COUNT_ATTRIBUTES + 1):
         key = (1, i - 1)
         plot_data.numeric_data_config[key] = {"back_color": '#eeeeee'}  # grey
         dataline.append(i)
     results.append(dataline)
 
-    i = pid.MIN_COUNT_SAMPLES
+    i = np.pid.MIN_COUNT_SAMPLES
     for row in data:
         key = (i - 1, 1)
         plot_data.numeric_data_config[key] = {"back_color": '#eeeeee'}  # grey
@@ -836,8 +837,8 @@ def perfindPlotter(
 
     plot_data.numeric_data_config = {}
 
-    sign_val_1 = pid.get_sign_level(
-        pid.RV1_1, numberOfSamples, numberOfAttributes)
+    sign_val_1 = np.pid.get_sign_level(
+        np.pid.RV1_1, numberOfSamples, numberOfAttributes)
     if sign_val_1 is None:
         show_err_msg(
             "Number of samples or number of attributes is not within acctable range [3, 50].")
@@ -1304,32 +1305,32 @@ def perfindPlotter(
     elif plotType == u'RV for 1% sign. level':
         plot_data.special_opts["plot_frame"] = False
         return set_sign_level_numeric_data(
-            pid.RV1_1, plot_data, numberOfSamples, numberOfAttributes)
+            np.pid.RV1_1, plot_data, numberOfSamples, numberOfAttributes)
 
     elif plotType == u'RV for 5% sign. level':
         plot_data.special_opts["plot_frame"] = False
         return set_sign_level_numeric_data(
-            pid.RV1_5, plot_data, numberOfSamples, numberOfAttributes)
+            np.pid.RV1_5, plot_data, numberOfSamples, numberOfAttributes)
 
     elif plotType == u'RV for 10% sign. level':
         plot_data.special_opts["plot_frame"] = False
         return set_sign_level_numeric_data(
-            pid.RV1_10, plot_data, numberOfSamples, numberOfAttributes)
+            np.pid.RV1_10, plot_data, numberOfSamples, numberOfAttributes)
 
     elif plotType == u'RV2 for 1% sign. level':
         plot_data.special_opts["plot_frame"] = False
         return set_sign_level_numeric_data(
-            pid.RV2_1, plot_data, numberOfSamples, numberOfAttributes)
+            np.pid.RV2_1, plot_data, numberOfSamples, numberOfAttributes)
 
     elif plotType == u'RV2 for 5% sign. level':
         plot_data.special_opts["plot_frame"] = False
         return set_sign_level_numeric_data(
-            pid.RV2_5, plot_data, numberOfSamples, numberOfAttributes)
+            np.pid.RV2_5, plot_data, numberOfSamples, numberOfAttributes)
 
     elif plotType == u'RV2 for 10% sign. level':
         plot_data.special_opts["plot_frame"] = False
         return set_sign_level_numeric_data(
-            pid.RV2_10, plot_data, numberOfSamples, numberOfAttributes)
+            np.pid.RV2_10, plot_data, numberOfSamples, numberOfAttributes)
 
     elif plotType == u'Indices table':
         plot_data.special_opts["plot_frame"] = False
@@ -1846,7 +1847,7 @@ def permuationTestRV(arrList, RVtype='RV2', numPerm=999, sigLevel=0.05):
         value = coeffMat[0, 1]
 
         # Check array dimensions for one of the arrays. It doesn't matter which one,
-        # since we are interested only in number of rows. Number of columns in
+        # np.since we are interested only in number of rows. Number of columns in
         # any of arrays is non-relevant for permutation.
         rows, cols = np.shape(arrList[1])
 
@@ -2482,59 +2483,59 @@ def makeCvRepPlot(
     print()
 
 
-def makeCvRepPlot2(
-        plot_data,
-        num_subplot,
-        sampValueList,
-        refValue,
-        elements,
-        titleString,
-        dbclkAss,
-        plotTypeLabel):
-
-    print("making perf ind cv plot...")
-
-    # Figure
-    replot = True
-    subplot = True
-    scatter_width = 35
-    if plot_data.fig is not None:
-        replot = True
-    else:
-        plot_data.fig = Figure(None)
-    if subplot:  # is subplot
-        plot_data.ax = plot_data.fig.add_subplot(
-            num_subplot[0], num_subplot[1], num_subplot[2])
-        scatter_width = 15
-    else:
-        plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
-    ax = plot_data.ax
-    fig = plot_data.fig
-
-    left = range(np.shape(pair[0])[0])
-    xlimit = left[-1] + 2
-    ax.bar(left, sampValueList, color='g')
-
-    font = {'fontname': 'Arial Narrow',
-            'color': 'black',
-            'fontweight': 'normal',
-            'fontsize': 10}
-
-    # Plot horizontal line indicating original index without leaving out
-    # objects.
-    plotValue = refValue
-    ax.plot([-1, xlimit], [plotValue, plotValue],
-            'r--', label='all samples included')
-    ax.set_xlim(0, xlimit - 1)
-    xticksStr = []
-    xticks = []
-    for tick in range(1, np.shape(pair[0])[0] + 1):
-        xticksStr.append(str(tick))
-        xticks.append(tick - 0.5)
-    ax.set_xticks(xticks)
-    ax.set_xticklabels(elements, fontdict=font, rotation=0, ha='center')
-    ax.set_ylabel(plotTypeLabel, font)
-    ax.set_title(titleString, font)
+# def makeCvRepPlot2(
+#         plot_data,
+#         num_subplot,
+#         sampValueList,
+#         refValue,
+#         elements,
+#         titleString,
+#         dbclkAss,
+#         plotTypeLabel):
+#
+#     print("making perf ind cv plot...")
+#
+#     # Figure
+#     replot = True
+#     subplot = True
+#     scatter_width = 35
+#     if plot_data.fig is not None:
+#         replot = True
+#     else:
+#         plot_data.fig = Figure(None)
+#     if subplot:  # is subplot
+#         plot_data.ax = plot_data.fig.add_subplot(
+#             num_subplot[0], num_subplot[1], num_subplot[2])
+#         scatter_width = 15
+#     else:
+#         plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
+#     ax = plot_data.ax
+#     fig = plot_data.fig
+#
+#     left = range(np.shape(pair[0])[0])
+#     xlimit = left[-1] + 2
+#     ax.bar(left, sampValueList, color='g')
+#
+#     font = {'fontname': 'Arial Narrow',
+#             'color': 'black',
+#             'fontweight': 'normal',
+#             'fontsize': 10}
+#
+#     # Plot horizontal line indicating original index without leaving out
+#     # objects.
+#     plotValue = refValue
+#     ax.plot([-1, xlimit], [plotValue, plotValue],
+#             'r--', label='all samples included')
+#     ax.set_xlim(0, xlimit - 1)
+#     xticksStr = []
+#     xticks = []
+#     for tick in range(1, np.shape(pair[0])[0] + 1):
+#         xticksStr.append(str(tick))
+#         xticks.append(tick - 0.5)
+#     ax.set_xticks(xticks)
+#     ax.set_xticklabels(elements, fontdict=font, rotation=0, ha='center')
+#     ax.set_ylabel(plotTypeLabel, font)
+#     ax.set_title(titleString, font)
 
 
 def combinations(iterable, r):
@@ -2618,7 +2619,7 @@ def resultsTable(resultsDict):
         ws.write(1,ind+1,ass)
 
     AGRpanelAver_obj = np.average(np.array(assObjRVcoeffList))
-    AGRpanelSTD_obj = np.std(np.array(assObjRVcoeffList), ddof=1)
+    AGRpanelSTD_obj = STD(np.array(assObjRVcoeffList), ddof=1)
     ws.write(1,ind+2,round(AGRpanelAver_obj,1),style1)
     ws.write(1,ind+3,round(AGRpanelSTD_obj,1),style1)
 
@@ -2630,7 +2631,7 @@ def resultsTable(resultsDict):
         ws.write(2,ind+1,ass)
 
     AGRpanelAver_var = np.average(np.array(assVarRVcoeffList))
-    AGRpanelSTD_var = np.std(np.array(assVarRVcoeffList), ddof=1)
+    AGRpanelSTD_var = STD(np.array(assVarRVcoeffList), ddof=1)
     ws.write(2,ind+2,round(AGRpanelAver_var,1),style1)
     ws.write(2,ind+3,round(AGRpanelSTD_var,1),style1)
 
@@ -2642,7 +2643,7 @@ def resultsTable(resultsDict):
         ws.write(3,ind+1,ass, style0)
 
     AGRpanelAver = np.average(np.array(AGRAver))
-    AGRpanelSTD = np.std(np.array(AGRAver), ddof=1)
+    AGRpanelSTD = STD(np.array(AGRAver), ddof=1)
     ws.write(3,ind+2,round(AGRpanelAver,1),style1)
     ws.write(3,ind+3,round(AGRpanelSTD,1),style1)
 
@@ -2654,7 +2655,7 @@ def resultsTable(resultsDict):
         ws.write(6,ind+1,ass)
 
     REPpanelAver_obj = np.average(np.array(repObjRVcoeffList))
-    REPpanelSTD_obj = np.std(np.array(repObjRVcoeffList), ddof=1)
+    REPpanelSTD_obj = STD(np.array(repObjRVcoeffList), ddof=1)
     ws.write(6,ind+2,round(REPpanelAver_obj,1),style1)
     ws.write(6,ind+3,round(REPpanelSTD_obj,1),style1)
 
@@ -2666,7 +2667,7 @@ def resultsTable(resultsDict):
         ws.write(7,ind+1,ass)
 
     REPpanelAver_var = np.average(np.array(repVarRVcoeffList))
-    REPpanelSTD_var = np.std(np.array(repVarRVcoeffList), ddof=1)
+    REPpanelSTD_var = STD(np.array(repVarRVcoeffList), ddof=1)
     ws.write(7,ind+2,round(REPpanelAver_var,1),style1)
     ws.write(7,ind+3,round(REPpanelSTD_var,1),style1)
 
@@ -2678,7 +2679,7 @@ def resultsTable(resultsDict):
         ws.write(8,ind+1,ass, style0)
 
     REPpanelAver = np.average(np.array(REPAver))
-    REPpanelSTD = np.std(np.array(REPAver), ddof=1)
+    REPpanelSTD = STD(np.array(REPAver), ddof=1)
     ws.write(8,ind+2,round(REPpanelAver,1),style1)
     ws.write(8,ind+3,round(REPpanelSTD,1),style1)
 
@@ -2714,7 +2715,7 @@ def resultsTable(resultsDict):
         ws.write(13,ind+1, ass, style0)
 #
 #    DISpanelAver = np.average(np.array(DISList))
-#    DISpanelSTD = np.std(np.array(DISList), ddof=1)
+#    DISpanelSTD = STD(np.array(DISList), ddof=1)
 #    ws.write(13,ind+2,round(DISpanelAver), style1)
 #    ws.write(13,ind+3,round(DISpanelSTD,1),style1)
 
@@ -2726,7 +2727,7 @@ def resultsTable(resultsDict):
         ws.write(14,ind+1,ass, style0)
 
     DISpanelAver2 = np.average(np.array(DISList2))
-    DISpanelSTD2 = np.std(np.array(DISList2), ddof=1)
+    DISpanelSTD2 = STD(np.array(DISList2), ddof=1)
     ws.write(14,ind+2,round(DISpanelAver2), style1)
     ws.write(14,ind+3,round(DISpanelSTD2,1),style1)
 

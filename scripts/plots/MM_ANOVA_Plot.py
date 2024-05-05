@@ -88,7 +88,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
 
         progress = Progress(None, abspath)
         progress.set_gauge(value=0, text="Using R...\n")
-        # Cannot use unicode-strings, since it causes rpy to crash.
+        # Cannot use unicode-strings, np.since it causes rpy to crash.
         # Need to convert unicode-strings to non-unicode strings
 
         # get program absolute-path:
@@ -97,7 +97,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
         #last_dir = os.getcwd()
         # os.chdir(abspath) # go to program path (for R script source)
 
-        # Need to transpose the raw data matrix since rpy transposes when transferring
+        # Need to transpose the raw data matrix np.since rpy transposes when transferring
         # it to an R-data frame
         part = raw[:, :]
 
@@ -244,7 +244,7 @@ def get_grid_data(s_data, plot_data, f_mat, p_mat, lsd_mat, plot_type):
 
         # calculate sample averages
         samples_averages = {}
-        ass_att_matrix = zeros(
+        ass_att_matrix = np.zeros(
             (len(activeAssessorsList), len(activeAttributesList)), float)
         samp_ind = 0
         for sample in activeSamplesList:
@@ -252,11 +252,11 @@ def get_grid_data(s_data, plot_data, f_mat, p_mat, lsd_mat, plot_type):
             for ass in activeAssessorsList:
                 att_matrix = m_data[ass_ind, samp_ind, :]
                 # average all replicates
-                ass_att_matrix[ass_ind] = average(att_matrix, 0)
+                ass_att_matrix[ass_ind] = np.average(att_matrix, 0)
                 ass_ind += 1
 
             # average all assessors
-            sample_averages_matrix = average(ass_att_matrix, 0)
+            sample_averages_matrix = np.average(ass_att_matrix, 0)
             temp = [sample]
             temp.extend(str_row(sample_averages_matrix, fmt="%.3f"))
             numeric_data.append(temp)
@@ -452,7 +452,7 @@ def MixModel_ANOVA_Plotter_2way1rep(
 
     pointAndLabelList = []
 
-    att_indices = arange(len(activeAttributesList))
+    att_indices = np.arange(len(activeAttributesList))
     _width = 0.75
     i = 0
     for att in s_data.AttributeList:
@@ -612,9 +612,9 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
     lsd_list = []
     lsd_list.append(res[2][0])
     lsd_list.append(res[2][1])
-    att_indices = arange(len(activeAttributesList))
+    att_indices = np.arange(len(activeAttributesList))
     num_active_samps = len(activeSamplesList)
-    averages_matrix = zeros((1, len(activeAttributesList)), float)
+    averages_matrix = np.zeros((1, len(activeAttributesList)), float)
     for samp in activeSamplesList:
         samp_scores_matrix = []
         stacking = 0
@@ -625,13 +625,13 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
                 samp_scores_matrix = att_column
                 stacking = 1
             else:
-                samp_scores_matrix = vstack((samp_scores_matrix, att_column))
-        samp_scores_matrix = transpose(samp_scores_matrix)
+                samp_scores_matrix = np.vstack((samp_scores_matrix, att_column))
+        samp_scores_matrix = np.transpose(samp_scores_matrix)
         # print samp_scores_matrix
         # average of the attributes for a given sample
-        averages_samp = average(samp_scores_matrix, 0)
+        averages_samp = np.average(samp_scores_matrix, 0)
         # print averages_samp
-        averages_matrix = vstack((averages_matrix, averages_samp))
+        averages_matrix = np.vstack((averages_matrix, averages_samp))
     averages_matrix = averages_matrix[1:, :]
     # averages_matrix = center(averages_matrix) # centered (between all active samples)
     # print averages_matrix
@@ -942,7 +942,7 @@ def MixModel_ANOVA_Plotter_2way(
     # colors:   grey       yellow     orange      red
     colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
     pointAndLabelList = []
-    att_indices = arange(len(activeAttributesList))
+    att_indices = np.arange(len(activeAttributesList))
     _width = 0.75
 
     if isinstance(f_matr, float):
@@ -1110,9 +1110,9 @@ def MixModel_ANOVA_LSD_Plotter_2way(
     lsd_list = []
     lsd_list.append(res[3][2])
     lsd_list.append(res[3][1])
-    att_indices = arange(len(activeAttributesList))
+    att_indices = np.arange(len(activeAttributesList))
     num_active_samps = len(activeSamplesList)
-    averages_matrix = zeros((1, len(activeAttributesList)), float)
+    averages_matrix = np.zeros((1, len(activeAttributesList)), float)
     for samp in activeSamplesList:
         samp_scores_matrix = []
         stacking = 0
@@ -1123,13 +1123,13 @@ def MixModel_ANOVA_LSD_Plotter_2way(
                 samp_scores_matrix = att_column
                 stacking = 1
             else:
-                samp_scores_matrix = vstack((samp_scores_matrix, att_column))
-        samp_scores_matrix = transpose(samp_scores_matrix)
+                samp_scores_matrix = np.vstack((samp_scores_matrix, att_column))
+        samp_scores_matrix = np.transpose(samp_scores_matrix)
         # print samp_scores_matrix
         # average of the attributes for a given sample
-        averages_samp = average(samp_scores_matrix, 0)
+        averages_samp = np.average(samp_scores_matrix, 0)
         # print averages_samp
-        averages_matrix = vstack((averages_matrix, averages_samp))
+        averages_matrix = np.vstack((averages_matrix, averages_samp))
     averages_matrix = averages_matrix[1:, :]
     # averages_matrix = center(averages_matrix) # centered (between all active samples)
     # print averages_matrix
@@ -1440,7 +1440,7 @@ def MixModel_ANOVA_Plotter_3way(
     # colors:   grey       yellow     orange      red
     colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
     pointAndLabelList = []
-    att_indices = arange(len(activeAttributesList))
+    att_indices = np.arange(len(activeAttributesList))
     _width = 0.75
     j = 0
     for att in s_data.AttributeList:
@@ -1617,9 +1617,9 @@ def MixModel_ANOVA_LSD_Plotter_3way(
     lsd_list = []
     lsd_list.append(res[3][0])
     lsd_list.append(res[3][1])
-    att_indices = arange(len(activeAttributesList))
+    att_indices = np.arange(len(activeAttributesList))
     num_active_samps = len(activeSamplesList)
-    averages_matrix = zeros((1, len(activeAttributesList)), float)
+    averages_matrix = np.zeros((1, len(activeAttributesList)), float)
     for samp in activeSamplesList:
         samp_scores_matrix = []
         stacking = 0
@@ -1630,13 +1630,13 @@ def MixModel_ANOVA_LSD_Plotter_3way(
                 samp_scores_matrix = att_column
                 stacking = 1
             else:
-                samp_scores_matrix = vstack((samp_scores_matrix, att_column))
-        samp_scores_matrix = transpose(samp_scores_matrix)
+                samp_scores_matrix = np.vstack((samp_scores_matrix, att_column))
+        samp_scores_matrix = np.transpose(samp_scores_matrix)
         # print samp_scores_matrix
         # average of the attributes for a given sample
-        averages_samp = average(samp_scores_matrix, 0)
+        averages_samp = np.average(samp_scores_matrix, 0)
         # print averages_samp
-        averages_matrix = vstack((averages_matrix, averages_samp))
+        averages_matrix = np.vstack((averages_matrix, averages_samp))
     averages_matrix = averages_matrix[1:, :]
     # averages_matrix = center(averages_matrix) # centered (between all active samples)
     # print averages_matrix

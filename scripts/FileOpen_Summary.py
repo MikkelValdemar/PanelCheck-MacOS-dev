@@ -4,7 +4,7 @@ import os
 import sys
 import pandas as pd
 
-from numpy import ceil, floor
+import numpy as np
 
 from Grid import DataTable, DataGrid, DataGridSheet
 
@@ -376,8 +376,8 @@ class Summary(wx.Dialog):
         self.textLims.SetLabel(
             "%5.2f, ...,%5.2f" %
             (self.limits[2], self.limits[3]))
-        self.limits[2] = floor(self.limits[2] - self.epsilon)
-        self.limits[3] = ceil(self.limits[3] + self.epsilon)
+        self.limits[2] = np.floor(self.limits[2] - self.epsilon)
+        self.limits[3] = np.ceil(self.limits[3] + self.epsilon)
         self.textMinInput.SetValue(str(self.limits[2]))
         self.textMaxInput.SetValue(str(self.limits[3]))
 

@@ -622,7 +622,7 @@ def numerical_data_add_loadings(
     return numeric_data
 
 
-############### numerical data single row ###############
+############### numerical data np.single row ###############
 def str_row(a, fmt="%.2f"):
     _list = []
     for x in a:
@@ -645,7 +645,7 @@ def check_columns(X):
     for current analysis.
     """
 
-    (rows, cols) = shape(X)
+    (rows, cols) = np.shape(X)
     out_cols = []
     in_cols = []
 
@@ -660,7 +660,7 @@ def check_columns(X):
     if len(out_cols) == 0:
         return X, []
     else:
-        new_X = zeros((rows, len(in_cols)), float)
+        new_X = np.zeros((rows, len(in_cols)), float)
         new_col_ind = 0
         for col_ind in in_cols:
             new_X[:, new_col_ind] = X[:, col_ind]
@@ -738,16 +738,16 @@ def check_columns(X):
 #     # print(progPath)
 #     progress = Progress(None, progPath)
 #     progress.set_gauge(value=0, text="Using R...\n")
-#     # Cannot use unicode-strings, since it causes rpy to crash.
+#     # Cannot use unicode-strings, np.since it causes rpy to crash.
 #     # Need to convert unicode-strings to non-unicode strings
 #
 #     # get program absolute-path:
 #     last_dir = os.getcwd()
 #     os.chdir(progPath)  # go to program path (for R script source)
 #
-#     # Need to transpose the raw data matrix since rpy transposes when transferring
+#     # Need to transpose the raw data matrix np.since rpy transposes when transferring
 #     # it to an R-data frame
-#     part = transpose(raw[:, :])
+#     part = np.transpose(raw[:, :])
 #
 #     # Constructing the data frame in R:
 #     # Switch to 'no conversion', such that everything that is created now

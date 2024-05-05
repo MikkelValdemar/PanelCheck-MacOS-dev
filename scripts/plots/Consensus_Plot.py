@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 
-from scripts.Plot_Tools import *
+import wx
+import numpy as np
+from scipy.linalg import svd
+from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+from matplotlib.collections import LineCollection
 
+from scripts.Math_Tools import PCA, STD, center, rotate_vec2d, lerp
+from scripts.plots.pca_module import CorrelationLoadings
+from scripts.Plot_Tools import raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, numerical_data_add_loadings, num2str, colors_rgb_list, set_xlabeling_rotation
 
 def numerical_data_add_average_mat(
         resultList,
@@ -156,23 +164,23 @@ def PCA_plotter(
                     oneAssessorList.append(newFloatRow)
 
             # Convert to array and then append to list
-            allAssessorsList.append(array(oneAssessorList))
+            allAssessorsList.append(np.array(oneAssessorList))
 
         # Now check each assessor for STD=0
         # by calculating a matrix that contains the STD's for each
         # assessor. Also averages for each assessor are calculated.
-        STDmatrix = zeros((1, len(activeAttributesList)), float)
+        STDmatrix = np.zeros((1, len(activeAttributesList)), float)
         # print STDmatrix
-        meanMatrix = zeros((1, len(activeAttributesList)), float)
+        meanMatrix = np.zeros((1, len(activeAttributesList)), float)
 
         leaveOutAtts = []
         for assessor in allAssessorsList:
 
-            check = array(STD(assessor, 0), copy=False)
-            assMean = array(average(assessor, 0), copy=False)
+            check = np.array(STD(assessor, 0), copy=False)
+            assMean = np.array(np.average(assessor, 0), copy=False)
             # ipshell()
-            STDmatrix = vstack((STDmatrix, check))
-            meanMatrix = vstack((meanMatrix, assMean))
+            STDmatrix = np.vstack((STDmatrix, check))
+            meanMatrix = np.vstack((meanMatrix, assMean))
 
             newCheck = check.tolist()
 
@@ -222,8 +230,8 @@ def PCA_plotter(
             dlg.Destroy()
 
         # Point 2.
-        realSTDarray = zeros((1, len(activeAssessorsList)), float)
-        realAssMeanArray = zeros((1, len(activeAssessorsList)), float)
+        realSTDarray = np.zeros((1, len(activeAssessorsList)), float)
+        realAssMeanArray = np.zeros((1, len(activeAssessorsList)), float)
 
         for attribute in range(len(activeAttributesList)):
             checkCol = STDarray[:, attribute]
@@ -234,14 +242,14 @@ def PCA_plotter(
                 pass
 
             else:
-                realSTDarray = vstack((realSTDarray, checkCol))
-                realAssMeanArray = vstack((realAssMeanArray, checkCol2))
+                realSTDarray = np.vstack((realSTDarray, checkCol))
+                realAssMeanArray = np.vstack((realAssMeanArray, checkCol2))
 
         nextSTDarray = realSTDarray[1:, :].copy()
-        finalSTDarray = transpose(nextSTDarray)
+        finalSTDarray = np.transpose(nextSTDarray)
 
         nextAssMeanArray = realAssMeanArray[1:, :].copy()
-        finalAssMeanArray = transpose(nextAssMeanArray)
+        finalAssMeanArray = np.transpose(nextAssMeanArray)
 
         # print finalSTDarray
         # print
@@ -263,11 +271,11 @@ def PCA_plotter(
     replicates = len(s_data.ReplicateList)
 
     rowsSampleAverageMatrix = replicates * len(activeAssessorsList)
-    averageMatrix = zeros((rowsAverageMatrix, columns), float)
+    averageMatrix = np.zeros((rowsAverageMatrix, columns), float)
 
     for sample in activeSamplesList:
 
-        constructSampleAverageMatrix = zeros((1, columns), float)
+        constructSampleAverageMatrix = np.zeros((1, columns), float)
         for assessor in activeAssessorsList:
 
             for replicate in s_data.ReplicateList:
@@ -295,10 +303,10 @@ def PCA_plotter(
                             assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
                         valueCollectionList.append(value)
 
-                oneMatrixRow = array(valueCollectionList)
+                oneMatrixRow = np.array(valueCollectionList)
 
                 # print '*******************************'
-                constructSampleAverageMatrix = vstack(
+                constructSampleAverageMatrix = np.vstack(
                     (constructSampleAverageMatrix, oneMatrixRow))
 
         # Remove first row that contains only zeros
@@ -307,7 +315,7 @@ def PCA_plotter(
 
         # Now calculate average for that sample and copy values
         # in to averageMatrix
-        sampleAverage = average(sampleAverageMatrix, 0)
+        sampleAverage = np.average(sampleAverageMatrix, 0)
         averageMatrix[activeSamplesList.index(sample)] = sampleAverage.copy()
 
     averageMatrixForAnalysis = averageMatrix.copy()
@@ -319,12 +327,12 @@ def PCA_plotter(
     #scores = PCAanalysis.GetScores()
     #loadings = PCAanalysis.GetLoadings()
     #corrLoadings = PCAanalysis.GetCorrelationLoadings()
-    #transCorrLoadings = transpose(corrLoadings)
+    #transCorrLoadings = np.transpose(corrLoadings)
     #explVar = PCAanalysis.GetExplainedVariances()
     scores, loadings, explVar = PCA(averageMatrixForAnalysis)
     explVar = list(explVar)
     corrLoadings = CorrelationLoadings(averageMatrixForAnalysis, scores)
-    transCorrLoadings = transpose(corrLoadings)
+    transCorrLoadings = np.transpose(corrLoadings)
 
     font = {'family': 'sans-serif',
             'color': 'k',
@@ -342,11 +350,11 @@ def PCA_plotter(
 
     # Continue building resultList
     # Limiting PC's in 'Numeric Results' to 10
-    [PCs, activeAttributes] = shape(corrLoadings)
-    [Samples, PCs] = shape(scores)
+    [PCs, activeAttributes] = np.shape(corrLoadings)
+    [Samples, PCs] = np.shape(scores)
 
     maxPCs = 10
-    [Samples, PCs] = shape(scores)
+    [Samples, PCs] = np.shape(scores)
     if PCs < maxPCs:
         maxPCs = PCs
 
@@ -426,16 +434,16 @@ def PCA_plotter(
         ax.grid(plot_data.view_grid)
 
      # Get the first and second column from the scores matrix
-        scoresXCoordinates = take(scores, (pc_x,), 1)
-        scoresYCoordinates = take(scores, (pc_y,), 1)
+        scoresXCoordinates = np.take(scores, (pc_x,), 1)
+        scoresYCoordinates = np.take(scores, (pc_y,), 1)
 
         # Catch max and min values in PC1 and PC2 scores
         # for defining axis-limits in the common scores plot.
-        x_max = ceil(max(scoresXCoordinates))
-        x_min = floor(min(scoresXCoordinates))
+        x_max = np.ceil(max(scoresXCoordinates))
+        x_min = np.floor(min(scoresXCoordinates))
 
-        y_max = ceil(max(scoresYCoordinates))
-        y_min = floor(min(scoresYCoordinates))
+        y_max = np.ceil(max(scoresYCoordinates))
+        y_min = np.floor(min(scoresYCoordinates))
 
         # Defining the titles, axes names, etc
         myTitle = title_pca_type + 'PCA scores'
@@ -555,11 +563,11 @@ def PCA_plotter(
 
         # Catch max and min values in PC1 and PC2 scores
         # for defining axis-limits in the common scores plot.
-        x_max = ceil(max(loadingsXCoordinates))
-        x_min = floor(min(loadingsXCoordinates))
+        x_max = np.ceil(max(loadingsXCoordinates))
+        x_min = np.floor(min(loadingsXCoordinates))
 
-        y_max = ceil(max(loadingsYCoordinates))
-        y_min = floor(min(loadingsYCoordinates))
+        y_max = np.ceil(max(loadingsYCoordinates))
+        y_min = np.floor(min(loadingsYCoordinates))
 
         # Defining the titles, axes names, etc
         myTitle = title_pca_type + 'PCA loadings'
@@ -620,24 +628,24 @@ def PCA_plotter(
         ax.grid(plot_data.view_grid)
 
         # Create circles and plot them
-        t = arange(0.0, 2 * pi, 0.01)
+        t = np.arange(0.0, 2 * np.pi, 0.01)
 
         # Compuing the outer circle
-        xcords = cos(t)
-        ycords = sin(t)
+        xcords = np.cos(t)
+        ycords = np.sin(t)
 
         # Plotting outer circle
         ax.plot(xcords, ycords, 'b-')
 
         # Computing inner circle
-        xcords50percent = 0.707 * cos(t)
-        ycords50percent = 0.707 * sin(t)
+        xcords50percent = 0.707 * np.cos(t)
+        ycords50percent = 0.707 * np.sin(t)
 
         # Plotting inner circle
         ax.plot(xcords50percent, ycords50percent, 'b-')
 
         # Plotting the correlation loadings
-        # Using 'scatter' instead of 'plot', since this allows sizable points
+        # Using 'scatter' instead of 'plot', np.since this allows sizable points
         # in plot
         xCorrLoadings = corrLoadings[pc_x]
         yCorrLoadings = corrLoadings[pc_y]
@@ -736,7 +744,7 @@ def PCA_plotter(
 
         ax.plot(cumulativeExplVar, 'b-')
 
-        _range = arange(maxPCs + 1)
+        _range = np.arange(maxPCs + 1)
         ax.set_xticks(_range)
 
         numerical_data_add_average_mat(
@@ -950,16 +958,16 @@ def spiderweb_plot(
             'weight': 'normal',
             'size': 13}
 
-    max_values = zeros((averageMatrix.shape[0]), float)
-    min_values = zeros((averageMatrix.shape[0]), float)
+    max_values = np.zeros((averageMatrix.shape[0]), float)
+    min_values = np.zeros((averageMatrix.shape[0]), float)
     for row_ind in range(averageMatrix.shape[0]):
         max_values[row_ind] = max(averageMatrix[row_ind, :])
         min_values[row_ind] = min(averageMatrix[row_ind, :])
 
     max_value = max(max_values)
     min_value = min(min_values)
-    top_lvl = int(ceil(max_value))
-    bottom_lvl = int(floor(min_value))
+    top_lvl = int(np.ceil(max_value))
+    bottom_lvl = int(np.floor(min_value))
 
     num_of_vars = len(activeAttributes)
     num_of_samps = len(plot_data.activeSamplesList)
@@ -967,7 +975,7 @@ def spiderweb_plot(
     vertices_circles = []
     vertices_lines = []
 
-    origo = array([0.0, 0.0], float)
+    origo = np.array([0.0, 0.0], float)
     angle_step = float(360.0 / float(num_of_vars))
     unit = (2 * top_lvl) * 0.01  # 1 %
 
@@ -977,7 +985,7 @@ def spiderweb_plot(
 
     for lvl in range(bottom_lvl, top_lvl + 1):
 
-        vec = array([0.0, float(lvl + diff)], float)
+        vec = np.array([0.0, float(lvl + diff)], float)
         points = []
 
         current_angle = 0.0
@@ -1026,8 +1034,8 @@ def spiderweb_plot(
     for samp_ind in range(num_of_samps):
 
         ring = []
-        x_vals = zeros((num_of_vars), float)
-        y_vals = zeros((num_of_vars), float)
+        x_vals = np.zeros((num_of_vars), float)
+        y_vals = np.zeros((num_of_vars), float)
 
         for att_ind in range(num_of_vars):
             # normalize value
@@ -1172,13 +1180,13 @@ def spiderweb_plot_lim(
             'weight': 'normal',
             'size': 13}
 
-    max_values = zeros((averageMatrix.shape[0]), float)
+    max_values = np.zeros((averageMatrix.shape[0]), float)
     for row_ind in range(averageMatrix.shape[0]):
         max_values[row_ind] = max(averageMatrix[row_ind, :])
 
-    top_lvl = int(ceil(plot_data.limits[3]))  # ymax
-    bottom_lvl = int(floor(plot_data.limits[2]))  # ymin
-    step_lvl = int(ceil((top_lvl - bottom_lvl) * 0.1))
+    top_lvl = int(np.ceil(plot_data.limits[3]))  # ymax
+    bottom_lvl = int(np.floor(plot_data.limits[2]))  # ymin
+    step_lvl = int(np.ceil((top_lvl - bottom_lvl) * 0.1))
 
     max_value = max(max_values)
     #top_lvl = int(ceil(max_value))
@@ -1188,7 +1196,7 @@ def spiderweb_plot_lim(
     vertices_circles = []
     vertices_lines = []
 
-    origo = array([0.0, 0.0], float)
+    origo = np.array([0.0, 0.0], float)
     angle_step = float(360.0 / float(num_of_vars))
     unit = (2 * top_lvl) * 0.01  # 1 %
 
@@ -1200,7 +1208,7 @@ def spiderweb_plot_lim(
 
     for lvl in range(bottom_lvl, top_lvl + step_lvl, step_lvl):
 
-        vec = array([0.0, float(lvl + diff)], float)
+        vec = np.array([0.0, float(lvl + diff)], float)
         points = []
 
         current_angle = 0.0
@@ -1250,8 +1258,8 @@ def spiderweb_plot_lim(
     for samp_ind in range(num_of_samps):
 
         ring = []
-        x_vals = zeros((num_of_vars), float)
-        y_vals = zeros((num_of_vars), float)
+        x_vals = np.zeros((num_of_vars), float)
+        y_vals = np.zeros((num_of_vars), float)
 
         for att_ind in range(num_of_vars):
             # normalize value
@@ -1473,22 +1481,22 @@ def average_data(s_data, plot_data, selection=0):
                     oneAssessorList.append(newFloatRow)
 
             # Convert to array and then append to list
-            allAssessorsList.append(array(oneAssessorList))
+            allAssessorsList.append(np.array(oneAssessorList))
 
         # Now check each assessor for STD=0
         # by calculating a matrix that contains the STD's for each
         # assessor. Also averages for each assessor are calculated.
-        STDmatrix = zeros((1, len(activeAttributesList)), float)
-        meanMatrix = zeros((1, len(activeAttributesList)), float)
+        STDmatrix = np.zeros((1, len(activeAttributesList)), float)
+        meanMatrix = np.zeros((1, len(activeAttributesList)), float)
 
         leaveOutAtts = []
         for assessor in allAssessorsList:
 
-            check = array(STD(assessor, 0), copy=False)
-            assMean = array(average(assessor, 0), copy=False)
+            check = np.array(STD(assessor, 0), copy=False)
+            assMean = np.array(np.average(assessor, 0), copy=False)
 
-            STDmatrix = vstack((STDmatrix, check))
-            meanMatrix = vstack((meanMatrix, assMean))
+            STDmatrix = np.vstack((STDmatrix, check))
+            meanMatrix = np.vstack((meanMatrix, assMean))
 
             newCheck = check.tolist()
 
@@ -1538,8 +1546,8 @@ def average_data(s_data, plot_data, selection=0):
             dlg.Destroy()
 
         # Point 2.
-        realSTDarray = zeros((1, len(activeAssessorsList)), float)
-        realAssMeanArray = zeros((1, len(activeAssessorsList)), float)
+        realSTDarray = np.zeros((1, len(activeAssessorsList)), float)
+        realAssMeanArray = np.zeros((1, len(activeAssessorsList)), float)
 
         for attribute in range(len(activeAttributesList)):
             checkCol = STDarray[:, attribute]
@@ -1550,14 +1558,14 @@ def average_data(s_data, plot_data, selection=0):
                 pass
 
             else:
-                realSTDarray = vstack((realSTDarray, checkCol))
-                realAssMeanArray = vstack((realAssMeanArray, checkCol2))
+                realSTDarray = np.vstack((realSTDarray, checkCol))
+                realAssMeanArray = np.vstack((realAssMeanArray, checkCol2))
 
         nextSTDarray = realSTDarray[1:, :].copy()
-        finalSTDarray = transpose(nextSTDarray)
+        finalSTDarray = np.transpose(nextSTDarray)
 
         nextAssMeanArray = realAssMeanArray[1:, :].copy()
-        finalAssMeanArray = transpose(nextAssMeanArray)
+        finalAssMeanArray = np.transpose(nextAssMeanArray)
 
         # print finalSTDarray
         # print
@@ -1579,11 +1587,11 @@ def average_data(s_data, plot_data, selection=0):
     replicates = len(s_data.ReplicateList)
 
     rowsSampleAverageMatrix = replicates * len(activeAssessorsList)
-    averageMatrix = zeros((rowsAverageMatrix, columns), float)
+    averageMatrix = np.zeros((rowsAverageMatrix, columns), float)
 
     for sample in activeSamplesList:
 
-        constructSampleAverageMatrix = zeros((1, columns), float)
+        constructSampleAverageMatrix = np.zeros((1, columns), float)
         for assessor in activeAssessorsList:
 
             for replicate in s_data.ReplicateList:
@@ -1611,11 +1619,11 @@ def average_data(s_data, plot_data, selection=0):
                             assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
                         valueCollectionList.append(value)
 
-                oneMatrixRow = array(valueCollectionList)
+                oneMatrixRow = np.array(valueCollectionList)
                 # print oneMatrixRow.shape
 
                 # print '*******************************'
-                constructSampleAverageMatrix = vstack(
+                constructSampleAverageMatrix = np.vstack(
                     (constructSampleAverageMatrix, oneMatrixRow))
 
         # Remove first row that contains only zeros
@@ -1623,7 +1631,7 @@ def average_data(s_data, plot_data, selection=0):
 
         # Now calculate average for that sample and copy values
         # in to averageMatrix
-        sampleAverage = average(sampleAverageMatrix, 0)
+        sampleAverage = np.average(sampleAverageMatrix, 0)
         averageMatrix[activeSamplesList.index(sample)] = sampleAverage.copy()
 
     return averageMatrix, activeAttributesList
@@ -1727,7 +1735,7 @@ def statisX(f_assMatricesList, choice):
         return None
 
     # Find dimensions of assessor matrices
-    rows, cols = shape(f_assMatricesList[0])
+    rows, cols = np.shape(f_assMatricesList[0])
 
     # Center all assessor matrices before STATIS computations
     cent_assMatrices = []
@@ -1741,31 +1749,31 @@ def statisX(f_assMatricesList, choice):
     oneRowCovs = []
     for ass1 in cent_assMatrices:
         for ass2 in cent_assMatrices:
-            covtotal = trace(dot(ass1.transpose(), ass2)) / shape(ass1)[0]
+            covtotal = np.trace(np.dot(ass1.transpose(), ass2)) / np.shape(ass1)[0]
             oneRowCovs.append(covtotal)
         allCovs.append(oneRowCovs)
         oneRowCovs = []
 
-    allCovsMat = array(allCovs)
-    totVar = diag(allCovsMat)
+    allCovsMat = np.array(allCovs)
+    totVar = np.diag(allCovsMat)
 
     # Calculate matrix holding CORRELATIONS of each possible
     # assessor-assessor combination
     newList = []
     for ass1 in range(len(cent_assMatrices)):
-        new_ass = cent_assMatrices[ass1] / sqrt(totVar[ass1])
+        new_ass = cent_assMatrices[ass1] / np.sqrt(totVar[ass1])
         newList.append(new_ass)
 
     allCorrs = []
     oneRowCorrs = []
     for ass1 in newList:
         for ass2 in newList:
-            corrtotal = trace(dot(ass1.transpose(), ass2)) / shape(ass1)[0]
+            corrtotal = np.trace(np.dot(ass1.transpose(), ass2)) / np.shape(ass1)[0]
             oneRowCorrs.append(corrtotal)
         allCorrs.append(oneRowCorrs)
         oneRowCorrs = []
 
-    allCorrsMat = array(allCorrs)
+    allCorrsMat = np.array(allCorrs)
 
     # Now compute eigenvectors according to users choice based on either
     # the covariances or correlations
@@ -1793,7 +1801,7 @@ def statisX(f_assMatricesList, choice):
 
     # Now construct consensus by multiplying each assessor's data with its
     # weight and then sum up all over all assessors
-    consensus = zeros((rows, cols), float)
+    consensus = np.zeros((rows, cols), float)
     for ass in range(len(f_assMatricesList)):
         consensus = consensus + f_assMatricesList[ass] * weights[ass]
 
@@ -1873,7 +1881,7 @@ def STATIS_AssWeight_Plotter(
 
     ax.grid(plot_data.view_grid)
 
-    ind = arange(1, len(results[1]) + 1)
+    ind = np.arange(1, len(results[1]) + 1)
     width = 0.35
     ax.bar(ind - (width / 2), results[1], width, color="#0000ff")
 
@@ -2028,13 +2036,13 @@ def STATIS_PCA_Plotter(
     #scores = PCAanalysis.GetScores()
     #loadings = PCAanalysis.GetLoadings()
     #corrLoadings = PCAanalysis.GetCorrelationLoadings()
-    #transCorrLoadings = transpose(corrLoadings)
+    #transCorrLoadings = np.transpose(corrLoadings)
     #explVar = PCAanalysis.GetExplainedVariances()
 
     scores, loadings, explVar = PCA(averageMatrixForAnalysis)
     explVar = list(explVar)
     corrLoadings = CorrelationLoadings(averageMatrixForAnalysis, scores)
-    transCorrLoadings = transpose(corrLoadings)
+    transCorrLoadings = np.transpose(corrLoadings)
 
     font = {'family': 'sans-serif',
             'color': 'k',
@@ -2050,11 +2058,11 @@ def STATIS_PCA_Plotter(
 
     # Continue building resultList
     # Limiting PC's in 'Numeric Results' to 10
-    [PCs, activeAttributes] = shape(corrLoadings)
-    [Samples, PCs] = shape(scores)
+    [PCs, activeAttributes] = np.shape(corrLoadings)
+    [Samples, PCs] = np.shape(scores)
 
     maxPCs = 10
-    [Samples, PCs] = shape(scores)
+    [Samples, PCs] = np.shape(scores)
     if PCs < maxPCs:
         maxPCs = PCs
 
@@ -2136,16 +2144,16 @@ def STATIS_PCA_Plotter(
         ax.grid(plot_data.view_grid)
 
      # Get the first and second column from the scores matrix
-        scoresXCoordinates = take(scores, (pc_x,), 1)
-        scoresYCoordinates = take(scores, (pc_y,), 1)
+        scoresXCoordinates = np.take(scores, (pc_x,), 1)
+        scoresYCoordinates = np.take(scores, (pc_y,), 1)
 
         # Catch max and min values in PC1 and PC2 scores
         # for defining axis-limits in the common scores plot.
-        x_max = ceil(max(scoresXCoordinates))
-        x_min = floor(min(scoresXCoordinates))
+        x_max = np.ceil(max(scoresXCoordinates))
+        x_min = np.floor(min(scoresXCoordinates))
 
-        y_max = ceil(max(scoresYCoordinates))
-        y_min = floor(min(scoresYCoordinates))
+        y_max = np.ceil(max(scoresYCoordinates))
+        y_min = np.floor(min(scoresYCoordinates))
 
         # Defining the titles, axes names, etc
         myTitle = 'STATIS: PCA scores'
@@ -2265,11 +2273,11 @@ def STATIS_PCA_Plotter(
 
         # Catch max and min values in PC1 and PC2 scores
         # for defining axis-limits in the common scores plot.
-        x_max = ceil(max(loadingsXCoordinates))
-        x_min = floor(min(loadingsXCoordinates))
+        x_max = np.ceil(max(loadingsXCoordinates))
+        x_min = np.floor(min(loadingsXCoordinates))
 
-        y_max = ceil(max(loadingsYCoordinates))
-        y_min = floor(min(loadingsYCoordinates))
+        y_max = np.ceil(max(loadingsYCoordinates))
+        y_min = np.floor(min(loadingsYCoordinates))
 
         # Defining the titles, axes names, etc
         myTitle = 'STATIS: PCA loadings'
@@ -2330,24 +2338,24 @@ def STATIS_PCA_Plotter(
         ax.grid(plot_data.view_grid)
 
         # Create circles and plot them
-        t = arange(0.0, 2 * pi, 0.01)
+        t = np.arange(0.0, 2 * np.pi, 0.01)
 
         # Compuing the outer circle
-        xcords = cos(t)
-        ycords = sin(t)
+        xcords = np.cos(t)
+        ycords = np.sin(t)
 
         # Plotting outer circle
         ax.plot(xcords, ycords, 'b-')
 
         # Computing inner circle
-        xcords50percent = 0.707 * cos(t)
-        ycords50percent = 0.707 * sin(t)
+        xcords50percent = 0.707 * np.cos(t)
+        ycords50percent = 0.707 * np.sin(t)
 
         # Plotting inner circle
         ax.plot(xcords50percent, ycords50percent, 'b-')
 
         # Plotting the correlation loadings
-        # Using 'scatter' instead of 'plot', since this allows sizable points
+        # Using 'scatter' instead of 'plot', np.since this allows sizable points
         # in plot
         xCorrLoadings = corrLoadings[pc_x]
         yCorrLoadings = corrLoadings[pc_y]
@@ -2446,7 +2454,7 @@ def STATIS_PCA_Plotter(
 
         ax.plot(cumulativeExplVar, 'b-')
 
-        _range = arange(maxPCs + 1)
+        _range = np.arange(maxPCs + 1)
         ax.set_xticks(_range)
 
         # Construct resultList

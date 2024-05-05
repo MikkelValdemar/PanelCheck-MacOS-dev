@@ -42,7 +42,7 @@ def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=Non
     results = {}
     resultList = []
     specSparseMatrix = {}
-    tempMatrix = zeros((1, len(s_data.AttributeList)), float)
+    tempMatrix = np.zeros((1, len(s_data.AttributeList)), float)
 
     # Loop through all active samples for the specific assessor
     for sample in activeSamplesList:
@@ -60,11 +60,11 @@ def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=Non
             # Transforming 'newObject' to matrix (NOT array) to avoid problems
             # with dimensions and vstack.
             newObject = mat(newObject)
-            tempMatrix = vstack((tempMatrix, newObject))
-            specSparseMatrix[(itemID[0], sample, replicate)] = array(newObject)
+            tempMatrix = np.vstack((tempMatrix, newObject))
+            specSparseMatrix[(itemID[0], sample, replicate)] = np.array(newObject)
 
     # Transforming matrix back to array and removing first row with zeros
-    tempMatrix = array(tempMatrix)
+    tempMatrix = np.array(tempMatrix)
     tempMatrix = tempMatrix[1:, :]
 
     # Create list that holds the index of each active attribute in
@@ -75,10 +75,10 @@ def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=Non
             columns.append(s_data.AttributeList.index(att))
 
     # New matrix with active attributes
-    specMatrix = take(tempMatrix, columns, 1)
+    specMatrix = np.take(tempMatrix, columns, 1)
 
     # Compute averages and STD's
-    averages = average(specMatrix, 0)
+    averages = np.average(specMatrix, 0)
     # print averages
     standDevs = STD(specMatrix, 0)
     # print "std"
@@ -133,7 +133,7 @@ def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=Non
     fig = plot_data.fig
 
     # plotting:
-    x_values = arange(1, len(averages) + 1)
+    x_values = np.arange(1, len(averages) + 1)
     width = 0.35
     ax.bar(x_values - (width / 2), averages,
            width, color='#FF0000', yerr=standDevs)
@@ -212,7 +212,7 @@ def RawDataAttributePlotter(
     # Dictionaries and matrix where numbers will be stored in
     results = {}
     specSparseMatrix = {}
-    tempMatrix = zeros((1, len(s_data.AssessorList)), float)
+    tempMatrix = np.zeros((1, len(s_data.AssessorList)), float)
 
     attIndex = s_data.AttributeList.index(itemID[0])
     # print attIndex
@@ -233,10 +233,10 @@ def RawDataAttributePlotter(
         attributeVectors.append(assessorVector)
 
     # Turn list holding lists into an array
-    attributeArray = array(attributeVectors)
+    attributeArray = np.array(attributeVectors)
 
     # Compute averages and STD's
-    averages = average(attributeArray, 1)
+    averages = np.average(attributeArray, 1)
     standDevs = STD(attributeArray, 1)
 
     # Store results in results dictionary
@@ -295,7 +295,7 @@ def RawDataAttributePlotter(
     for ass in activeAssessorsList:
         colors.append(_colors[(ass, "rep")][0])
 
-    x_values = arange(1, len(averages) + 1)
+    x_values = np.arange(1, len(averages) + 1)
     width = 0.35
     ax.bar(x_values - (width / 2), averages,
            width, color="#00DD00", yerr=standDevs)

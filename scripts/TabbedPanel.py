@@ -372,7 +372,7 @@ class TabPanel(wx.Panel):
         j = obj.GetSelection()  # index of current element in list
 
         if j >= 0:
-            if i > 0:  # if i == 0 -> Single-select
+            if i > 0:  # if i == 0 -> np.single-select
                 while j < amount:
                     if obj.IsChecked(j):
                         obj.Check(j, False)

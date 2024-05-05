@@ -40,14 +40,14 @@ from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEve
 # from matplotlib.transforms import Bbox, Point, Value, get_bbox_transform, bbox_all,\
 #     unit_bbox, inverse_transform_bbox, lbwh_to_bbox
 
-from scripts.Summary import SummaryFrame
-from Grid import GridFrame, GridFramePerfInd
-
 from numpy import array
+from Grid import GridFrame, GridFramePerfInd
+from scripts.Summary import SummaryFrame
 
 # Plots
 from scripts.plots.Line_Plot import SampleLinePlotter, AssessorLinePlotter, ReplicateLinePlotter
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
+from scripts.plots.Consensus_Plot import PCA_plotter
 
 """
 
@@ -922,7 +922,7 @@ class PlotFrame(wx.Frame):
         line2d = self.plot_data.lsd_lines[selected - 1][0]
         ydata = line2d.get_ydata()
         new_y = y - self.lsd_ydiff
-        new_ydata = array([new_y + self.lsd_ylength, new_y], float)
+        new_ydata = np.array([new_y + self.lsd_ylength, new_y], float)
         line2d.set_ydata(new_ydata)
 
         set_points_in_range(
@@ -2205,73 +2205,73 @@ class NavigationToolbar2Wx(NavigationToolbar2, wx.ToolBar):
             del odc
 
 
-class SimpleFigLegend(Figure):
-    """
-    !!!Unfinished!!!
-    A custom legend-box for PanelCheck (rather then using figlegend in matplotlib).
-    Comment: Width will be stable and canvas hopefully nicer and more suitable. Width is a issue with the current legend solution.
-    """
-
-    def __init__(self, parent, symbolColorsAndLabelsList):
-        Figure.__init__(self)
-        self.set_figure(parent.figure)
-        self.parent = parent
-        self.symbolColors = symbolColorsAndLabelsList[0]
-        self.texts = symbolColorsAndLabelsList[1]
-        self.fontsize = FontProperties(size='smaller').get_size_in_points()
-
-        self.set_transform(get_bbox_transform(unit_bbox(), self.parent.bbox))
-
-        # legend position
-        self.xPos = 0.8
-        self.yPos = 0.95
-
-        self.symbolWidth = 0.1
-
-        self.HEIGHT = self._approx_text_height()
-        self.legendPatch = Rectangle(
-            xy=(self.xPos, self.yPos),
-            width=0.5, height=self.HEIGHT * len(self.texts),
-            facecolor='w', edgecolor='k',)
-        self._set_artist_props(self.legendPatch)
-
-        # self.legendPatch.set_bounds(l,b,w,h)
-
-    def _set_artist_props(self, a):
-        a.set_figure(self.figure)
-        a.set_transform(self._transform)
-
-    def _approx_text_height(self):
-        return self.fontsize / 72.0 * self.figure.dpi.get() / self.parent.bbox.height()
-
-    def draw(self):
-        renderer.open_group('legend')
-
-        # positioning
-        # self.legendPatch.set_x(self.xPos)
-        # self.legendPatch.set_y(self.yPos)
-        i = 0
-        for t in self.texts:
-            t.set_position((self.xPos + self.symbolWidth + 0.02,
-                            self.yPos - (0.01 + i * self.HEIGHT)))
-            c = Circle.__init__((self.xPos + 0.01,
-                                 self.yPos - (0.01 + i * self.HEIGHT)),
-                                radius=5,
-                                resolution=20)
-            c.set_facecolor(self.symbolColors[i])
-            c.set_figure(self.legendPatch.figure)
-            c.set_transform(self._transform)
-            i += 1
-
-        # render
-        self.legendPatch.draw(renderer)
-
-        # for h in self.symbols:
-        #    h.draw(renderer)
-
-        for t in self.texts:
-            t.draw(renderer)
-        renderer.close_group('legend')
+# class SimpleFigLegend(Figure):
+#     """
+#     !!!Unfinished!!!
+#     A custom legend-box for PanelCheck (rather then using figlegend in matplotlib).
+#     Comment: Width will be stable and canvas hopefully nicer and more suitable. Width is a issue with the current legend solution.
+#     """
+#
+#     def __init__(self, parent, symbolColorsAndLabelsList):
+#         Figure.__init__(self)
+#         self.set_figure(parent.figure)
+#         self.parent = parent
+#         self.symbolColors = symbolColorsAndLabelsList[0]
+#         self.texts = symbolColorsAndLabelsList[1]
+#         self.fontsize = FontProperties(size='smaller').get_size_in_points()
+#
+#         self.set_transform(get_bbox_transform(unit_bbox(), self.parent.bbox))
+#
+#         # legend position
+#         self.xPos = 0.8
+#         self.yPos = 0.95
+#
+#         self.symbolWidth = 0.1
+#
+#         self.HEIGHT = self._approx_text_height()
+#         self.legendPatch = Rectangle(
+#             xy=(self.xPos, self.yPos),
+#             width=0.5, height=self.HEIGHT * len(self.texts),
+#             facecolor='w', edgecolor='k',)
+#         self._set_artist_props(self.legendPatch)
+#
+#         # self.legendPatch.set_bounds(l,b,w,h)
+#
+#     def _set_artist_props(self, a):
+#         a.set_figure(self.figure)
+#         a.set_transform(self._transform)
+#
+#     def _approx_text_height(self):
+#         return self.fontsize / 72.0 * self.figure.dpi.get() / self.parent.bbox.height()
+#
+#     def draw(self):
+#         renderer.open_group('legend')
+#
+#         # positioning
+#         # self.legendPatch.set_x(self.xPos)
+#         # self.legendPatch.set_y(self.yPos)
+#         i = 0
+#         for t in self.texts:
+#             t.set_position((self.xPos + self.symbolWidth + 0.02,
+#                             self.yPos - (0.01 + i * self.HEIGHT)))
+#             c = Circle.__init__((self.xPos + 0.01,
+#                                  self.yPos - (0.01 + i * self.HEIGHT)),
+#                                 radius=5,
+#                                 resolution=20)
+#             c.set_facecolor(self.symbolColors[i])
+#             c.set_figure(self.legendPatch.figure)
+#             c.set_transform(self._transform)
+#             i += 1
+#
+#         # render
+#         self.legendPatch.draw(renderer)
+#
+#         # for h in self.symbols:
+#         #    h.draw(renderer)
+#
+#         for t in self.texts:
+#             t.draw(renderer)
+#         renderer.close_group('legend')
 
 
 def set_xlabeling(ax, x_string_list):

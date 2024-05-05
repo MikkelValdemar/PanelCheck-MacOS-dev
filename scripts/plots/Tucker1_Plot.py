@@ -6,7 +6,7 @@ from copy import deepcopy
 from matplotlib.figure import Figure
 from scripts.Math_Tools import PCA
 from scripts.plots.pca_module import CorrelationLoadings
-from scripts.Plot_Tools import equal_lists, raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, OverviewPlotter, significance_legend
+from scripts.Plot_Tools import num2str, equal_lists, raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, OverviewPlotter, significance_legend
 
 
 def getTucker1Matrix(s_data, plot_data, selection):
@@ -87,7 +87,7 @@ def getTucker1Matrix(s_data, plot_data, selection):
 
         inputMatrix = Tucker1Matrix.copy()
         variableMean = np.average(inputMatrix, 0)
-        standardDev = np.STD(inputMatrix, 0)
+        standardDev = STD(inputMatrix, 0)
 
         # Go through all values in each column
         # and search for STD = 0
@@ -269,7 +269,7 @@ def Tucker1Plotter(
 
     # Create a list with active (checked in CheckListBox) assessors/attributes
     # that is chronologically sorted as in original file. Just doing
-    # .keys() and .sort() is not enough, since only alphabetical order
+    # .keys() and .sort() is not enough, np.since only alphabetical order
     # is given.
 
     # Constructs a list that contains all active assessors AND attributes AND
@@ -479,14 +479,14 @@ def Tucker1Plotter(
                 for sample in activeSamplesList:
                     sampleRow = [sample]
                     for x in Tucker1Matrix[activeSamplesList.index(sample)]:
-                        sampleRow.append(np.num2str(x, fmt="%.2f"))
+                        sampleRow.append(num2str(x, fmt="%.2f"))
                     resultList1.append(sampleRow)
 
                 resultList1.append(emptyLine)
                 resultList1.append(emptyLine)
                 resultList1.append(emptyLine)
 
-            # selection has to be increased by one, since in the GUI
+            # selection has to be increased by one, np.since in the GUI
             # selections are RawData = 0 and Standardized = 1
             # In the PCA module PCA on mean-centered data = 1 and
             # PCA on standardized data = 2
@@ -495,7 +495,7 @@ def Tucker1Plotter(
             #PCAanalysis = PCA(Tucker1Matrix, selection + 1)
             #scores = PCAanalysis.GetScores()
             #corrLoadings = PCAanalysis.GetCorrelationLoadings()
-            #transCorrLoadings = transpose(corrLoadings)
+            #transCorrLoadings = np.transpose(corrLoadings)
             #explVar = PCAanalysis.GetExplainedVariances()
             # print corrLoadings[0:3]
 
@@ -534,7 +534,7 @@ def Tucker1Plotter(
                 for sample in activeSamplesList:
                     sampleRow = [sample]
                     for x in Tucker1Matrix[activeSamplesList.index(sample)]:
-                        sampleRow.append(np.num2str(x, fmt="%.2f"))
+                        sampleRow.append(num2str(x, fmt="%.2f"))
                     resultList1.append(sampleRow)
 
                 resultList1.append(emptyLine)
@@ -734,7 +734,7 @@ def Tucker1Plotter(
             ax.plot(xcords50percent, ycords50percent, 'b-')
 
             # Plotting the correlation loadings
-            # Unsing 'scatter' instead of 'plot', since this allows sizable points
+            # Unsing 'scatter' instead of 'plot', np.since this allows sizable points
             # in plot
             xCorrLoadings = corrLoadings[pc_x]
             yCorrLoadings = corrLoadings[pc_y]
@@ -743,7 +743,7 @@ def Tucker1Plotter(
             # print "****************************"
             # print corrLoadings[0]
             # print "****************************"
-            # print shape(corrLoadings[0])
+            # print np.shape(corrLoadings[0])
             # ipshell()
             ax.scatter(
                 xCorrLoadings,
@@ -760,7 +760,7 @@ def Tucker1Plotter(
             if itemID[0] in activeAssessorsList:
                 # Find out where in the activeAssessorList the selected assessor is.
                 # Depending on the position the correlation loadings will be
-                # picked.
+                # np.picked.
                 specificPositionAssessor = activeAssessorsList.index(itemID[0])
 
                 lowerLimit = specificPositionAssessor * \
@@ -823,7 +823,7 @@ def Tucker1Plotter(
                 if selection[1] == 0:
                     # Find out where in the activeAttributeList the selected attribute is.
                     # Depending on the position the correlation loadings will
-                    # be picked.
+                    # be np.picked.
                     specificPositionAttribute = activeAttributesList.index(
                         itemID
                         [0])
@@ -883,7 +883,7 @@ def Tucker1Plotter(
 
                     # Find out where in the activeAttributeList the selected attribute is.
                     # Depending on the position the correlation loadings will
-                    # be picked.
+                    # be np.picked.
                     specificPositionAttribute = activeAttributesList.index(
                         itemID
                         [0])

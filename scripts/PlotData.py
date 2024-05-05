@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 from copy import deepcopy, copy
-
 
 class PlotData:
     """
