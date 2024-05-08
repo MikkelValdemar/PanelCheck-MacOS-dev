@@ -15,8 +15,11 @@ from scripts.plots.Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPl
     SampleLineOverviewPlotter, SampleLinePlotter
 from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter, RawDataAssessorOverviewPlotter, RawDataAttributeOverviewPlotter
 from scripts.plots.Correlation_Plot import CorrelationOverviewPlotter, CorrelationPlotter
+from scripts.plots.Tucker1_Plot import Tucker1AssOverviewPlotter, Tucker1AttOverviewPlotter
+from scripts.plots.profile_Plot import profileOverviewPlotter, profilePlotter
 
 from scripts.Plot_Tools import CollectionCalcPlotData
+from scripts.PlotData import PCA_PlotData
 
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
 from scripts.plots.Consensus_Plot import PCA_plotter
@@ -2341,143 +2344,143 @@ class Main_Frame(wx.Frame):
                 else:
                     res = CorrelationPlotter(self.s_data, plot_data)
 
-#         # When Tucker-1 plot tab is active plot Tucker-1 plots
-#         # ----------------------------------------------------
-#         elif tab_panel == self.tuck1_panel:
-#             plot_title = "Tucker-1 Plot"
-#
-#             selection = []
-#             # Check which sorting or tree-ctrl the user chose:
-#             selection.append(self.tuck1_panel.get_radio_selection())
-#             selection.append(self.tuck1_radioBoxModel.GetSelection())
-#             print(selection)
-#
-#             if self.tucker1_plot_data is None:
-#                 # print "anova plot data is None"
-#                 self.tucker1_plot_data = PCA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#             elif self.tucker1_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#                 # print "actives changed"
-#                 self.tucker1_plot_data = PCA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#             elif self.tucker1_plot_data.selection != selection:
-#                 self.tucker1_plot_data = PCA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#             else:
-#                 new_plot_data = PCA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#                 # use same calc data:
-#                 new_plot_data.copy_data(self.tucker1_plot_data)
-#                 self.tucker1_plot_data = new_plot_data
-#
-#             self.tucker1_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if self.tuck1_cb.GetValue():
-#                 self.tucker1_plot_data.aspect = 'equal'
-#             else:
-#                 self.tucker1_plot_data.aspect = 'auto'
-#
-#             if pydata[0] == "Overview Plot (assessors)":
-#                 res = Tucker1AssOverviewPlotter(
-#                     self.s_data,
-#                     self.tucker1_plot_data,
-#                     selection,
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] == "Overview Plot (attributes)":
-#                 res = Tucker1AttOverviewPlotter(
-#                     self.s_data,
-#                     self.tucker1_plot_data,
-#                     selection,
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             else:
-#                 res = Tucker1Plotter(
-#                     self.s_data,
-#                     self.tucker1_plot_data,
-#                     selection=selection,
-#                     abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.profile_panel:
-#             plot_title = "Profile Plot"
-#
-#             selection = []
-#             # Check which sorting or tree-ctrl the user chose:
-#             selection.append(self.profile_panel.get_radio_selection())
-#             selection.append(self.profile_radioBoxModel.GetSelection())
-#
-#             temp_plot_data = self.profile_plot_data
-#
-#             if temp_plot_data is None:
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             elif temp_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             else:
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#                 # use old calc data:
-#                 new_plot_data.copy_data(temp_plot_data)
-#
-#             self.profile_plot_data = new_plot_data
-#             self.profile_plot_data.special_opts["selection"] = selection
-#
-#             self.profile_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if pydata[0] == "Overview Plot":
-#                 res = profileOverviewPlotter(
-#                     self.s_data,
-#                     self.profile_plot_data,
-#                     selection=selection,
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             else:
-#                 res = profilePlotter(
-#                     self.s_data,
-#                     self.profile_plot_data,
-#                     selection=selection,
-#                     abspath=self.ProgPathAbs)
-#
+        # When Tucker-1 plot tab is active plot Tucker-1 plots
+        # ----------------------------------------------------
+        elif tab_panel == self.tuck1_panel:
+            plot_title = "Tucker-1 Plot"
+
+            selection = []
+            # Check which sorting or tree-ctrl the user chose:
+            selection.append(self.tuck1_panel.get_radio_selection())
+            selection.append(self.tuck1_radioBoxModel.GetSelection())
+            print(selection)
+
+            if self.tucker1_plot_data is None:
+                # print "anova plot data is None"
+                self.tucker1_plot_data = PCA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+            elif self.tucker1_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+                # print "actives changed"
+                self.tucker1_plot_data = PCA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+            elif self.tucker1_plot_data.selection != selection:
+                self.tucker1_plot_data = PCA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+            else:
+                new_plot_data = PCA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+                # use same calc data:
+                new_plot_data.copy_data(self.tucker1_plot_data)
+                self.tucker1_plot_data = new_plot_data
+
+            self.tucker1_plot_data.set_limits(self.s_data.scale_limits)
+
+            if self.tuck1_cb.GetValue():
+                self.tucker1_plot_data.aspect = 'equal'
+            else:
+                self.tucker1_plot_data.aspect = 'auto'
+
+            if pydata[0] == "Overview Plot (assessors)":
+                res = Tucker1AssOverviewPlotter(
+                    self.s_data,
+                    self.tucker1_plot_data,
+                    selection,
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] == "Overview Plot (attributes)":
+                res = Tucker1AttOverviewPlotter(
+                    self.s_data,
+                    self.tucker1_plot_data,
+                    selection,
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            else:
+                res = Tucker1Plotter(
+                    self.s_data,
+                    self.tucker1_plot_data,
+                    selection=selection,
+                    abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.profile_panel:
+            plot_title = "Profile Plot"
+
+            selection = []
+            # Check which sorting or tree-ctrl the user chose:
+            selection.append(self.profile_panel.get_radio_selection())
+            selection.append(self.profile_radioBoxModel.GetSelection())
+
+            temp_plot_data = self.profile_plot_data
+
+            if temp_plot_data is None:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            elif temp_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+                # use old calc data:
+                new_plot_data.copy_data(temp_plot_data)
+
+            self.profile_plot_data = new_plot_data
+            self.profile_plot_data.special_opts["selection"] = selection
+
+            self.profile_plot_data.set_limits(self.s_data.scale_limits)
+
+            if pydata[0] == "Overview Plot":
+                res = profileOverviewPlotter(
+                    self.s_data,
+                    self.profile_plot_data,
+                    selection=selection,
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            else:
+                res = profilePlotter(
+                    self.s_data,
+                    self.profile_plot_data,
+                    selection=selection,
+                    abspath=self.ProgPathAbs)
+
 #         elif tab_panel == self.egg_panel:
 #             plot_title = "Eggshell Plot"
 #

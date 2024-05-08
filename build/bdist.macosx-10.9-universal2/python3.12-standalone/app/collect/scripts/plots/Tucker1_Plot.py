@@ -4,9 +4,9 @@ import numpy as np
 
 from copy import deepcopy
 from matplotlib.figure import Figure
-from scripts.Math_Tools import PCA
+from scripts.Math_Tools import PCA, STD
 from scripts.plots.pca_module import CorrelationLoadings
-from scripts.Plot_Tools import num2str, equal_lists, raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, OverviewPlotter, significance_legend
+from scripts.Plot_Tools import str_row, num2str, equal_lists, raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, OverviewPlotter, significance_legend
 
 
 def getTucker1Matrix(s_data, plot_data, selection):
@@ -997,7 +997,7 @@ def Tucker1Plotter(
             for PC in range(1, maxPCs + 1):
                 PCrow = ['PC ' + str(PC)]
                 # print PC, PCrow
-                PCrow.extend(np.str_row(corrLoadings[PC - 1], fmt="%.3f"))
+                PCrow.extend(str_row(corrLoadings[PC - 1], fmt="%.3f"))
                 resultList.append(PCrow)
 
             resultList.append(emptyLine)

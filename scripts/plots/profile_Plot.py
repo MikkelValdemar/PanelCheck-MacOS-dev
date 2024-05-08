@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 
-from Plot_Tools import *
-import os
-import sys
-import pdb
-import numpy
+import wx
+import numpy as np
+
+from copy import deepcopy
+from matplotlib.figure import Figure
+from scripts.Math_Tools import PCA, STD
+from scripts.plots.pca_module import CorrelationLoadings
+from scripts.Plot_Tools import assign_colors, str_row, num2str, set_xlabeling, set_xlabeling_rotation, OverviewPlotter, equal_lists, raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, OverviewPlotter, significance_legend
+
 """
 #def profilePlotCalc(f_assessorAveragesList, f_selectedAtt, f_activeSamplesList):
 
