@@ -14,6 +14,7 @@ from scripts.TabbedPanel import TabPanel, RadioTabPanel
 from scripts.plots.Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPlotter, AssessorLinePlotter, \
     SampleLineOverviewPlotter, SampleLinePlotter
 from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter, RawDataAssessorOverviewPlotter, RawDataAttributeOverviewPlotter
+from scripts.plots.Correlation_Plot import CorrelationOverviewPlotter, CorrelationPlotter
 
 from scripts.Plot_Tools import CollectionCalcPlotData
 
@@ -2316,30 +2317,30 @@ class Main_Frame(wx.Frame):
                 res = RawDataAttributeOverviewPlotter(
                     self.s_data, self.mean_plot_data, abspath=self.ProgPathAbs)
 
-#         # When correlation plot tab is active plot correlation plots
-#         # ----------------------------------------------------------
-#         elif tab_panel == self.corr_panel:
-#             plot_title = "Correlation Plot"
-#
-#             if len(pydata) == 2:
-#
-#                 # print pydata
-#                 plot_data = PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)  # no legend
-#                 plot_data.set_limits(self.s_data.scale_limits)
-#
-#                 if pydata[1] == "Overview Plot":
-#                     res = CorrelationOverviewPlotter(
-#                         self.s_data, plot_data, abspath=self.ProgPathAbs)
-#                     overview_plot = True
-#                 else:
-#                     res = CorrelationPlotter(self.s_data, plot_data)
-#
+        # When correlation plot tab is active plot correlation plots
+        # ----------------------------------------------------------
+        elif tab_panel == self.corr_panel:
+            plot_title = "Correlation Plot"
+
+            if len(pydata) == 2:
+
+                # print pydata
+                plot_data = PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)  # no legend
+                plot_data.set_limits(self.s_data.scale_limits)
+
+                if pydata[1] == "Overview Plot":
+                    res = CorrelationOverviewPlotter(
+                        self.s_data, plot_data, abspath=self.ProgPathAbs)
+                    overview_plot = True
+                else:
+                    res = CorrelationPlotter(self.s_data, plot_data)
+
 #         # When Tucker-1 plot tab is active plot Tucker-1 plots
 #         # ----------------------------------------------------
 #         elif tab_panel == self.tuck1_panel:
