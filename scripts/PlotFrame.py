@@ -5,8 +5,8 @@ import wx
 import time
 import wx.lib.buttons as buttons
 
-from scripts.PlotPanel import *
-from Tools import *
+#from scripts.PlotPanel import *
+#from Tools import *
 from scripts.PlotData import PlotData, CollectionCalcPlotData
 
 #import wx.lib.dialogs
@@ -14,7 +14,6 @@ import os
 import sys
 import matplotlib
 # matplotlib.use('WXAgg')
-from scripts.plots.MM_ANOVA_Plot import set_points_in_range
 
 #from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
 from matplotlib.ticker import FixedLocator
@@ -40,14 +39,27 @@ from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEve
 # from matplotlib.transforms import Bbox, Point, Value, get_bbox_transform, bbox_all,\
 #     unit_bbox, inverse_transform_bbox, lbwh_to_bbox
 
-from numpy import array
+import numpy as np
 from Grid import GridFrame, GridFramePerfInd
 from scripts.Summary import SummaryFrame
+from scripts.PlotPanel import PlotPanel
 
 # Plots
 from scripts.plots.Line_Plot import SampleLinePlotter, AssessorLinePlotter, ReplicateLinePlotter
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
-from scripts.plots.Consensus_Plot import PCA_plotter
+from scripts.plots.Consensus_Plot import PCA_plotter, STATIS_PCA_Plotter, STATIS_AssWeight_Plotter
+# from scripts.plots.MM_ANOVA_Plot import set_points_in_range, MM_ANOVA_PlotData
+from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter
+from scripts.plots.Correlation_Plot import CorrelationPlotter
+from scripts.plots.profile_Plot import profilePlotter
+from scripts.plots.Eggshell_Plot import EggshellPlotter
+from scripts.plots.F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
+from scripts.plots.MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific
+from scripts.plots.pmse_Plot import pmsePlotter
+from scripts.plots.Manhattan_Plot import ManhattanPlotter
+
+from scripts.PlotData import PCA_PlotData, ANOVA_PlotData
+
 
 """
 
@@ -907,16 +919,16 @@ class PlotFrame(wx.Frame):
         self.overview_plot = False
         self.plot_panel.SetCursor(self.cursor_arrow)
 
-    def set_points_in_ranges(self):
-        ind = 1
-        for line2d in self.plot_data.lsd_lines:
-            ydata = line2d[0].get_ydata()
-            set_points_in_range(
-                self.plot_panel.subplot,
-                ydata,
-                ind,
-                self.plot_data.lsd_points)
-            ind += 1
+    # def set_points_in_ranges(self):
+    #     ind = 1
+    #     for line2d in self.plot_data.lsd_lines:
+    #         ydata = line2d[0].get_ydata()
+    #         set_points_in_range(
+    #             self.plot_panel.subplot,
+    #             ydata,
+    #             ind,
+    #             self.plot_data.lsd_points)
+    #         ind += 1
 
     def updateLSD(self, x, y, selected):  # selected [1, ..., n]
         line2d = self.plot_data.lsd_lines[selected - 1][0]
@@ -1847,17 +1859,19 @@ class PlotFrame(wx.Frame):
 
         plotter = self.get_plot_method(plot_type)
         if plot_type == "mm_anova_f_2way1rep" or plot_type == "mm_anova_lsd_2way1rep" or plot_type == "mm_anova_f_2way" or plot_type == "mm_anova_lsd_2way" or plot_type == "mm_anova_f_3way" or plot_type == "mm_anova_lsd_3way":
-            plot_data = MM_ANOVA_PlotData(
-                self.active_ass,
-                self.active_att,
-                self.active_samp,
-                tree_path,
-                self.plot_data.view_grid,
-                self.plot_data.view_legend)  # overview_plot = False
-            plot_data.sensmixed_data = self.plot_data.sensmixed_data
-            plot_data.accepted_active_attributes = self.plot_data.accepted_active_attributes
-            if self.plot_type == "mm_anova_f_3way" or self.plot_type == "mm_anova_f_2way":
-                plot_data.p_matr = deepcopy(self.plot_data.p_matr)
+            return
+            # TODO MVK
+            # plot_data = MM_ANOVA_PlotData(
+            #     self.active_ass,
+            #     self.active_att,
+            #     self.active_samp,
+            #     tree_path,
+            #     self.plot_data.view_grid,
+            #     self.plot_data.view_legend)  # overview_plot = False
+            # plot_data.sensmixed_data = self.plot_data.sensmixed_data
+            # plot_data.accepted_active_attributes = self.plot_data.accepted_active_attributes
+            # if self.plot_type == "mm_anova_f_3way" or self.plot_type == "mm_anova_f_2way":
+            #     plot_data.p_matr = deepcopy(self.plot_data.p_matr)
 
         elif plot_type == "tucker1" or plot_type == "consensus":
             plot_data = PCA_PlotData(

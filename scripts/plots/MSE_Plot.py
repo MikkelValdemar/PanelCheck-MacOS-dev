@@ -5,7 +5,7 @@ from matplotlib.lines import Line2D
 from matplotlib.figure import Figure
 from matplotlib.collections import LineCollection
 from scripts.Math_Tools import ANOVA
-from scripts.Plot_Tools import raw_data_grid, numerical_data_grid, axes_create, colors_hex_list, axes_setup, set_xlabeling, set_xlabeling_rotation
+from scripts.Plot_Tools import assign_colors, raw_data_grid, numerical_data_grid, axes_create, colors_hex_list, axes_setup, set_xlabeling, set_xlabeling_rotation
 
 def MSE_error_check(s_data, plot_data):
 

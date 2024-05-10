@@ -2,7 +2,7 @@
 
 import os
 import sys  # for Rpy i/o sources (for correct paths for the scripts)
-from scripts.Plot_Tools import *
+#from scripts.Plot_Tools import *
 import pandas as pd
 #import rpy2.rpy_classic as rpy
 #from rpy2.rpy_classic import *
@@ -10,8 +10,14 @@ import pandas as pd
 #from rpy2.robjects import r, pandas2ri
 #import rpy2.robjects as ro
 # pandas2ri.activate()
-from numpy import transpose, array, asarray
-
+import wx
+import numpy as np
+from scripts.plots.Progress_Info import Progress
+from scripts.Plot_Tools import check_columns, show_info_msg
+from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+from matplotlib.collections import LineCollection
+from scripts.Plot_Tools import OverviewPlotter, str_row, set_xlabeling, axes_create, axes_setup, set_xlabeling_rotation, raw_data_grid
 
 def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
 
@@ -84,7 +90,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
                 #plot_data.accepted_active_attributes = plot_data.activeAttributesList
         #print(matrix_num_lables)
 
-        raw = hstack((matrix_num_lables, matrix_selected_scores))
+        raw = np.hstack((matrix_num_lables, matrix_selected_scores))
 
         progress = Progress(None, abspath)
         progress.set_gauge(value=0, text="Using R...\n")
