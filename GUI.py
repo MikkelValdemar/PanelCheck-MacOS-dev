@@ -17,9 +17,16 @@ from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributeP
 from scripts.plots.Correlation_Plot import CorrelationOverviewPlotter, CorrelationPlotter
 from scripts.plots.Tucker1_Plot import Tucker1AssOverviewPlotter, Tucker1AttOverviewPlotter
 from scripts.plots.profile_Plot import profileOverviewPlotter, profilePlotter
+from scripts.plots.Consensus_Plot import STATIS_Averaged_Data_Grid, Averaged_Data_Grid, STATIS_PCA_Plotter, STATIS_AssWeight_Plotter
+from scripts.plots.MM_ANOVA_Plot import MixModel_ANOVA_LSD_OverviewPlotter, MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_OverviewPlotter, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
+from scripts.plots.Eggshell_Plot import EggshellOverviewPlotter, EggshellPlotter
+from scripts.plots.F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
+from scripts.plots.pmse_Plot import pmse_OverviewPlotter, pmsePlotter
+from scripts.plots.MSE_Plot import MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific, MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific
+from scripts.plots.Manhattan_Plot import ManhattanPlotter, ManhattanAttOverviewPlotter, ManhattanAssOverviewPlotter
 
 from scripts.Plot_Tools import CollectionCalcPlotData
-from scripts.PlotData import PCA_PlotData
+from scripts.PlotData import PCA_PlotData, MM_ANOVA_PlotData, ANOVA_PlotData
 
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
 from scripts.plots.Consensus_Plot import PCA_plotter
@@ -2481,672 +2488,672 @@ class Main_Frame(wx.Frame):
                     selection=selection,
                     abspath=self.ProgPathAbs)
 
-#         elif tab_panel == self.egg_panel:
-#             plot_title = "Eggshell Plot"
-#
-#             temp_plot_data = self.egg_plot_data
-#
-#             if temp_plot_data is None:
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             elif temp_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             else:
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#                 # use old calc data:
-#                 new_plot_data.copy_data(temp_plot_data)
-#
-#             self.egg_plot_data = new_plot_data
-#             self.egg_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if pydata[0] == "Overview Plot":
-#                 res = EggshellOverviewPlotter(
-#                     self.s_data, self.egg_plot_data, abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             else:
-#                 res = EggshellPlotter(self.s_data, self.egg_plot_data, abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.pmse_panel:
-#             plot_title = "p-MSE Plot"
-#
-#             #plot_data = PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#
-#             if self.pmse_plot_data is None:
-#                 # print "anova plot data is None"
-#                 self.pmse_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             if self.pmse_plot_data.actives_changed(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List):
-#                 # print "actives changed"
-#                 self.pmse_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             else:
-#                 new_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#                 # use same calc data:
-#                 new_plot_data.copy_data(self.pmse_plot_data)
-#                 self.pmse_plot_data = new_plot_data
-#
-#             self.pmse_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if pydata[0] == "Overview Plot (assessors)" or pydata[0] == "Overview Plot (attributes)":
-#                 res = pmse_OverviewPlotter(
-#                     self.s_data, self.pmse_plot_data, abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             else:
-#                 res = pmsePlotter(
-#                     self.s_data,
-#                     self.pmse_plot_data,
-#                     abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.f_panel:
-#             plot_title = "F/p Plot"
-#             # Check which sorting or tree-ctrl the user chose:
-#             selection = self.f_panel.get_radio_selection()
-#             print(selection)
-#
-#             if self.f_plot_data is None:
-#                 # print "anova plot data is None"
-#                 self.f_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             if self.f_plot_data.actives_changed(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List):
-#                 # print "actives changed"
-#                 self.f_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             else:
-#                 new_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#                 # use same calc data:
-#                 new_plot_data.copy_data(self.f_plot_data)
-#                 self.f_plot_data = new_plot_data
-#
-#             self.f_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if len(pydata) == 2:
-#                 # When user double-clicks on 'General Plot'
-#                 if pydata[1] == u'General Plot':
-#                     # Go here if 'sorted by assessor' is selected
-#                     if selection == 0:
-#                         res = FPlotter_Assessor_General(
-#                             self.s_data, self.f_plot_data)
-#                     elif selection == 1:
-#                         res = FPlotter_Attribute_General(
-#                             self.s_data, self.f_plot_data)
-#
-#                 else:
-#                     # Go here if 'sorted by assessor' is selected
-#                     if selection == 0:
-#                         res = FPlotter_Assessor_Specific(
-#                             self.s_data, self.f_plot_data)
-#                     elif selection == 1:
-#                         res = FPlotter_Attribute_Specific(
-#                             self.s_data, self.f_plot_data)
-#
-#         elif tab_panel == self.mse_panel:
-#             plot_title = "MSE Plot"
-#
-#             # Check which sorting or tree-ctrl the user chose:
-#             selection = self.mse_panel.get_radio_selection()
-#             print(selection)
-#
-#             if self.mse_plot_data is None:
-#                 # print "anova plot data is None"
-#                 self.mse_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             if self.mse_plot_data.actives_changed(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List):
-#                 # print "actives changed"
-#                 self.mse_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             else:
-#                 new_plot_data = ANOVA_PlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#
-#                 # use same calc data:
-#                 new_plot_data.copy_data(self.mse_plot_data)
-#                 self.mse_plot_data = new_plot_data
-#
-#             self.mse_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             # When user double-clicks on 'General Plot'
-#             if pydata[0] == u'General Plot':
-#                 # Go here if 'sorted by assessor' is selected
-#                 if selection == 0:
-#                     res = MSEPlotter_Assessor_General(
-#                         self.s_data, self.mse_plot_data)
-#                 # Go here if 'sorted by attribute' is selected
-#                 elif selection == 1:
-#                     res = MSEPlotter_Attribute_General(
-#                         self.s_data, self.mse_plot_data)
-#
-#             else:
-#                 # Go here if 'sorted by assessor' is selected
-#                 if selection == 0:
-#                     res = MSEPlotter_Assessor_Specific(
-#                         self.s_data, self.mse_plot_data)
-#                 # Go here if 'sorted by attribute' is selected
-#                 elif selection == 1:
-#                     res = MSEPlotter_Attribute_Specific(
-#                         self.s_data, self.mse_plot_data)
-#
-#         # When original tab in Averages is active do the following
-#         # --------------------------------------------------------
-#         elif tab_panel == self.org_panel:
-#             plot_title = "Consensus Plot"
-#
-#             selection = 0  # averOrg
-#
-#             plot_data = PlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#             plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if self.org_cb.GetValue():
-#                 plot_data.aspect = 'equal'
-#             else:
-#                 plot_data.aspect = 'auto'
-#
-#             # When user double-clicks on 'Data'
-#             if pydata[0] == u'Averaged Data':
-#                 plot = False  # no plot
-#                 grid = True  # show grid
-#                 frame_name, result_list = Averaged_Data_Grid(
-#                     self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA scores'
-#             # elif pydata[0] == u'PCA Scores':
-#             #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Loadings'
-#             # elif pydata[0] == u'PCA Loadings':
-#             #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Correlation Loadings'
-#             # elif pydata[0] == u'PCA Correlation Loadings':
-#             #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Explained Variance'
-#             # elif pydata[0] == u'PCA Explained Variance':
-#
-#             else:
-#                 res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#         # When standardised tab in Averages is active do the following
-#         # ------------------------------------------------------------
-#         elif tab_panel == self.std_panel:
-#             plot_title = "Consensus Plot"
-#
-#             selection = 1  # averStd
-#
-#             plot_data = PlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#             plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if self.std_cb.GetValue():
-#                 plot_data.aspect = 'equal'
-#             else:
-#                 plot_data.aspect = 'auto'
-#
-#             # When user double-clicks on 'Data'
-#             if pydata[0] == u'Averaged Data':
-#                 plot = False  # no plot
-#                 grid = True  # show grid
-#                 frame_name, result_list = Averaged_Data_Grid(
-#                     self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA scores'
-#             # elif pydata[0] == u'PCA Scores':
-#             #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Loadings'
-#             # elif pydata[0] == u'PCA Loadings':
-#             #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Correlation Loadings'
-#             # elif pydata[0] == u'PCA Correlation Loadings':
-#             #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Explained Variance'
-#             # elif pydata[0] == u'PCA Explained Variance':
-#             else:
-#                 res = PCA_plotter(self.s_data, plot_data, selection=selection)
-#
-#         # When standardised tab in Averages is active do the following
-#         # ------------------------------------------------------------
-#         elif tab_panel == self.statis_panel:
-#             plot_title = "STATIS Plot"
-#
-#             selection = self.statis_panel.get_radio_selection()
-#             print(selection)
-#
-#             plot_data = PlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#             plot_data.set_limits(self.s_data.scale_limits)
-#
-#             if self.statis_cb.GetValue():
-#                 plot_data.aspect = 'equal'
-#             else:
-#                 plot_data.aspect = 'auto'
-#
-#             # When user double-clicks on 'Data'
-#             if pydata[0] == u'Averaged Data':
-#                 plot = False  # no plot
-#                 grid = True  # show grid
-#                 frame_name, result_list = STATIS_Averaged_Data_Grid(
-#                     self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA scores'
-#             # elif pydata[0] == u'PCA Scores':
-#             #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Loadings'
-#             # elif pydata[0] == u'PCA Loadings':
-#             #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Correlation Loadings'
-#             # elif pydata[0] == u'PCA Correlation Loadings':
-#             #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'PCA Explained Variance'
-#             # elif pydata[0] == u'PCA Explained Variance':
-#             #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
-#
-#             # When user double-clicks on 'Weights'
-#             elif pydata[0] == u'Assessor Weights':
-#                 res = STATIS_AssWeight_Plotter(
-#                     self.s_data, plot_data, selection=selection)
-#             else:
-#                 res = STATIS_PCA_Plotter(
-#                     self.s_data, plot_data, selection=selection)
-#
-#         elif tab_panel == self.mm_anova_panel1:
-#             plot_title = "2-way ANOVA (1 rep) Plot"
-#
-#             # if self.mm_anova1_plot_data == None:
-#             # print "anova plot data is None"
-#             self.mm_anova1_plot_data = MM_ANOVA_PlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#             # if self.mm_anova1_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#             # print "actives changed"
-#             #    self.mm_anova1_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#             # else:
-#             #    new_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#
-#             # use same calc data:
-#             #    new_plot_data.copy_data(self.mm_anova1_plot_data)
-#             #    self.mm_anova1_plot_data = new_plot_data
-#
-#             self.mm_anova1_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             _types = ['F1', 'F2']
-#             lsd_types = ['LSD1', 'LSD2']
-#
-#             if pydata[0] == "Overview Plot 1":  # F & p
-#                 res = MixModel_ANOVA_OverviewPlotter(
-#                     self.s_data,
-#                     self.mm_anova1_plot_data,
-#                     plot_type="2way1rep",
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] == "Overview Plot 2":  # LSD
-#                 res = MixModel_ANOVA_LSD_OverviewPlotter(
-#                     self.s_data,
-#                     self.mm_anova1_plot_data,
-#                     plot_type="2way1rep",
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] in _types:
-#                 res = MixModel_ANOVA_Plotter_2way1rep(
-#                     self.s_data, self.mm_anova1_plot_data,
-#                     abspath=self.ProgPathAbs)
-#             elif pydata[0] in lsd_types:
-#                 res = MixModel_ANOVA_LSD_Plotter_2way1rep(
-#                     self.s_data, self.mm_anova1_plot_data, abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.mm_anova_panel2:
-#             plot_title = "2-way ANOVA Plot"
-#
-#             # if self.mm_anova2_plot_data == None:
-#             # print "anova plot data is None"
-#             self.mm_anova2_plot_data = MM_ANOVA_PlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#             # if self.mm_anova2_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#             # print "actives changed"
-#             #    self.mm_anova2_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#             # else:
-#             #    new_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#
-#             # use same calc data:
-#             #    new_plot_data.copy_data(self.mm_anova2_plot_data)
-#             #    self.mm_anova2_plot_data = new_plot_data
-#
-#             self.mm_anova2_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             _types = ['F1', 'F2', 'F3']
-#             lsd_types = ['LSD1', 'LSD2']
-#
-#             if pydata[0] == "Overview Plot 1":  # F & p
-#                 res = MixModel_ANOVA_OverviewPlotter(
-#                     self.s_data,
-#                     self.mm_anova2_plot_data,
-#                     plot_type="2way",
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] == "Overview Plot 2":  # LSD
-#                 res = MixModel_ANOVA_LSD_OverviewPlotter(
-#                     self.s_data,
-#                     self.mm_anova2_plot_data,
-#                     plot_type="2way",
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] in _types:
-#                 res = MixModel_ANOVA_Plotter_2way(
-#                     self.s_data, self.mm_anova2_plot_data,
-#                     abspath=self.ProgPathAbs)
-#             elif pydata[0] in lsd_types:
-#                 res = MixModel_ANOVA_LSD_Plotter_2way(
-#                     self.s_data, self.mm_anova2_plot_data,
-#                     abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.mm_anova_panel3:
-#             plot_title = "3-way ANOVA Plot"
-#
-#             # if self.mm_anova3_plot_data == None:
-#             # print "anova plot data is None"
-#             self.mm_anova3_plot_data = MM_ANOVA_PlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#             # if self.mm_anova3_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#             # print "actives changed"
-#             #    self.mm_anova3_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#             # else:
-#             #    new_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
-#
-#             # use same calc data:
-#             #   new_plot_data.copy_data(self.mm_anova3_plot_data)
-#             #   self.mm_anova3_plot_data = new_plot_data
-#
-#             self.mm_anova3_plot_data.set_limits(self.s_data.scale_limits)
-#
-#             _types = ['F1', 'F2', 'F2b', 'F3', 'F4', 'F5']
-#             lsd_types = ['LSD1', 'LSD2']
-#
-#             if pydata[0] == "Overview Plot 1":  # F & p
-#                 res = MixModel_ANOVA_OverviewPlotter(
-#                     self.s_data,
-#                     self.mm_anova3_plot_data,
-#                     plot_type="3way",
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] == "Overview Plot 2":  # LSD
-#                 res = MixModel_ANOVA_LSD_OverviewPlotter(
-#                     self.s_data,
-#                     self.mm_anova3_plot_data,
-#                     plot_type="3way",
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] in _types:
-#                 res = MixModel_ANOVA_Plotter_3way(
-#                     self.s_data, self.mm_anova3_plot_data,
-#                     abspath=self.ProgPathAbs)
-#             elif pydata[0] in lsd_types:
-#                 res = MixModel_ANOVA_LSD_Plotter_3way(
-#                     self.s_data, self.mm_anova3_plot_data,
-#                     abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.manh_panel:
-#             plot_title = "Manhattan Plot"
-#
-#             maxPCs = int(self.manh_spin_txt.GetValue())
-#             selection = self.manh_panel.get_radio_selection()
-#
-#             # view legend is not used in Manhattan plots
-#             if self.manh_plot_data is None:
-#                 self.manh_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             elif self.manh_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#                 self.manh_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             elif self.manh_plot_data.maxPCs != maxPCs:
-#                 self.manh_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             elif self.manh_plot_data.selection != selection:
-#                 self.manh_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#             else:
-#                 new_plot_data = CollectionCalcPlotData(
-#                     activeAssessors_List,
-#                     activeAttributes_List,
-#                     activeSamples_List,
-#                     pydata,
-#                     self.menuViewGrid,
-#                     self.menuViewLegend)
-#                 # use old calc data:
-#                 new_plot_data.copy_data(self.manh_plot_data)
-#                 self.manh_plot_data = new_plot_data
-#
-#             self.manh_plot_data.set_limits(self.s_data.scale_limits)
-#             self.manh_plot_data.maxPCs = maxPCs
-#
-#             if pydata[0] == "Overview Plot (assessors)":
-#                 res = ManhattanAssOverviewPlotter(
-#                     self.s_data,
-#                     self.manh_plot_data,
-#                     selection=selection,
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             elif pydata[0] == "Overview Plot (attributes)":
-#                 res = ManhattanAttOverviewPlotter(
-#                     self.s_data,
-#                     self.manh_plot_data,
-#                     selection=selection,
-#                     abspath=self.ProgPathAbs)
-#                 overview_plot = True
-#             else:
-#                 res = ManhattanPlotter(
-#                     self.s_data,
-#                     self.manh_plot_data,
-#                     selection=selection,
-#                     abspath=self.ProgPathAbs)
-#
-#         elif tab_panel == self.perf_ind_panel:
-#             plot_title = "Performance Indices Plot"
-#
-#             new_plot_data = CollectionCalcPlotData(
-#                 activeAssessors_List,
-#                 activeAttributes_List,
-#                 activeSamples_List,
-#                 pydata,
-#                 self.menuViewGrid,
-#                 self.menuViewLegend)
-#
-#             # performance indices settings
-#             new_plot_data.special_opts["agr"] = self.perf_ind_spin_agr.GetValue(
-#             )
-#             new_plot_data.special_opts["rep"] = self.perf_ind_spin_rep.GetValue(
-#             )
-#             new_plot_data.special_opts["dis"] = self.perf_ind_spin_dis.GetValue(
-#             )
-#             # self.perf_ind_rb_lvl.GetStringSelection()
-#             new_plot_data.special_opts["lvl"] = "same for all"
-#             new_plot_data.special_opts["comp"] = self.perf_ind_rb_comp.GetStringSelection(
-#             )
-#             new_plot_data.special_opts["target_lvl"] = self.perf_ind_cbl_include.IsChecked(
-#                 0)
-#             new_plot_data.special_opts["1_sign_lvl"] = self.perf_ind_cbl_include.IsChecked(
-#                 1)
-#             new_plot_data.special_opts["5_sign_lvl"] = self.perf_ind_cbl_include.IsChecked(
-#                 2)
-#             new_plot_data.special_opts["10_sign_lvl"] = self.perf_ind_cbl_include.IsChecked(
-#                 3)
-#             new_plot_data.special_opts["recalc"] = True
-#
-#             if self.perf_ind_data is None:
-#                 self.perf_ind_data = new_plot_data
-#             elif self.perf_ind_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
-#                 self.perf_ind_data = new_plot_data
-#             else:
-#                 recalc = False
-#                 if new_plot_data.special_opts["comp"] != self.perf_ind_data.special_opts["comp"]:
-#                     self.perf_ind_data.special_opts["recalc"] = True
-#                     recalc = True
-#
-#                 if recalc:
-#                     self.perf_ind_data = new_plot_data
-#                 else:
-#                     new_plot_data.copy_data(self.perf_ind_data)
-#                     self.perf_ind_data = new_plot_data
-#                     self.perf_ind_data.special_opts["recalc"] = False
-#
-#             print(self.perf_ind_data.special_opts)
-#
-#             if pydata[0] == "Overview Plot":
-#
-#                 res = perfind_OverviewPlotter(
-#                     self.s_data, self.perf_ind_data, selection=0)
-#                 overview_plot = True
-#             else:
-#                 res = perfindPlotter(
-#                     self.s_data, self.perf_ind_data, selection=0)
-#                 if(res is None):
-#                     return
-#
-#                 result_list = self.perf_ind_data.numeric_data
-#                 grid_config = self.perf_ind_data.numeric_data_config
-#                 frame_name = "Performance Indices - " + str(pydata[0])
-#                 plot = self.perf_ind_data.special_opts["plot_frame"]
-#
-#                 if pydata[0] == u"Indices table":
-#                     self.figureList.append(
-#                         GridFramePerfInd(
-#                             self,
-#                             frame_name,
-#                             result_list,
-#                             self.s_data,
-#                             res,
-#                             config=grid_config))
-#                     if self.figureList[len(self.figureList) - 1] is not None:
-#                         self.figureList[len(self.figureList) - 1].Show()
-#                         return
+        elif tab_panel == self.egg_panel:
+            plot_title = "Eggshell Plot"
+
+            temp_plot_data = self.egg_plot_data
+
+            if temp_plot_data is None:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            elif temp_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+                # use old calc data:
+                new_plot_data.copy_data(temp_plot_data)
+
+            self.egg_plot_data = new_plot_data
+            self.egg_plot_data.set_limits(self.s_data.scale_limits)
+
+            if pydata[0] == "Overview Plot":
+                res = EggshellOverviewPlotter(
+                    self.s_data, self.egg_plot_data, abspath=self.ProgPathAbs)
+                overview_plot = True
+            else:
+                res = EggshellPlotter(self.s_data, self.egg_plot_data, abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.pmse_panel:
+            plot_title = "p-MSE Plot"
+
+            #plot_data = PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+
+            if self.pmse_plot_data is None:
+                # print "anova plot data is None"
+                self.pmse_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            if self.pmse_plot_data.actives_changed(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List):
+                # print "actives changed"
+                self.pmse_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+                # use same calc data:
+                new_plot_data.copy_data(self.pmse_plot_data)
+                self.pmse_plot_data = new_plot_data
+
+            self.pmse_plot_data.set_limits(self.s_data.scale_limits)
+
+            if pydata[0] == "Overview Plot (assessors)" or pydata[0] == "Overview Plot (attributes)":
+                res = pmse_OverviewPlotter(
+                    self.s_data, self.pmse_plot_data, abspath=self.ProgPathAbs)
+                overview_plot = True
+            else:
+                res = pmsePlotter(
+                    self.s_data,
+                    self.pmse_plot_data,
+                    abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.f_panel:
+            plot_title = "F/p Plot"
+            # Check which sorting or tree-ctrl the user chose:
+            selection = self.f_panel.get_radio_selection()
+            print(selection)
+
+            if self.f_plot_data is None:
+                # print "anova plot data is None"
+                self.f_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            if self.f_plot_data.actives_changed(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List):
+                # print "actives changed"
+                self.f_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+                # use same calc data:
+                new_plot_data.copy_data(self.f_plot_data)
+                self.f_plot_data = new_plot_data
+
+            self.f_plot_data.set_limits(self.s_data.scale_limits)
+
+            if len(pydata) == 2:
+                # When user double-clicks on 'General Plot'
+                if pydata[1] == u'General Plot':
+                    # Go here if 'sorted by assessor' is selected
+                    if selection == 0:
+                        res = FPlotter_Assessor_General(
+                            self.s_data, self.f_plot_data)
+                    elif selection == 1:
+                        res = FPlotter_Attribute_General(
+                            self.s_data, self.f_plot_data)
+
+                else:
+                    # Go here if 'sorted by assessor' is selected
+                    if selection == 0:
+                        res = FPlotter_Assessor_Specific(
+                            self.s_data, self.f_plot_data)
+                    elif selection == 1:
+                        res = FPlotter_Attribute_Specific(
+                            self.s_data, self.f_plot_data)
+
+        elif tab_panel == self.mse_panel:
+            plot_title = "MSE Plot"
+
+            # Check which sorting or tree-ctrl the user chose:
+            selection = self.mse_panel.get_radio_selection()
+            print(selection)
+
+            if self.mse_plot_data is None:
+                # print "anova plot data is None"
+                self.mse_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            if self.mse_plot_data.actives_changed(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List):
+                # print "actives changed"
+                self.mse_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = ANOVA_PlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+
+                # use same calc data:
+                new_plot_data.copy_data(self.mse_plot_data)
+                self.mse_plot_data = new_plot_data
+
+            self.mse_plot_data.set_limits(self.s_data.scale_limits)
+
+            # When user double-clicks on 'General Plot'
+            if pydata[0] == u'General Plot':
+                # Go here if 'sorted by assessor' is selected
+                if selection == 0:
+                    res = MSEPlotter_Assessor_General(
+                        self.s_data, self.mse_plot_data)
+                # Go here if 'sorted by attribute' is selected
+                elif selection == 1:
+                    res = MSEPlotter_Attribute_General(
+                        self.s_data, self.mse_plot_data)
+
+            else:
+                # Go here if 'sorted by assessor' is selected
+                if selection == 0:
+                    res = MSEPlotter_Assessor_Specific(
+                        self.s_data, self.mse_plot_data)
+                # Go here if 'sorted by attribute' is selected
+                elif selection == 1:
+                    res = MSEPlotter_Attribute_Specific(
+                        self.s_data, self.mse_plot_data)
+
+        # When original tab in Averages is active do the following
+        # --------------------------------------------------------
+        elif tab_panel == self.org_panel:
+            plot_title = "Consensus Plot"
+
+            selection = 0  # averOrg
+
+            plot_data = PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            plot_data.set_limits(self.s_data.scale_limits)
+
+            if self.org_cb.GetValue():
+                plot_data.aspect = 'equal'
+            else:
+                plot_data.aspect = 'auto'
+
+            # When user double-clicks on 'Data'
+            if pydata[0] == u'Averaged Data':
+                plot = False  # no plot
+                grid = True  # show grid
+                frame_name, result_list = Averaged_Data_Grid(
+                    self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA scores'
+            # elif pydata[0] == u'PCA Scores':
+            #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Loadings'
+            # elif pydata[0] == u'PCA Loadings':
+            #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Correlation Loadings'
+            # elif pydata[0] == u'PCA Correlation Loadings':
+            #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Explained Variance'
+            # elif pydata[0] == u'PCA Explained Variance':
+
+            else:
+                res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+        # When standardised tab in Averages is active do the following
+        # ------------------------------------------------------------
+        elif tab_panel == self.std_panel:
+            plot_title = "Consensus Plot"
+
+            selection = 1  # averStd
+
+            plot_data = PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            plot_data.set_limits(self.s_data.scale_limits)
+
+            if self.std_cb.GetValue():
+                plot_data.aspect = 'equal'
+            else:
+                plot_data.aspect = 'auto'
+
+            # When user double-clicks on 'Data'
+            if pydata[0] == u'Averaged Data':
+                plot = False  # no plot
+                grid = True  # show grid
+                frame_name, result_list = Averaged_Data_Grid(
+                    self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA scores'
+            # elif pydata[0] == u'PCA Scores':
+            #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Loadings'
+            # elif pydata[0] == u'PCA Loadings':
+            #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Correlation Loadings'
+            # elif pydata[0] == u'PCA Correlation Loadings':
+            #    res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Explained Variance'
+            # elif pydata[0] == u'PCA Explained Variance':
+            else:
+                res = PCA_plotter(self.s_data, plot_data, selection=selection)
+
+        # When standardised tab in Averages is active do the following
+        # ------------------------------------------------------------
+        elif tab_panel == self.statis_panel:
+            plot_title = "STATIS Plot"
+
+            selection = self.statis_panel.get_radio_selection()
+            print(selection)
+
+            plot_data = PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            plot_data.set_limits(self.s_data.scale_limits)
+
+            if self.statis_cb.GetValue():
+                plot_data.aspect = 'equal'
+            else:
+                plot_data.aspect = 'auto'
+
+            # When user double-clicks on 'Data'
+            if pydata[0] == u'Averaged Data':
+                plot = False  # no plot
+                grid = True  # show grid
+                frame_name, result_list = STATIS_Averaged_Data_Grid(
+                    self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA scores'
+            # elif pydata[0] == u'PCA Scores':
+            #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Loadings'
+            # elif pydata[0] == u'PCA Loadings':
+            #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Correlation Loadings'
+            # elif pydata[0] == u'PCA Correlation Loadings':
+            #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'PCA Explained Variance'
+            # elif pydata[0] == u'PCA Explained Variance':
+            #    res = STATIS_PCA_Plotter(self.s_data, plot_data, selection=selection)
+
+            # When user double-clicks on 'Weights'
+            elif pydata[0] == u'Assessor Weights':
+                res = STATIS_AssWeight_Plotter(
+                    self.s_data, plot_data, selection=selection)
+            else:
+                res = STATIS_PCA_Plotter(
+                    self.s_data, plot_data, selection=selection)
+
+        elif tab_panel == self.mm_anova_panel1:
+            plot_title = "2-way ANOVA (1 rep) Plot"
+
+            # if self.mm_anova1_plot_data == None:
+            # print "anova plot data is None"
+            self.mm_anova1_plot_data = MM_ANOVA_PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            # if self.mm_anova1_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+            # print "actives changed"
+            #    self.mm_anova1_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+            # else:
+            #    new_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+
+            # use same calc data:
+            #    new_plot_data.copy_data(self.mm_anova1_plot_data)
+            #    self.mm_anova1_plot_data = new_plot_data
+
+            self.mm_anova1_plot_data.set_limits(self.s_data.scale_limits)
+
+            _types = ['F1', 'F2']
+            lsd_types = ['LSD1', 'LSD2']
+
+            if pydata[0] == "Overview Plot 1":  # F & p
+                res = MixModel_ANOVA_OverviewPlotter(
+                    self.s_data,
+                    self.mm_anova1_plot_data,
+                    plot_type="2way1rep",
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] == "Overview Plot 2":  # LSD
+                res = MixModel_ANOVA_LSD_OverviewPlotter(
+                    self.s_data,
+                    self.mm_anova1_plot_data,
+                    plot_type="2way1rep",
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] in _types:
+                res = MixModel_ANOVA_Plotter_2way1rep(
+                    self.s_data, self.mm_anova1_plot_data,
+                    abspath=self.ProgPathAbs)
+            elif pydata[0] in lsd_types:
+                res = MixModel_ANOVA_LSD_Plotter_2way1rep(
+                    self.s_data, self.mm_anova1_plot_data, abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.mm_anova_panel2:
+            plot_title = "2-way ANOVA Plot"
+
+            # if self.mm_anova2_plot_data == None:
+            # print "anova plot data is None"
+            self.mm_anova2_plot_data = MM_ANOVA_PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            # if self.mm_anova2_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+            # print "actives changed"
+            #    self.mm_anova2_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+            # else:
+            #    new_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+
+            # use same calc data:
+            #    new_plot_data.copy_data(self.mm_anova2_plot_data)
+            #    self.mm_anova2_plot_data = new_plot_data
+
+            self.mm_anova2_plot_data.set_limits(self.s_data.scale_limits)
+
+            _types = ['F1', 'F2', 'F3']
+            lsd_types = ['LSD1', 'LSD2']
+
+            if pydata[0] == "Overview Plot 1":  # F & p
+                res = MixModel_ANOVA_OverviewPlotter(
+                    self.s_data,
+                    self.mm_anova2_plot_data,
+                    plot_type="2way",
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] == "Overview Plot 2":  # LSD
+                res = MixModel_ANOVA_LSD_OverviewPlotter(
+                    self.s_data,
+                    self.mm_anova2_plot_data,
+                    plot_type="2way",
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] in _types:
+                res = MixModel_ANOVA_Plotter_2way(
+                    self.s_data, self.mm_anova2_plot_data,
+                    abspath=self.ProgPathAbs)
+            elif pydata[0] in lsd_types:
+                res = MixModel_ANOVA_LSD_Plotter_2way(
+                    self.s_data, self.mm_anova2_plot_data,
+                    abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.mm_anova_panel3:
+            plot_title = "3-way ANOVA Plot"
+
+            # if self.mm_anova3_plot_data == None:
+            # print "anova plot data is None"
+            self.mm_anova3_plot_data = MM_ANOVA_PlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+            # if self.mm_anova3_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+            # print "actives changed"
+            #    self.mm_anova3_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+            # else:
+            #    new_plot_data  = MM_ANOVA_PlotData(activeAssessors_List, activeAttributes_List, activeSamples_List, pydata, self.menuViewGrid, self.menuViewLegend)
+
+            # use same calc data:
+            #   new_plot_data.copy_data(self.mm_anova3_plot_data)
+            #   self.mm_anova3_plot_data = new_plot_data
+
+            self.mm_anova3_plot_data.set_limits(self.s_data.scale_limits)
+
+            _types = ['F1', 'F2', 'F2b', 'F3', 'F4', 'F5']
+            lsd_types = ['LSD1', 'LSD2']
+
+            if pydata[0] == "Overview Plot 1":  # F & p
+                res = MixModel_ANOVA_OverviewPlotter(
+                    self.s_data,
+                    self.mm_anova3_plot_data,
+                    plot_type="3way",
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] == "Overview Plot 2":  # LSD
+                res = MixModel_ANOVA_LSD_OverviewPlotter(
+                    self.s_data,
+                    self.mm_anova3_plot_data,
+                    plot_type="3way",
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] in _types:
+                res = MixModel_ANOVA_Plotter_3way(
+                    self.s_data, self.mm_anova3_plot_data,
+                    abspath=self.ProgPathAbs)
+            elif pydata[0] in lsd_types:
+                res = MixModel_ANOVA_LSD_Plotter_3way(
+                    self.s_data, self.mm_anova3_plot_data,
+                    abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.manh_panel:
+            plot_title = "Manhattan Plot"
+
+            maxPCs = int(self.manh_spin_txt.GetValue())
+            selection = self.manh_panel.get_radio_selection()
+
+            # view legend is not used in Manhattan plots
+            if self.manh_plot_data is None:
+                self.manh_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            elif self.manh_plot_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+                self.manh_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            elif self.manh_plot_data.maxPCs != maxPCs:
+                self.manh_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            elif self.manh_plot_data.selection != selection:
+                self.manh_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+            else:
+                new_plot_data = CollectionCalcPlotData(
+                    activeAssessors_List,
+                    activeAttributes_List,
+                    activeSamples_List,
+                    pydata,
+                    self.menuViewGrid,
+                    self.menuViewLegend)
+                # use old calc data:
+                new_plot_data.copy_data(self.manh_plot_data)
+                self.manh_plot_data = new_plot_data
+
+            self.manh_plot_data.set_limits(self.s_data.scale_limits)
+            self.manh_plot_data.maxPCs = maxPCs
+
+            if pydata[0] == "Overview Plot (assessors)":
+                res = ManhattanAssOverviewPlotter(
+                    self.s_data,
+                    self.manh_plot_data,
+                    selection=selection,
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            elif pydata[0] == "Overview Plot (attributes)":
+                res = ManhattanAttOverviewPlotter(
+                    self.s_data,
+                    self.manh_plot_data,
+                    selection=selection,
+                    abspath=self.ProgPathAbs)
+                overview_plot = True
+            else:
+                res = ManhattanPlotter(
+                    self.s_data,
+                    self.manh_plot_data,
+                    selection=selection,
+                    abspath=self.ProgPathAbs)
+
+        elif tab_panel == self.perf_ind_panel:
+            plot_title = "Performance Indices Plot"
+
+            new_plot_data = CollectionCalcPlotData(
+                activeAssessors_List,
+                activeAttributes_List,
+                activeSamples_List,
+                pydata,
+                self.menuViewGrid,
+                self.menuViewLegend)
+
+            # performance indices settings
+            new_plot_data.special_opts["agr"] = self.perf_ind_spin_agr.GetValue(
+            )
+            new_plot_data.special_opts["rep"] = self.perf_ind_spin_rep.GetValue(
+            )
+            new_plot_data.special_opts["dis"] = self.perf_ind_spin_dis.GetValue(
+            )
+            # self.perf_ind_rb_lvl.GetStringSelection()
+            new_plot_data.special_opts["lvl"] = "same for all"
+            new_plot_data.special_opts["comp"] = self.perf_ind_rb_comp.GetStringSelection(
+            )
+            new_plot_data.special_opts["target_lvl"] = self.perf_ind_cbl_include.IsChecked(
+                0)
+            new_plot_data.special_opts["1_sign_lvl"] = self.perf_ind_cbl_include.IsChecked(
+                1)
+            new_plot_data.special_opts["5_sign_lvl"] = self.perf_ind_cbl_include.IsChecked(
+                2)
+            new_plot_data.special_opts["10_sign_lvl"] = self.perf_ind_cbl_include.IsChecked(
+                3)
+            new_plot_data.special_opts["recalc"] = True
+
+            if self.perf_ind_data is None:
+                self.perf_ind_data = new_plot_data
+            elif self.perf_ind_data.actives_changed(activeAssessors_List, activeAttributes_List, activeSamples_List):
+                self.perf_ind_data = new_plot_data
+            else:
+                recalc = False
+                if new_plot_data.special_opts["comp"] != self.perf_ind_data.special_opts["comp"]:
+                    self.perf_ind_data.special_opts["recalc"] = True
+                    recalc = True
+
+                if recalc:
+                    self.perf_ind_data = new_plot_data
+                else:
+                    new_plot_data.copy_data(self.perf_ind_data)
+                    self.perf_ind_data = new_plot_data
+                    self.perf_ind_data.special_opts["recalc"] = False
+
+            print(self.perf_ind_data.special_opts)
+
+            if pydata[0] == "Overview Plot":
+
+                res = perfind_OverviewPlotter(
+                    self.s_data, self.perf_ind_data, selection=0)
+                overview_plot = True
+            else:
+                res = perfindPlotter(
+                    self.s_data, self.perf_ind_data, selection=0)
+                if(res is None):
+                    return
+
+                result_list = self.perf_ind_data.numeric_data
+                grid_config = self.perf_ind_data.numeric_data_config
+                frame_name = "Performance Indices - " + str(pydata[0])
+                plot = self.perf_ind_data.special_opts["plot_frame"]
+
+                if pydata[0] == u"Indices table":
+                    self.figureList.append(
+                        GridFramePerfInd(
+                            self,
+                            frame_name,
+                            result_list,
+                            self.s_data,
+                            res,
+                            config=grid_config))
+                    if self.figureList[len(self.figureList) - 1] is not None:
+                        self.figureList[len(self.figureList) - 1].Show()
+                        return
 
         if plot:
             # try:

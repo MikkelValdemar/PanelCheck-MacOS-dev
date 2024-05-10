@@ -14,7 +14,7 @@ from __future__ import division
 from scripts.Plot_Tools import *
 from Tools import *
 import numpy as np
-#import statTools as st
+#import stattools as st
 #import pyper
 import math
 from matplotlib.figure import Figure
@@ -126,7 +126,7 @@ def calcAGR(
     agr = plot_data.special_opts["agr"]  # target level
 
     progress_value = 0
-    progress = Progress(None, abspath=progPath)
+    progress = Progress(None, abspath=abspath)
     progress.set_gauge(value=progress_value, text="Calculating AGR...\n")
 
     # Convert attribute names from unicode to latin-1. Unicode makes
