@@ -41,14 +41,15 @@ from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEve
 
 import numpy as np
 from Grid import GridFrame, GridFramePerfInd
+from Tools import summaryConstructor, split_path
 from scripts.Summary import SummaryFrame
-from scripts.PlotPanel import PlotPanel
+from scripts.PlotPanel import PlotPanel, PointLabel
 
 # Plots
 from scripts.plots.Line_Plot import SampleLinePlotter, AssessorLinePlotter, ReplicateLinePlotter
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
 from scripts.plots.Consensus_Plot import PCA_plotter, STATIS_PCA_Plotter, STATIS_AssWeight_Plotter
-# from scripts.plots.MM_ANOVA_Plot import set_points_in_range, MM_ANOVA_PlotData
+from scripts.plots.MM_ANOVA_Plot import set_points_in_range, MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_Plotter_2way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_3way
 from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter
 from scripts.plots.Correlation_Plot import CorrelationPlotter
 from scripts.plots.profile_Plot import profilePlotter
@@ -58,7 +59,7 @@ from scripts.plots.MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Asses
 from scripts.plots.pmse_Plot import pmsePlotter
 from scripts.plots.Manhattan_Plot import ManhattanPlotter
 
-from scripts.PlotData import PCA_PlotData, ANOVA_PlotData
+from scripts.PlotData import PCA_PlotData, ANOVA_PlotData, MM_ANOVA_PlotData
 
 
 """
@@ -843,65 +844,65 @@ class PlotFrame(wx.Frame):
         elif plot_type == "line_rep":
             return ReplicateLinePlotter
 
-        # elif plot_type == "mean_std_ass":
-        #     return RawDataAssessorPlotter
-        #
-        # elif plot_type == "mean_std_att":
-        #     return RawDataAttributePlotter
-        #
-        # elif plot_type == "corr":
-        #     return CorrelationPlotter
-        #
-        # elif plot_type == "profile":
-        #     return profilePlotter
-        #
-        # elif plot_type == "egg":
-        #     return EggshellPlotter
-        #
-        # elif plot_type == "f_ass":
-        #     return FPlotter_Assessor_General
-        #
-        # elif plot_type == "f_att":
-        #     return FPlotter_Attributes_General
-        #
-        # elif plot_type == "mse_ass":
-        #     return MSEPlotter_Assessor_General
-        #
-        # elif plot_type == "mse_att":
-        #     return MSEPlotter_Attributes_General
-        #
-        # elif plot_type == "pmse":
-        #     return pmsePlotter
-        #
-        # elif plot_type == "tucker1":
-        #     return Tucker1Plotter
-        #
-        # elif plot_type == "consensus":
-        #     return PCA_plotter
-        #
-        # elif plot_type == "mm_anova_f_2way1rep":
-        #     return MixModel_ANOVA_Plotter_2way1rep
-        #
-        # elif plot_type == "mm_anova_lsd_2way1rep":
-        #     return MixModel_ANOVA_LSD_Plotter_2way1rep
-        #
-        # elif plot_type == "mm_anova_f_2way":
-        #     return MixModel_ANOVA_Plotter_2way
-        #
-        # elif plot_type == "mm_anova_lsd_2way":
-        #     return MixModel_ANOVA_LSD_Plotter_2way
-        #
-        # elif plot_type == "mm_anova_f_3way":
-        #     return MixModel_ANOVA_Plotter_3way
-        #
-        # elif plot_type == "mm_anova_lsd_3way":
-        #     return MixModel_ANOVA_LSD_Plotter_3way
-        #
-        # elif plot_type == "manhattan_ass" or plot_type == "manhattan_att":
-        #     return ManhattanPlotter
-        #
-        # elif plot_type == "perf_ind":
-        #     return perfindPlotter
+        elif plot_type == "mean_std_ass":
+            return RawDataAssessorPlotter
+
+        elif plot_type == "mean_std_att":
+            return RawDataAttributePlotter
+
+        elif plot_type == "corr":
+            return CorrelationPlotter
+
+        elif plot_type == "profile":
+            return profilePlotter
+
+        elif plot_type == "egg":
+            return EggshellPlotter
+
+        elif plot_type == "f_ass":
+            return FPlotter_Assessor_General
+
+        elif plot_type == "f_att":
+            return FPlotter_Attribute_General
+
+        elif plot_type == "mse_ass":
+            return MSEPlotter_Assessor_General
+
+        elif plot_type == "mse_att":
+            return MSEPlotter_Attribute_General
+
+        elif plot_type == "pmse":
+            return pmsePlotter
+
+        elif plot_type == "tucker1":
+            return Tucker1Plotter
+
+        elif plot_type == "consensus":
+            return PCA_plotter
+
+        elif plot_type == "mm_anova_f_2way1rep":
+            return MixModel_ANOVA_Plotter_2way1rep
+
+        elif plot_type == "mm_anova_lsd_2way1rep":
+            return MixModel_ANOVA_LSD_Plotter_2way1rep
+
+        elif plot_type == "mm_anova_f_2way":
+            return MixModel_ANOVA_Plotter_2way
+
+        elif plot_type == "mm_anova_lsd_2way":
+            return MixModel_ANOVA_LSD_Plotter_2way
+
+        elif plot_type == "mm_anova_f_3way":
+            return MixModel_ANOVA_Plotter_3way
+
+        elif plot_type == "mm_anova_lsd_3way":
+            return MixModel_ANOVA_LSD_Plotter_3way
+
+        elif plot_type == "manhattan_ass" or plot_type == "manhattan_att":
+            return ManhattanPlotter
+
+        elif plot_type == "perf_ind":
+            return perfindPlotter
 
     def update_gui(self):
         if self.pc_ctrl_on:
@@ -919,16 +920,16 @@ class PlotFrame(wx.Frame):
         self.overview_plot = False
         self.plot_panel.SetCursor(self.cursor_arrow)
 
-    # def set_points_in_ranges(self):
-    #     ind = 1
-    #     for line2d in self.plot_data.lsd_lines:
-    #         ydata = line2d[0].get_ydata()
-    #         set_points_in_range(
-    #             self.plot_panel.subplot,
-    #             ydata,
-    #             ind,
-    #             self.plot_data.lsd_points)
-    #         ind += 1
+    def set_points_in_ranges(self):
+        ind = 1
+        for line2d in self.plot_data.lsd_lines:
+            ydata = line2d[0].get_ydata()
+            set_points_in_range(
+                self.plot_panel.subplot,
+                ydata,
+                ind,
+                self.plot_data.lsd_points)
+            ind += 1
 
     def updateLSD(self, x, y, selected):  # selected [1, ..., n]
         line2d = self.plot_data.lsd_lines[selected - 1][0]
@@ -1859,19 +1860,17 @@ class PlotFrame(wx.Frame):
 
         plotter = self.get_plot_method(plot_type)
         if plot_type == "mm_anova_f_2way1rep" or plot_type == "mm_anova_lsd_2way1rep" or plot_type == "mm_anova_f_2way" or plot_type == "mm_anova_lsd_2way" or plot_type == "mm_anova_f_3way" or plot_type == "mm_anova_lsd_3way":
-            return
-            # TODO MVK
-            # plot_data = MM_ANOVA_PlotData(
-            #     self.active_ass,
-            #     self.active_att,
-            #     self.active_samp,
-            #     tree_path,
-            #     self.plot_data.view_grid,
-            #     self.plot_data.view_legend)  # overview_plot = False
-            # plot_data.sensmixed_data = self.plot_data.sensmixed_data
-            # plot_data.accepted_active_attributes = self.plot_data.accepted_active_attributes
-            # if self.plot_type == "mm_anova_f_3way" or self.plot_type == "mm_anova_f_2way":
-            #     plot_data.p_matr = deepcopy(self.plot_data.p_matr)
+            plot_data = MM_ANOVA_PlotData(
+                self.active_ass,
+                self.active_att,
+                self.active_samp,
+                tree_path,
+                self.plot_data.view_grid,
+                self.plot_data.view_legend)  # overview_plot = False
+            plot_data.sensmixed_data = self.plot_data.sensmixed_data
+            plot_data.accepted_active_attributes = self.plot_data.accepted_active_attributes
+            if self.plot_type == "mm_anova_f_3way" or self.plot_type == "mm_anova_f_2way":
+                plot_data.p_matr = deepcopy(self.plot_data.p_matr)
 
         elif plot_type == "tucker1" or plot_type == "consensus":
             plot_data = PCA_PlotData(

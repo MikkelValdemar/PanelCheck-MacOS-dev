@@ -7,7 +7,6 @@ import os
 from scripts.SensoryData import SensoryData
 import xlrd
 
-
 class DataFile:
     """
     Initializes variables and defines methods for use while loading the file.

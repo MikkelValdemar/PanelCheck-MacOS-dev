@@ -1066,30 +1066,30 @@ class Main_Frame(wx.Frame):
         v["legend"] = self.menuOptionsLegend.IsChecked()
         v["selection"] = self.menuOptionsSelectAll.IsChecked()
 
-        # self.session_data.update(view=v,
-        #                          image_save_path=self.image_save_path,
-        #                          export_active_plots=self.export_active_plots)
-        # self.session_data.store_session_file(
-        #     filename=self.progPath + "/session.dat")
+        self.session_data.update(view=v,
+                                 image_save_path=self.image_save_path,
+                                 export_active_plots=self.export_active_plots)
+        self.session_data.store_session_file(
+            filename=self.progPath + "/session.dat")
 
     def OnMenuFileSave(self, event):
         """
         Save current dataset as standard panelcheck file.
         """
-        # file_choices = "PanelCheck file (*.pchk)|*.pchk||"
-        #
-        # thisdir = os.getcwd()
-        #
-        # dlg = wx.FileDialog(self, message='Save current dataset as...',
-        #                     defaultDir=thisdir, defaultFile='dataset001.pchk',
-        #                     wildcard=file_choices, style=wx.FD_SAVE)
-        #
-        # if dlg.ShowModal() == wx.ID_OK:
-        #     abspath = dlg.GetPath()
-        #     #abspath = str(abspath)
-        #     msg = save_dataset(abspath, self.s_data)
-        #     self.statusBar.SetStatusText(msg)
-        # dlg.Destroy()
+        file_choices = "PanelCheck file (*.pchk)|*.pchk||"
+
+        thisdir = os.getcwd()
+
+        dlg = wx.FileDialog(self, message='Save current dataset as...',
+                            defaultDir=thisdir, defaultFile='dataset001.pchk',
+                            wildcard=file_choices, style=wx.FD_SAVE)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            abspath = dlg.GetPath()
+            #abspath = str(abspath)
+            msg = save_dataset(abspath, self.s_data)
+            self.statusBar.SetStatusText(msg)
+        dlg.Destroy()
 
     def OnMenuFileClose_fileMenu(self, event):
         """
@@ -1146,11 +1146,11 @@ class Main_Frame(wx.Frame):
         # self.Close()
         self.OnClosing(event)
 
-        # for frame in self.figureList:
-        #     try:
-        #         frame.Close()
-        #     except BaseException:
-        #         print("Dead frame")
+        for frame in self.figureList:
+            try:
+                frame.Close()
+            except BaseException:
+                print("Dead frame")
         sys.exit()
 
     def OnMenuViewGridMenu(self, event):
@@ -2277,7 +2277,6 @@ class Main_Frame(wx.Frame):
         # When mean & std plot tab is active plot:
         # ----------------------------------------------------------
         elif tab_panel == self.mean_std_panel:
-            print(tab_panel)
             plot_title = "Mean/STD Plot"
 
             temp_plot_data = self.mean_plot_data
@@ -3181,17 +3180,17 @@ class Main_Frame(wx.Frame):
             # except:
             #    print "Plotting failed!"
 
-        # else:
-        #     print(self.ProgPathAbs)
-        #     self.figureList.append(
-        #         GridFrame(
-        #             self,
-        #             frame_name,
-        #             result_list,
-        #             config=grid_config,
-        #             abspath=self.ProgPathAbs))
-        #     if self.figureList[len(self.figureList) - 1] is not None:
-        #         self.figureList[len(self.figureList) - 1].Show()
+        else:
+            print(self.ProgPathAbs)
+            self.figureList.append(
+                GridFrame(
+                    self,
+                    frame_name,
+                    result_list,
+                    config=grid_config,
+                    abspath=self.ProgPathAbs))
+            if self.figureList[len(self.figureList) - 1] is not None:
+                self.figureList[len(self.figureList) - 1].Show()
     ###########NECESSARY_CUSTOM_METHODS_END###########
 
     def OnGeneralFileOpen(self, fileName, delimiter):
