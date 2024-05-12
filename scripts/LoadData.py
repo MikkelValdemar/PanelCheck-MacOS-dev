@@ -6,6 +6,7 @@ import wx
 import os
 from scripts.SensoryData import SensoryData
 import xlrd
+from scripts.mvt import IMP
 
 class DataFile:
     """
@@ -493,16 +494,17 @@ class DataFile:
             mv_ass_info[ass] = float(num_missing) / float(rows * cols)
             if mv_ass_info[ass] > 0:
                 self.s_data.has_mv = True
-            #ass_mat = mvt.IMP(ass_mat)  # impute new values for NaN values
+            #ass_mat = IMP(ass_mat)  # impute new values for NaN values
 
             row_ind = 0
+            # TODO MVK: This part doesn't work and returns wrong values overwriting all values with the last assessors. Commented out for now
             for samp in self.SampleList:
                 for rep in self.ReplicateList:
                     key = (ass, samp, rep)
-                    # print(key)
-                    # print(self.s_data.SparseMatrix[key])
-                    self.s_data.SparseMatrix[key] = ass_mat[row_ind]
-                    # print('\t',self.s_data.SparseMatrix[key])
+                    #print(key)
+                    #print(self.s_data.SparseMatrix[key])
+                    #self.s_data.SparseMatrix[key] = ass_mat[row_ind]
+                    #print('\t',self.s_data.SparseMatrix[key])
                     row_ind += 1
         return mvt_dict, mv_ass_info
 

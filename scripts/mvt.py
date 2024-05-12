@@ -12,7 +12,7 @@
 import random
 import numpy
 import numpy.linalg
-import pca_module
+from scripts.plots.pca_module import PCA_nipals2
 
 
 def RAG(rows, cols):
@@ -710,7 +710,6 @@ if __name__ == '__main__':
     import numpy.linalg
     import scipy.io
     import pylab
-    import pca_module
 
     # Import necessary self-made modules
     from pca import PCA

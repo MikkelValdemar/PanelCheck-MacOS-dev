@@ -4,7 +4,7 @@ import sys
 import wx
 import wx.grid as gridlib
 import pandas as pd
-
+from scripts.PlotData import CollectionCalcPlotData
 
 class DataTable(gridlib.GridTableBase):
 
@@ -196,22 +196,20 @@ class GridFramePerfInd(GridFrame):
         """
         GridFrame.__init__(self, parent, frameName, results, config)
 
-        # import PlotData
-        #
-        # self.plotType = plot_data.tree_path[0]
-        # self.plot_data = PlotData.CollectionCalcPlotData()
-        # plot_data.copy_data_to(self.plot_data)
-        # self.plot_data.copy_data(plot_data)
-        # self.plot_data.overview_plot = True
-        # self.plot_data.special_opts["disable_cursor_link"] = True
-        # self.s_data = s_data
-        # self.numberOfWindow = 0
-        # self.figureList = []
-        #
-        # self.grid.Bind(
-        #     gridlib.EVT_GRID_CELL_LEFT_DCLICK,
-        #     self.onLeftDClickEvent)
-        # self.Bind(wx.EVT_CLOSE, self.OnFrameClosing)
+        self.plotType = plot_data.tree_path[0]
+        self.plot_data = CollectionCalcPlotData()
+        plot_data.copy_data_to(self.plot_data)
+        self.plot_data.copy_data(plot_data)
+        self.plot_data.overview_plot = True
+        self.plot_data.special_opts["disable_cursor_link"] = True
+        self.s_data = s_data
+        self.numberOfWindow = 0
+        self.figureList = []
+
+        self.grid.Bind(
+            gridlib.EVT_GRID_CELL_LEFT_DCLICK,
+            self.onLeftDClickEvent)
+        self.Bind(wx.EVT_CLOSE, self.OnFrameClosing)
 
     def onLeftDClickEvent(self, event=None):
         """
@@ -222,43 +220,43 @@ class GridFramePerfInd(GridFrame):
 
         #print(row, col)
 
-        # import PlotFrame
-        # import perfInd_Plot
-        #
-        # if col <= 0 or col > len(self.plot_data.activeAssessorsList):
-        #     print("no grid plot")
-        #     return
-        #
-        # plotted = False
-        # assessor = self.plot_data.activeAssessorsList[col - 1]
-        # cell_0 = self.grid.GetCellValue(row, 0)
-        #
-        # if cell_0 == u"AGR prod":
-        #     perfInd_Plot.cv_AGR_prod(self.s_data, self.plot_data, assessor)
-        #     plotted = True
-        # elif cell_0 == u"AGR att":
-        #     perfInd_Plot.cv_AGR_att(self.s_data, self.plot_data, assessor)
-        #     plotted = True
-        # elif cell_0 == u"REP prod":
-        #     perfInd_Plot.cv_REP_prod(self.s_data, self.plot_data, assessor)
-        #     plotted = True
-        # elif cell_0 == u"REP att":
-        #     perfInd_Plot.cv_REP_att(self.s_data, self.plot_data, assessor)
-        #     plotted = True
-        #
-        # if plotted:
-        #     self.numberOfWindow += 1
-        #     _title = {"fig": "Fig. " +
-        #               str(self.numberOfWindow), "plot": self.plotType}
-        #     self.figureList.append(
-        #         PlotFrame.PlotFrame(
-        #             None,
-        #             _title,
-        #             self.s_data,
-        #             self.plot_data,
-        #             self))
-        #     if self.figureList[len(self.figureList) - 1] is not None:
-        #         self.figureList[len(self.figureList) - 1].Show()
+        import PlotFrame
+        import perfInd_Plot
+
+        if col <= 0 or col > len(self.plot_data.activeAssessorsList):
+            print("no grid plot")
+            return
+
+        plotted = False
+        assessor = self.plot_data.activeAssessorsList[col - 1]
+        cell_0 = self.grid.GetCellValue(row, 0)
+
+        if cell_0 == u"AGR prod":
+            perfInd_Plot.cv_AGR_prod(self.s_data, self.plot_data, assessor)
+            plotted = True
+        elif cell_0 == u"AGR att":
+            perfInd_Plot.cv_AGR_att(self.s_data, self.plot_data, assessor)
+            plotted = True
+        elif cell_0 == u"REP prod":
+            perfInd_Plot.cv_REP_prod(self.s_data, self.plot_data, assessor)
+            plotted = True
+        elif cell_0 == u"REP att":
+            perfInd_Plot.cv_REP_att(self.s_data, self.plot_data, assessor)
+            plotted = True
+
+        if plotted:
+            self.numberOfWindow += 1
+            _title = {"fig": "Fig. " +
+                      str(self.numberOfWindow), "plot": self.plotType}
+            self.figureList.append(
+                PlotFrame.PlotFrame(
+                    None,
+                    _title,
+                    self.s_data,
+                    self.plot_data,
+                    self))
+            if self.figureList[len(self.figureList) - 1] is not None:
+                self.figureList[len(self.figureList) - 1].Show()
 
     def OnFrameClosing(self, event):
         for frame in self.figureList:

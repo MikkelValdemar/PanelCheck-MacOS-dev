@@ -14,25 +14,25 @@ from matplotlib.colors import LinearSegmentedColormap
 import wx
 import os
 import sys
-import rpy2
+# import rpy2
 # from rpy2.robjects import r, pandas2ri
 # import rpy2.robjects as ro
 # pandas2ri.activate()
 
-# def save_rdata_file(df, filename):
-#     #r_data = ro.conversion.py2ri(transpose(df))
-#     r_data = ro.conversion.py2rpy(transpose(df))
-#     ro.r.assign("my_df", r_data)
-#     ro.r("save(my_df, file='{}')".format(filename))
-#     os.chmod(filename, 0o777)
-#
-#
-# def data_frame(data):
-#     #data = pd.DataFrame(data)
-#     #    print(data)
-#     r_dataframe = ro.conversion.py2rpy(transpose(data))
-# #    save_rdata_file(data,'/Users/linder2411/Desktop/r_data.Rdata')
-#     return r_dataframe
+def save_rdata_file(df, filename):
+    #r_data = ro.conversion.py2ri(transpose(df))
+    r_data = ro.conversion.py2rpy(transpose(df))
+    ro.r.assign("my_df", r_data)
+    ro.r("save(my_df, file='{}')".format(filename))
+    os.chmod(filename, 0o777)
+
+
+def data_frame(data):
+    #data = pd.DataFrame(data)
+    #    print(data)
+    r_dataframe = ro.conversion.py2rpy(transpose(data))
+#    save_rdata_file(data,'/Users/linder2411/Desktop/r_data.Rdata')
+    return r_dataframe
 
 
 # custom colormap
@@ -671,209 +671,209 @@ def check_columns(X):
 
 ############### R script (attribute significance) ###############
 
-# def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
-#     from scripts.plots.MM_ANOVA_Plot import load_mm_anova_data
-#     activeAssessorsList = plot_data.activeAssessorsList
-#     activeAttributesList = plot_data.activeAttributesList
-#     activeSamplesList = plot_data.activeSamplesList
-#     new_active_attributes_list = activeAttributesList
-#
-#     matrix_num_lables = s_data.MatrixNumLables(
-#         assessors=activeAssessorsList, samples=activeSamplesList)
-#     matrix_selected_scores = s_data.MatrixDataSelected(
-#         assessors=activeAssessorsList,
-#         attributes=activeAttributesList,
-#         samples=activeSamplesList)
-#
-#     matrix_selected_scores, out_cols = check_columns(matrix_selected_scores)
-#     if len(out_cols) > 0:
-#         msg = "For the selected samples the standard deviation\nover all assessors is 0 for the following attributes:\n"
-#         for col_ind in out_cols:
-#             msg += plot_data.activeAttributesList[col_ind] + "\n"
-#
-#         msg += "\nThese attributes were left out of the analysis."
-#
-#         new_active_attributes_indices = []
-#         new_active_attributes_list = []
-#         for att_ind in range(len(plot_data.activeAttributesList)):
-#             if att_ind not in out_cols:
-#                 new_active_attributes_indices.append(att_ind)
-#
-#         for att_ind in new_active_attributes_indices:
-#             new_active_attributes_list.append(
-#                 plot_data.activeAttributesList[att_ind])
-#
-#         matrix_selected_scores = s_data.MatrixDataSelected(
-#             assessors=activeAssessorsList,
-#             attributes=new_active_attributes_list,
-#             samples=activeSamplesList)
-#
-#         # show_info_msg(msg)
-#
-#         lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
-#         for i in range(
-#                 s_data.value_index,
-#                 len(new_active_attributes_list) +
-#                 s_data.value_index):
-#             lables.append(i)
-#
-#         # return None
-#     else:
-#         lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
-#         for i in range(
-#                 s_data.value_index,
-#                 len(activeAttributesList) +
-#                 s_data.value_index):
-#             lables.append(i)
-#
-#     if isinstance(plot_data, (CollectionCalcPlotData)):
-#         plot_data.collection_calc_data["accepted_active_attributes"] = new_active_attributes_list
-#     else:
-#         plot_data.accepted_active_attributes = new_active_attributes_list
-#
-#     raw = hstack((matrix_num_lables, matrix_selected_scores))
-#
-#     pathname = os.path.dirname(sys.argv[0])
-#     progPath = os.path.abspath(pathname)
-#     # print(progPath)
-#     progress = Progress(None, progPath)
-#     progress.set_gauge(value=0, text="Using R...\n")
-#     # Cannot use unicode-strings, np.since it causes rpy to crash.
-#     # Need to convert unicode-strings to non-unicode strings
-#
-#     # get program absolute-path:
-#     last_dir = os.getcwd()
-#     os.chdir(progPath)  # go to program path (for R script source)
-#
-#     # Need to transpose the raw data matrix np.since rpy transposes when transferring
-#     # it to an R-data frame
-#     part = np.transpose(raw[:, :])
-#
-#     # Constructing the data frame in R:
-#     # Switch to 'no conversion', such that everything that is created now
-#     # is an R object and NOT Python object (in this case 'frame' and 'names').
-#     # set_default_mode(NO_CONVERSION)
-#     names = r.get('names<-')
-#
-#     frame = data_frame(part)
-#     frame = names(frame, lables)
-#     # r.print_(frame)
-#
-#     # Switch back to basic conversion, so that variable res (see below) will be a
-#     # python list and NOT a R object
-#     # set_default_mode(BASIC_CONVERSION)
-#
-#     # Now running Per's R-function to analyse the constructed data frame. All
-#     # calculation results are stored in python dictionary 'res'. The dictionary
-#     # contains the matrices 'Fmatr' (res[0]), 'Pmatr' (res[1]) and
-#     # 'LSDmatr' (res[2]).
-#     # Each of them has dimension:(8 rows) x (no. of attributes).
-#
-#     # First initialise Per's function, then run it with our data-frame.
-#     # if one_rep:
-#     #     script_source = 'source(\"R_scripts/sensmixedNoRepVer1.1.R\")'
-#     #     progress.set_gauge(value=7, text="Running R script...\n")
-#     #     r(script_source)
-#     #     res = r.sensmixedNoRep11(frame)
-#     # else:
-#     #     script_source = 'source(\"R_scripts/sensmixedVer4.2.R\")'
-#     #     progress.set_gauge(value=7, text="Running R script...\n")
-#     #     r(script_source)
-#     #     res = r.sensmixedVer42(frame)
-#     res = load_mm_anova_data(s_data, plot_data, abspath=abspath)
-#     os.chdir(last_dir)  # go back
-#     progress.set_gauge(value=100, text="Done\n")
-#     progress.Destroy()
-#     # print(res[1][1][0])
-#     # print(res[2][6][0])
-#
-#     if one_rep:
-#         return res[1][1]  # Product Effect p-matrix
-#     else:
-#         return res[2][6]  # Product Effect p-matrix
+def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
+    from scripts.plots.MM_ANOVA_Plot import load_mm_anova_data
+    activeAssessorsList = plot_data.activeAssessorsList
+    activeAttributesList = plot_data.activeAttributesList
+    activeSamplesList = plot_data.activeSamplesList
+    new_active_attributes_list = activeAttributesList
 
-# TODO MVK: Fix colored frame
-# def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
-#
-#     if len(s_data.ReplicateList) == 1:
-#         one_rep = True
-#     else:
-#         one_rep = False
-#
-#     # try:
-#     if isinstance(plot_data, (CollectionCalcPlotData)):
-#         # print("collection_calc")
-#         if not plot_data.collection_calc_data.__contains__("p_matr"):
-#             plot_data.collection_calc_data["p_matr"] = attribute_significance(
-#                 s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
-#         elif plot_data.collection_calc_data["p_matr"].size == 0:
-#             plot_data.collection_calc_data["p_matr"] = attribute_significance(
-#                 s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
-#         else:
-#             pass  # ok
-#         p_matr = plot_data.collection_calc_data["p_matr"]
-#     else:
-#         #import pdb; pdb.set_trace()
-#         if not hasattr(plot_data, "p_matr"):
-#             plot_data.p_matr = attribute_significance(
-#                 s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
-#         elif 'None' in str(type(plot_data.p_matr)):
-#             plot_data.p_matr = attribute_significance(
-#                 s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
-#         else:
-#             pass  # ok
-#         p_matr = plot_data.p_matr
-#
-#     lsd_colors = {
-#         0.0: '#999999',
-#         1.0: '#FFD800',
-#         2.0: '#FF8A00',
-#         3.0: '#E80B0B'}
-#
-#     # if index list
-#     if isinstance(active_att_list[0], (int)):
-#         temp = []
-#         for ind in active_att_list:
-#             temp.append(s_data.AttributeList[ind])
-#         active_atts = temp
-#     else:
-#         active_atts = active_att_list
-#
-#     if isinstance(plot_data, (CollectionCalcPlotData)):
-#         active_atts = plot_data.collection_calc_data["accepted_active_attributes"]
-#     elif isinstance(plot_data, (MM_ANOVA_PlotData)):
-#         active_atts = plot_data.accepted_active_attributes
-#
-#     # print active_att
-#     # print plot_data.ax.get_legend_handles_labels()
-#     # print(p_matr)
-#     if p_matr.size == 0:
-#         print("Cannot set frame color: STD=0 for one or more attributes")
-#         return False
-#     elif len(p_matr) != len(active_atts):
-#         print(
-#             "Cannot set frame color: length of p list != length of active attributes list")
-#         return False
-#
-#     if active_att not in active_atts:
-#         print("Cannot set frame color: active attribute index not valid")
-#         return False
-#
-#     current_att_ind = active_atts.index(active_att)
-#
-#     # print(current_att_ind)
-#
-#     # set frame coloring:
-#     # ax.set_axis_bgcolor(lsd_colors[p_matr[current_att_ind]])
-#     plot_data.ax.set_facecolor(lsd_colors[p_matr[current_att_ind]])
-#
-#     # if plot_data.overview_plot:
-#     #    plot_data.ax.set_linewidth(3)
-#     # else:
-#     #    plot_data.ax.set_linewidth(3)
-#
-#     return True
-#     # except: return
+    matrix_num_lables = s_data.MatrixNumLables(
+        assessors=activeAssessorsList, samples=activeSamplesList)
+    matrix_selected_scores = s_data.MatrixDataSelected(
+        assessors=activeAssessorsList,
+        attributes=activeAttributesList,
+        samples=activeSamplesList)
+
+    matrix_selected_scores, out_cols = check_columns(matrix_selected_scores)
+    if len(out_cols) > 0:
+        msg = "For the selected samples the standard deviation\nover all assessors is 0 for the following attributes:\n"
+        for col_ind in out_cols:
+            msg += plot_data.activeAttributesList[col_ind] + "\n"
+
+        msg += "\nThese attributes were left out of the analysis."
+
+        new_active_attributes_indices = []
+        new_active_attributes_list = []
+        for att_ind in range(len(plot_data.activeAttributesList)):
+            if att_ind not in out_cols:
+                new_active_attributes_indices.append(att_ind)
+
+        for att_ind in new_active_attributes_indices:
+            new_active_attributes_list.append(
+                plot_data.activeAttributesList[att_ind])
+
+        matrix_selected_scores = s_data.MatrixDataSelected(
+            assessors=activeAssessorsList,
+            attributes=new_active_attributes_list,
+            samples=activeSamplesList)
+
+        # show_info_msg(msg)
+
+        lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
+        for i in range(
+                s_data.value_index,
+                len(new_active_attributes_list) +
+                s_data.value_index):
+            lables.append(i)
+
+        # return None
+    else:
+        lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
+        for i in range(
+                s_data.value_index,
+                len(activeAttributesList) +
+                s_data.value_index):
+            lables.append(i)
+
+    if isinstance(plot_data, (CollectionCalcPlotData)):
+        plot_data.collection_calc_data["accepted_active_attributes"] = new_active_attributes_list
+    else:
+        plot_data.accepted_active_attributes = new_active_attributes_list
+
+    raw = hstack((matrix_num_lables, matrix_selected_scores))
+
+    pathname = os.path.dirname(sys.argv[0])
+    progPath = os.path.abspath(pathname)
+    # print(progPath)
+    progress = Progress(None, progPath)
+    progress.set_gauge(value=0, text="Using R...\n")
+    # Cannot use unicode-strings, np.since it causes rpy to crash.
+    # Need to convert unicode-strings to non-unicode strings
+
+    # get program absolute-path:
+    last_dir = os.getcwd()
+    os.chdir(progPath)  # go to program path (for R script source)
+
+    # Need to transpose the raw data matrix np.since rpy transposes when transferring
+    # it to an R-data frame
+    part = np.transpose(raw[:, :])
+
+    # Constructing the data frame in R:
+    # Switch to 'no conversion', such that everything that is created now
+    # is an R object and NOT Python object (in this case 'frame' and 'names').
+    # set_default_mode(NO_CONVERSION)
+    names = r.get('names<-')
+
+    frame = data_frame(part)
+    frame = names(frame, lables)
+    # r.print_(frame)
+
+    # Switch back to basic conversion, so that variable res (see below) will be a
+    # python list and NOT a R object
+    # set_default_mode(BASIC_CONVERSION)
+
+    # Now running Per's R-function to analyse the constructed data frame. All
+    # calculation results are stored in python dictionary 'res'. The dictionary
+    # contains the matrices 'Fmatr' (res[0]), 'Pmatr' (res[1]) and
+    # 'LSDmatr' (res[2]).
+    # Each of them has dimension:(8 rows) x (no. of attributes).
+
+    # First initialise Per's function, then run it with our data-frame.
+    # if one_rep:
+    #     script_source = 'source(\"R_scripts/sensmixedNoRepVer1.1.R\")'
+    #     progress.set_gauge(value=7, text="Running R script...\n")
+    #     r(script_source)
+    #     res = r.sensmixedNoRep11(frame)
+    # else:
+    #     script_source = 'source(\"R_scripts/sensmixedVer4.2.R\")'
+    #     progress.set_gauge(value=7, text="Running R script...\n")
+    #     r(script_source)
+    #     res = r.sensmixedVer42(frame)
+    res = load_mm_anova_data(s_data, plot_data, abspath=abspath)
+    os.chdir(last_dir)  # go back
+    progress.set_gauge(value=100, text="Done\n")
+    progress.Destroy()
+    # print(res[1][1][0])
+    # print(res[2][6][0])
+
+    if one_rep:
+        return res[1][1]  # Product Effect p-matrix
+    else:
+        return res[2][6]  # Product Effect p-matrix
+
+#TODO MVK: Fix colored frame
+def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
+
+    if len(s_data.ReplicateList) == 1:
+        one_rep = True
+    else:
+        one_rep = False
+
+    # try:
+    if isinstance(plot_data, (CollectionCalcPlotData)):
+        # print("collection_calc")
+        if not plot_data.collection_calc_data.__contains__("p_matr"):
+            plot_data.collection_calc_data["p_matr"] = attribute_significance(
+                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+        elif plot_data.collection_calc_data["p_matr"].size == 0:
+            plot_data.collection_calc_data["p_matr"] = attribute_significance(
+                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+        else:
+            pass  # ok
+        p_matr = plot_data.collection_calc_data["p_matr"]
+    else:
+        #import pdb; pdb.set_trace()
+        if not hasattr(plot_data, "p_matr"):
+            plot_data.p_matr = attribute_significance(
+                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+        elif 'None' in str(type(plot_data.p_matr)):
+            plot_data.p_matr = attribute_significance(
+                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+        else:
+            pass  # ok
+        p_matr = plot_data.p_matr
+
+    lsd_colors = {
+        0.0: '#999999',
+        1.0: '#FFD800',
+        2.0: '#FF8A00',
+        3.0: '#E80B0B'}
+
+    # if index list
+    if isinstance(active_att_list[0], (int)):
+        temp = []
+        for ind in active_att_list:
+            temp.append(s_data.AttributeList[ind])
+        active_atts = temp
+    else:
+        active_atts = active_att_list
+
+    if isinstance(plot_data, (CollectionCalcPlotData)):
+        active_atts = plot_data.collection_calc_data["accepted_active_attributes"]
+    elif isinstance(plot_data, (MM_ANOVA_PlotData)):
+        active_atts = plot_data.accepted_active_attributes
+
+    # print active_att
+    # print plot_data.ax.get_legend_handles_labels()
+    # print(p_matr)
+    if p_matr.size == 0:
+        print("Cannot set frame color: STD=0 for one or more attributes")
+        return False
+    elif len(p_matr) != len(active_atts):
+        print(
+            "Cannot set frame color: length of p list != length of active attributes list")
+        return False
+
+    if active_att not in active_atts:
+        print("Cannot set frame color: active attribute index not valid")
+        return False
+
+    current_att_ind = active_atts.index(active_att)
+
+    # print(current_att_ind)
+
+    # set frame coloring:
+    # ax.set_axis_bgcolor(lsd_colors[p_matr[current_att_ind]])
+    plot_data.ax.set_facecolor(lsd_colors[p_matr[current_att_ind]])
+
+    # if plot_data.overview_plot:
+    #    plot_data.ax.set_linewidth(3)
+    # else:
+    #    plot_data.ax.set_linewidth(3)
+
+    return True
+    # except: return
 
 
 def significance_legend(plot_data, pos='upper right'):

@@ -31,11 +31,12 @@ from scripts.PlotData import PCA_PlotData, MM_ANOVA_PlotData, ANOVA_PlotData
 from scripts.plots.Tucker1_Plot import Tucker1Plotter
 from scripts.plots.Consensus_Plot import PCA_plotter
 
+from Grid import GridFrame
 
 #from Grid import *
 
-from scripts.Math_Tools import *
-from scripts.PanelCheck_Plots import *
+#from scripts.Math_Tools import *
+#from scripts.PanelCheck_Plots import *
 
 
 def create(parent, filename, delimiter):
@@ -896,10 +897,10 @@ class Main_Frame(wx.Frame):
             self.summaryFrame.append_text(self.fileName + "\n")
             self.summaryFrame.set_gauge(0)
 
-            new_data = PlainText(self, self.fileName, self.summaryFrame, ';')
-            if new_data.fileRead:
+            newData = PlainText(self, self.fileName, self.summaryFrame, ';')
+            if newData.fileRead:
                 self.summaryFrame.append_text("\nLoading data...\n")
-                self.s_data = new_data.s_data
+                self.s_data = newData.s_data
                 self.update_tabs()
             else:
                 print("Failed to load file")
