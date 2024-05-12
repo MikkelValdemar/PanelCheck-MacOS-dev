@@ -1,8 +1,4 @@
-#import psyco
-# psyco.full()
-
 import os
-import sys
 import wx
 import re
 import math
@@ -17,6 +13,25 @@ import glob
 
 # from PlotData import *
 
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+
+from scripts.PlotData import ANOVA_PlotData, MM_ANOVA_PlotData, PlotData, CollectionCalcPlotData, PCA_PlotData
+from scripts.Progress_Info import Progress
+
+from scripts.plots.F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
+from scripts.plots.MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific
+from scripts.plots.MM_ANOVA_Plot import MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
+from scripts.plots.Tucker1_Plot import Tucker1Plotter
+from scripts.plots.pmse_Plot import pmsePlotter
+from scripts.plots.Eggshell_Plot import EggshellPlotter
+from scripts.plots.profile_Plot import profilePlotter
+from scripts.plots.rawData_Plot import RawDataAttributePlotter, RawDataAssessorPlotter
+from scripts.plots.Manhattan_Plot import ManhattanPlotter
+from scripts.plots.Consensus_Plot import STATIS_PCA_Plotter, STATIS_AssWeight_Plotter, PCA_plotter
+from scripts.plots.Line_Plot import AssessorLinePlotter, SampleLinePlotter
+from scripts.plots.Correlation_Plot import CorrelationPlotter
 
 class Export_Images_Dialog(wx.Dialog):
     def __init__(
@@ -598,22 +613,22 @@ class Export_Images_Dialog(wx.Dialog):
                 dlg.ShowModal()
                 dlg.Destroy()
                 return
-        # ExportImages(
-        #     self.parent,
-        #     self.s_data,
-        #     active_plots,
-        #     self.plots,
-        #     self.input_browse.GetValue(),
-        #     in_im,
-        #     activeAssessors_List,
-        #     activeAttributes_List,
-        #     activeSamples_List,
-        #     self.view_grid,
-        #     self.view_legend,
-        #     saving_ppt_file=self.saving_ppt_file,
-        #     selection=selection,
-        #     dpi=dpi,
-        #     abspath=self.progPathAbs)
+        ExportImages(
+            self.parent,
+            self.s_data,
+            active_plots,
+            self.plots,
+            self.input_browse.GetValue(),
+            in_im,
+            activeAssessors_List,
+            activeAttributes_List,
+            activeSamples_List,
+            self.view_grid,
+            self.view_legend,
+            saving_ppt_file=self.saving_ppt_file,
+            selection=selection,
+            dpi=dpi,
+            abspath=self.progPathAbs)
 
         # self.EndModal(1)
 
@@ -734,1016 +749,1016 @@ class Export_Images_Dialog(wx.Dialog):
             for ind in changes["samp"]:
                 self._checkList_Samp.Check(ind, True)
 
-#
-# class ExportImages:
-#     def __init__(
-#             self,
-#             parent,
-#             s_data,
-#             active_plots,
-#             plots,
-#             outputdir,
-#             images_dir,
-#             active_ass,
-#             active_att,
-#             active_samp,
-#             grid,
-#             legend,
-#             saving_ppt_file=False,
-#             selection=0,
-#             dpi=128,
-#             abspath=None):
-#         print("saving images")
-#         self.s_data = s_data
-#
-#         self.active_plots = active_plots  # plots for exporting
-#         self.outputdir = outputdir  # directory for saving all files
-#         self.plots = plots
-#
-#         self.parent = parent
-#
-#         self.summary = ""
-#
-#         self.active_ass = active_ass
-#         self.active_att = active_att
-#         self.active_samp = active_samp
-#
-#         # plot data:
-#         self.mm_anova1_plot_data = None  # plot data for Mixed Model ANOVA
-#         self.mm_anova2_plot_data = None  # plot data for Mixed Model ANOVA
-#         self.anova_plot_data = None  # plot data for all F and p plots
-#         self.pca_plot_data = None  # plot data for all tucker1 plots
-#         self.coll_calc_plot_data = None
-#         self.manhattan_plot_data = None
-#
-#         self.view_grid = grid
-#         self.view_legend = legend
-#         self.progPathAbs = abspath
-#         self.image_files = []
-#
-#         folder = "_data_set_" + self.s_data.filename
-#         if not saving_ppt_file:
-#             self.im_out_dir = outputdir + "/" + folder
-#         else:
-#             self.im_out_dir = images_dir + "/" + folder
-#
-#         if not os.path.isdir(self.im_out_dir):  # if folder not exists:
-#             if not saving_ppt_file:
-#                 os.mkdir(self.im_out_dir)
-#             else:
-#                 if selection == 0:
-#                     os.mkdir(self.im_out_dir)
-#
-#         # plot_data = PlotData(self.active_ass, self.active_att, self.active_samp, [self.active_samp[0], self.active_ass[0], self.s_data.ReplicateList[0]], False, False) # no legend
-#         # plot_data.set_limits(self.s_data.scale_limits)
-#         #plot_data = ReplicateLinePlotter(self.s_data, plot_data)
-#         self.canvas = FigureCanvasAgg(Figure(None))
-#         filename = self.im_out_dir + "_null_.png"
-#
-#         #filename = str(filename)
-#         self.canvas.print_figure(filename, dpi=dpi)
-#         os.remove(filename)
-#
-#         if saving_ppt_file:
-#             if selection == 0:
-#                 self.save_image_files(self.im_out_dir, dpi)
-#             else:
-#                 self.find_image_files(images_dir)
-#             self.save_ppt_file(self.image_files, self.outputdir)
-#         else:
-#             if selection == 0:
-#                 self.save_image_files(self.im_out_dir, dpi,abspath=abspath)
-#             else:
-#                 self.save_image_files(self.im_out_dir, dpi, ext=".eps",abspath=abspath)
-#
-#     def find_image_files(self, images_dir):
-#         files = glob.glob(images_dir + "/*.png")
-#         files.extend(glob.glob(images_dir + "/*.eps"))
-#         files.extend(glob.glob(images_dir + "/*.bmp"))
-#         files.extend(glob.glob(images_dir + "/*.jpg"))
-#         files.extend(glob.glob(images_dir + "/*.gif"))
-#         self.image_files = files
-#
-#     def canvas_ok(self, plot_data, plotter):
-#         if hasattr(plot_data, "fig") and plot_data.fig is not None:
-#             self.canvas.figure = plot_data.fig
-#             self.canvas.figure.set_canvas(self.canvas)
-#             return True
-#         else:
-#             self.summary += "Plot method failed: " + str(plotter) + "\n"
-#             return False
-#
-#     def plot_ok(self, tree_path, plotter, selection=0):
-#         if plotter == FPlotter_Attribute_General or plotter == FPlotter_Attribute_Specific or plotter == FPlotter_Assessor_General or plotter == FPlotter_Assessor_Specific \
-#                 or plotter == MSEPlotter_Attribute_General or plotter == MSEPlotter_Attribute_Specific or plotter == MSEPlotter_Assessor_General or plotter == MSEPlotter_Assessor_Specific \
-#                 or plotter == pmsePlotter:
-#             if self.anova_plot_data is None:
-#                 self.anova_plot_data = ANOVA_PlotData(
-#                     self.active_ass,
-#                     self.active_att,
-#                     self.active_samp,
-#                     tree_path,
-#                     self.view_grid,
-#                     self.view_legend)
-#                 self.anova_plot_data.set_limits(self.s_data.scale_limits)
-#                 self.anova_plot_data = plotter(
-#                     self.s_data, self.anova_plot_data, selection=selection)
-#                 return self.canvas_ok(self.anova_plot_data, plotter)
-#             else:
-#                 self.anova_plot_data.tree_path = tree_path
-#                 self.anova_plot_data.fig = None  # reset Figure
-#                 self.anova_plot_data = plotter(
-#                     self.s_data, self.anova_plot_data, selection=selection)
-#                 return self.canvas_ok(self.anova_plot_data, plotter)
-#
-#         elif plotter == EggshellPlotter or plotter == profilePlotter or plotter == RawDataAttributePlotter:
-#             if self.coll_calc_plot_data is None:
-#                 self.coll_calc_plot_data = CollectionCalcPlotData(
-#                     self.active_ass,
-#                     self.active_att,
-#                     self.active_samp,
-#                     tree_path,
-#                     self.view_grid,
-#                     self.view_legend)
-#                 self.coll_calc_plot_data.set_limits(self.s_data.scale_limits)
-#                 self.coll_calc_plot_data = plotter(
-#                     self.s_data, self.coll_calc_plot_data)
-#                 return self.canvas_ok(self.coll_calc_plot_data, plotter)
-#             else:
-#                 self.coll_calc_plot_data.tree_path = tree_path
-#                 self.coll_calc_plot_data.fig = None  # reset Figure
-#                 self.coll_calc_plot_data = plotter(
-#                     self.s_data, self.coll_calc_plot_data)
-#                 return self.canvas_ok(self.coll_calc_plot_data, plotter)
-#
-#         elif plotter == Tucker1Plotter:
-#             if self.pca_plot_data is None or self.pca_plot_data.selection != selection:
-#                 self.pca_plot_data = PCA_PlotData(
-#                     self.active_ass,
-#                     self.active_att,
-#                     self.active_samp,
-#                     tree_path,
-#                     self.view_grid,
-#                     self.view_legend)
-#                 self.pca_plot_data.set_limits(self.s_data.scale_limits)
-#                 self.pca_plot_data = plotter(
-#                     self.s_data, self.pca_plot_data, selection=selection)
-#                 return self.canvas_ok(self.pca_plot_data, plotter)
-#             else:
-#                 self.pca_plot_data.tree_path = tree_path
-#                 self.pca_plot_data.fig = None  # reset Figure
-#                 self.pca_plot_data = plotter(
-#                     self.s_data, self.pca_plot_data, selection=selection)
-#                 return self.canvas_ok(self.pca_plot_data, plotter)
-#
-#         elif plotter == ManhattanPlotter:
-#             if self.manhattan_plot_data is None or self.manhattan_plot_data.selection != selection:
-#                 self.manhattan_plot_data = CollectionCalcPlotData(
-#                     self.active_ass,
-#                     self.active_att,
-#                     self.active_samp,
-#                     tree_path,
-#                     self.view_grid,
-#                     self.view_legend)
-#                 self.manhattan_plot_data.set_limits(self.s_data.scale_limits)
-#                 self.manhattan_plot_data.maxPCs = int(
-#                     self.parent.manh_spin_txt.GetValue())
-#                 self.manhattan_plot_data = plotter(
-#                     self.s_data, self.manhattan_plot_data, selection=selection)
-#                 return self.canvas_ok(self.manhattan_plot_data, plotter)
-#             else:
-#                 self.manhattan_plot_data.tree_path = tree_path
-#                 self.manhattan_plot_data.fig = None  # reset Figure
-#                 self.manhattan_plot_data.maxPCs = int(
-#                     self.parent.manh_spin_txt.GetValue())
-#                 self.manhattan_plot_data = plotter(
-#                     self.s_data, self.manhattan_plot_data, selection=selection)
-#                 return self.canvas_ok(self.manhattan_plot_data, plotter)
-#
-#         elif plotter == MixModel_ANOVA_Plotter_2way or plotter == MixModel_ANOVA_LSD_Plotter_2way or plotter == MixModel_ANOVA_Plotter_3way or plotter == MixModel_ANOVA_LSD_Plotter_3way:
-#             if self.mm_anova2_plot_data is None:
-#                 self.mm_anova2_plot_data = MM_ANOVA_PlotData(
-#                     self.active_ass,
-#                     self.active_att,
-#                     self.active_samp,
-#                     tree_path,
-#                     self.view_grid,
-#                     self.view_legend)
-#                 self.mm_anova2_plot_data.set_limits(self.s_data.scale_limits)
-#                 self.mm_anova2_plot_data = plotter(
-#                     self.s_data, self.mm_anova2_plot_data,abspath=self.progPathAbs)
-#                 return self.canvas_ok(self.mm_anova2_plot_data, plotter)
-#             else:
-#                 self.mm_anova2_plot_data.tree_path = tree_path
-#                 self.mm_anova2_plot_data.fig = None  # reset Figure
-#                 self.mm_anova2_plot_data = plotter(
-#                     self.s_data, self.mm_anova2_plot_data, selection=selection,abspath=self.progPathAbs)
-#                 return self.canvas_ok(self.mm_anova2_plot_data, plotter)
-#
-#         elif plotter == MixModel_ANOVA_Plotter_2way1rep or plotter == MixModel_ANOVA_LSD_Plotter_2way1rep:
-#             if self.mm_anova1_plot_data is None:
-#                 self.mm_anova1_plot_data = MM_ANOVA_PlotData(
-#                     self.active_ass,
-#                     self.active_att,
-#                     self.active_samp,
-#                     tree_path,
-#                     self.view_grid,
-#                     self.view_legend)
-#                 self.mm_anova1_plot_data.set_limits(self.s_data.scale_limits)
-#                 self.mm_anova1_plot_data = plotter(
-#                     self.s_data, self.mm_anova1_plot_data, selection=selection)
-#                 return self.canvas_ok(self.mm_anova1_plot_data, plotter)
-#             else:
-#                 self.mm_anova1_plot_data.tree_path = tree_path
-#                 self.mm_anova1_plot_data.fig = None  # reset Figure
-#                 self.mm_anova1_plot_data = plotter(
-#                     self.s_data, self.mm_anova1_plot_data)
-#                 return self.canvas_ok(self.mm_anova1_plot_data, plotter)
-#
-#         else:
-#             plot_data = PlotData(
-#                 self.active_ass,
-#                 self.active_att,
-#                 self.active_samp,
-#                 tree_path,
-#                 self.view_grid,
-#                 self.view_legend)
-#             plot_data.set_limits(self.s_data.scale_limits)
-#             plot_data = plotter(self.s_data, plot_data, selection=selection)
-#             return self.canvas_ok(plot_data, plotter)
-#
-#     def int2str(self, num, digits=3):
-#         str_num = str(num)
-#         len_num = len(str_num)
-#         _zeros = ""
-#         while len_num < digits:
-#             _zeros += "0"
-#             len_num += 1
-#         return _zeros + str_num
-#
-#     def save_image_files(self, outputdir, dpi, ext=".png",abspath=None):
-#         self.yes_to_all = False
-#         self.no_to_all = False
-#         progress = Progress(None,abspath=abspath)
-#         progress.set_gauge(
-#             value=0,
-#             text="Saving images...\nThis may take several minutes.\nPlease wait...\n")
-#         _num = len(self.active_plots)
-#         part = 100 / _num
-#         _index = 0
-#         plot_ind = 0
-#         current_value = int(math.ceil(part))
-#         _index += 1
-#
-#         # Line Sample Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for samp in self.active_samp:
-#                 if self.plot_ok([samp], SampleLinePlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_line_samp" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             progress.set_gauge(value=current_value)
-#             _index += 1
-#
-#         plot_ind += 1
-#         # Line Assessor Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for samp in self.active_samp:
-#                 for ass in self.active_ass:
-#                     if self.plot_ok([samp, ass], AssessorLinePlotter):
-#                         filename = outputdir + "/" + self.int2str(plot_ind) + "_line_samp_ass" + self.int2str(
-#                             _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                         self.save_image_file(self.canvas, filename, dpi=dpi)
-#                         _nr += 1
-#                         if self.no_to_all:
-#                             progress.Destroy()
-#                             return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Mean && STD Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], RawDataAssessorPlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_mean_std_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             for att in self.active_att:
-#                 if self.plot_ok([att], RawDataAttributePlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_mean_std_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Correlation Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for ass in self.active_ass:
-#                 for att in self.active_att:
-#                     if self.plot_ok([ass, att], CorrelationPlotter):
-#                         filename = outputdir + "/" + self.int2str(plot_ind) + "_corr_ass_att" + self.int2str(
-#                             _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                         self.save_image_file(self.canvas, filename, dpi=dpi)
-#                         _nr += 1
-#                         if self.no_to_all:
-#                             progress.Destroy()
-#                             return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Profile Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for att in self.active_att:
-#                 if self.plot_ok([att], profilePlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_profile" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Eggshell Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for att in self.active_att:
-#                 if self.plot_ok([att], EggshellPlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_eggshell" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # F Assessor Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             if self.plot_ok(['F-values', 'General Plot'],
-#                             FPlotter_Attribute_General):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_f_ass_general" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             for att in self.active_att:
-#                 if self.plot_ok(['F-values', att], FPlotter_Assessor_Specific):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_f_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # F Attribute Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             if self.plot_ok(['F-values', 'General Plot'],
-#                             FPlotter_Attribute_General):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_f_att_general" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             for ass in self.active_ass:
-#                 if self.plot_ok(['F-values', ass],
-#                                 FPlotter_Attribute_Specific):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_f_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # p Assessor Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             if self.plot_ok(['p-values', 'General Plot'],
-#                             FPlotter_Assessor_General):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_p_ass_general" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             for att in self.active_att:
-#                 if self.plot_ok(['p-values', att], FPlotter_Assessor_Specific):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_p_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # p Attribute Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             if self.plot_ok(['p-values', 'General Plot'],
-#                             FPlotter_Attribute_General):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_p_att_general" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             for ass in self.active_ass:
-#                 if self.plot_ok(['p-values', ass],
-#                                 FPlotter_Attribute_Specific):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_p_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # MSE Assessor Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             if self.plot_ok(['General Plot'], MSEPlotter_Assessor_General):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_mse_ass_general" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#             if self.no_to_all:
-#                 progress.Destroy()
-#                 return
-#             _nr = 1
-#             for att in self.active_att:
-#                 if self.plot_ok([att], MSEPlotter_Assessor_Specific):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_mse_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # MSE Attribute Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             if self.plot_ok(['General Plot'], MSEPlotter_Attribute_General):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_mse_att_general" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             _nr = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], MSEPlotter_Attribute_Specific):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_mse_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # p-MSE Assessor Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], pmsePlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_pmse_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # p-MSE Attribute Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             for att in self.active_att:
-#                 if self.plot_ok([att], pmsePlotter):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "_pmse_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Tucker-1 Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             if self.plot_ok(['Common Scores'], Tucker1Plotter, selection=0):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_tucker1_common_scores" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             _nr = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], Tucker1Plotter, selection=0):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_tucker1_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             for att in self.active_att:
-#                 if self.plot_ok([att], Tucker1Plotter, selection=0):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "c_tucker1_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Tucker-1 Standardize Plots
-#         if self.plots[plot_ind] in self.active_plots:
-#             if self.plot_ok(['Common Scores'], Tucker1Plotter, selection=1):
-#                 filename = outputdir + "/" + self.int2str(
-#                     plot_ind) + "_tucker1_standard_common_scores" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             _nr = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], Tucker1Plotter, selection=1):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_tucker1_standard_ass" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             for att in self.active_att:
-#                 if self.plot_ok([att], Tucker1Plotter, selection=1):
-#                     filename = outputdir + "/" + self.int2str(plot_ind) + "c_tucker1_standard_att" + self.int2str(
-#                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     _nr += 1
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Consensus Original
-#         if self.plots[plot_ind] in self.active_plots:
-#             _list = [
-#                 u'PCA Scores',
-#                 u'PCA Loadings',
-#                 u'PCA Correlation Loadings',
-#                 u'PCA Explained Variance',
-#                 'Spiderweb Plot',
-#                 'Bi-Plot']
-#             type_ind = 1
-#             for type in _list:
-#                 if self.plot_ok([type], PCA_plotter, selection=0):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_consensus_original" + str(type_ind) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#                 type_ind += 1
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Consensus Standardized
-#         if self.plots[plot_ind] in self.active_plots:
-#             _list = [
-#                 u'PCA Scores',
-#                 u'PCA Loadings',
-#                 u'PCA Correlation Loadings',
-#                 u'PCA Explained Variance',
-#                 'Spiderweb Plot',
-#                 'Bi-Plot']
-#             type_ind = 1
-#             for type in _list:
-#                 if self.plot_ok([type], PCA_plotter, selection=1):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_consensus_standardized" + str(type_ind) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#                 type_ind += 1
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # STATIS Cov
-#         if self.plots[plot_ind] in self.active_plots:
-#             selection = 0  # covariance
-#             _list = [
-#                 u'PCA Scores',
-#                 u'PCA Loadings',
-#                 u'PCA Correlation Loadings',
-#                 u'PCA Explained Variance',
-#                 'Spiderweb Plot',
-#                 'Bi-Plot']
-#             type_ind = 1
-#             for type in _list:
-#                 if self.plot_ok([type], STATIS_PCA_Plotter, selection):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_statis" + str(type_ind) + "_cov" + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#                 type_ind += 1
-#             if self.plot_ok(
-#                 [u'Assessor Weight'],
-#                 STATIS_AssWeight_Plotter,
-#                     selection):
-#                 filename = outputdir + "/" + \
-#                     self.int2str(plot_ind) + "_statis5_cov_ass_weight" + ext
-#                 self.save_image_file(self.canvas, filename, dpi=dpi)
-#                 if self.no_to_all:
-#                     progress.Destroy()
-#                     return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # STATIS Corr
-#         if self.plots[plot_ind] in self.active_plots:
-#             selection = 1  # correlation
-#             _list = [
-#                 u'PCA Scores',
-#                 u'PCA Loadings',
-#                 u'PCA Correlation Loadings',
-#                 u'PCA Explained Variance',
-#                 'Spiderweb Plot',
-#                 'Bi-Plot',
-#                 'Assessor Weight']
-#             type_ind = 1
-#             for type in _list:
-#                 if type == "Assessor Weight":
-#                     plotter = STATIS_AssWeight_Plotter
-#                 else:
-#                     plotter = STATIS_AssWeight_Plotter
-#                 if self.plot_ok([type], plotter, selection):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_statis" + str(type_ind) + "_corr" + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#                 type_ind += 1
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Manhattan Original
-#         if self.plots[plot_ind] in self.active_plots:
-#             type_ind = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], ManhattanPlotter, selection=0):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_manhattan_original" + str(type_ind) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#                 type_ind += 1
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Manhattan Standardized
-#         if self.plots[plot_ind] in self.active_plots:
-#             type_ind = 1
-#             for ass in self.active_ass:
-#                 if self.plot_ok([ass], ManhattanPlotter, selection=1):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_manhattan_standardized" + str(type_ind) + ext
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#                 type_ind += 1
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Mixed Model ANOVA
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             _types = ['F1', 'F2']
-#             for _type in _types:
-#                 if self.plot_ok([_type], MixModel_ANOVA_Plotter_2way1rep):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_mm_anova_f_" + str(_nr) + ext
-#                     _nr += 1
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             lsd_types = ['LSD1', 'LSD2']
-#             _nr = 1
-#             for _type in lsd_types:
-#                 if self.plot_ok([_type], MixModel_ANOVA_LSD_Plotter_2way1rep):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_mm_anova_lsd_" + str(_nr) + ext
-#                     _nr += 1
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Mixed Model ANOVA
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             _types = ['F1', 'F2', 'F3']
-#             for _type in _types:
-#                 if self.plot_ok([_type], MixModel_ANOVA_Plotter_2way):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_mm_anova_f_" + str(_nr) + ext
-#                     _nr += 1
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             lsd_types = ['LSD1', 'LSD2']
-#             _nr = 1
-#             for _type in lsd_types:
-#                 if self.plot_ok([_type], MixModel_ANOVA_LSD_Plotter_2way):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_mm_anova_lsd_" + str(_nr) + ext
-#                     _nr += 1
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         plot_ind += 1
-#         # Mixed Model ANOVA
-#         if self.plots[plot_ind] in self.active_plots:
-#             _nr = 1
-#             _types = ['F1', 'F2', 'F3', 'F4']
-#             for _type in _types:
-#                 if self.plot_ok([_type], MixModel_ANOVA_Plotter_3way):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_mm_anova_f_" + str(_nr) + ext
-#                     _nr += 1
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             lsd_types = ['LSD1', 'LSD2']
-#             _nr = 1
-#             for _type in lsd_types:
-#                 if self.plot_ok([_type], MixModel_ANOVA_LSD_Plotter_3way):
-#                     filename = outputdir + "/" + self.int2str(
-#                         plot_ind) + "_mm_anova_lsd_" + str(_nr) + ext
-#                     _nr += 1
-#                     self.save_image_file(self.canvas, filename, dpi=dpi)
-#                     if self.no_to_all:
-#                         progress.Destroy()
-#                         return
-#             current_value = int(math.ceil(part * _index))
-#             _index += 1
-#             progress.set_gauge(value=current_value)
-#
-#         progress.set_gauge(value=100, text="Done\n")
-#         progress.Destroy()
-#
-#     def save_ppt_file(self, image_files, pdf_file):
-#         plt.savefigure(pdf_file)
-#
-#     def char_ok(self, c):
-#         test_pattern = r'[a-zA-Z_0-9]'
-#         if re.search(test_pattern, c) is not None:
-#             return True
-#         else:
-#             return False
-#
-#     def ascii_encode(self, obj):
-#         """
-#         returns the decoded unicode representation of obj
-#
-#         Also removes some characters not used in dir or file names ie.
-#         """
-#         return obj.encode('ascii', 'ignore')  # remove bad characters
-#
-#     def ascii_enc(self, obj):
-#         """
-#         returns the decoded unicode representation of obj
-#
-#         Also removes some characters not used in dir or file names ie.
-#         """
-#         # new_obj = obj.encode('ascii', 'ignore') # remove bad characters
-#
-#         ret_obj = ""
-#         # for each character
-#         for c in obj:
-#             if self.char_ok(c):
-#                 ret_obj += c
-#         return ret_obj
-#
-#     def save_image_file(self, canvas, file, dpi):
-#         """
-#         Saves image file
-#
-#         @type file:    string
-#         @param file:    absolute file path
-#
-#         @type image:    wx.Image
-#         @param image:    image data to be saved
-#
-#         @type type:    int
-#         @param type:    file type
-#         """
-#         file = file
-#
-#         canvas.figure.text(
-#             0.01,
-#             0.01,
-#             "PanelCheck",
-#             fontdict={
-#                 'fontname': 'Arial Narrow',
-#                 'color': 'black',
-#                 'fontweight': 'bold',
-#                 'fontsize': 14,
-#                 'alpha': 0.25})
-#
-#         if self.yes_to_all:
-#             canvas.print_figure(file, dpi=dpi)
-#             self.image_files.append(file)
-#         elif os.path.isfile(file):  # does file exist?
-#             save = False
-#             #splitted = split_path(file)
-#             string = file
-#             if len(string) > 55:
-#                 string = string[:15] + " ... " + string[-35:]
-#             dlg = SaveDialog(self.parent, string)
-#             dlg.CenterOnScreen()
-#             code = dlg.ShowModal()
-#             if code == dlg.id_yes:
-#                 save = True
-#             elif code == dlg.id_yes_all:
-#                 self.yes_to_all = True
-#                 save = True
-#             elif code == dlg.id_no:
-#                 save = False
-#             else:
-#                 self.no_to_all = True
-#                 save = False  # no to all
-#             dlg.Destroy()
-#             if save:
-#                 canvas.print_figure(file, dpi=dpi)
-#                 self.image_files.append(file)
-#         else:
-#             print(file)
-#             canvas.print_figure(file, dpi=dpi)
-#             self.image_files.append(file)
-#
-#             del canvas.figure.texts[-1]
-#
-#
-# class SaveDialog(wx.Dialog):
-#     """
-#     Custom dialog class, for having the "Yes to all" button
-#     """
-#
-#     def __init__(self, prnt, file, yesToAll_btn=True, noToAll_btn=True):
-#         wx.Dialog.__init__(self, parent=prnt, id=-1,
-#                            pos=wx.DefaultPosition, size=wx.DefaultSize,
-#                            style=wx.DEFAULT_DIALOG_STYLE, title=u'Overwrite?')
-#
-#         box = wx.BoxSizer(wx.VERTICAL)
-#         text = wx.StaticText(
-#             self,
-#             id=wx.NewId(),
-#             label=u'File exists:\n' +
-#             file +
-#             '\n\nDo you wish to overwrite?')
-#
-#         btnsizer = wx.BoxSizer(wx.HORIZONTAL)
-#
-#         self.id_yes = wx.NewId()
-#         self.id_yes_all = wx.NewId()
-#         self.id_no = wx.NewId()
-#         self.id_no_all = wx.NewId()
-#         yes = wx.Button(self, id=self.id_yes, label=u'Yes')
-#         yes.Bind(wx.EVT_BUTTON, self.onYes, id=self.id_yes)
-#         if yesToAll_btn:
-#             yes_to_all = wx.Button(
-#                 self, id=self.id_yes_all, label=u'Yes to all')
-#             yes_to_all.Bind(wx.EVT_BUTTON, self.onYesAll, id=self.id_yes_all)
-#         no = wx.Button(self, id=self.id_no, label=u'No')
-#         no.Bind(wx.EVT_BUTTON, self.onNo, id=self.id_no)
-#         if noToAll_btn:
-#             no_all = wx.Button(self, id=self.id_no_all, label=u'No to all')
-#             no_all.Bind(wx.EVT_BUTTON, self.onNoAll, id=self.id_no_all)
-#
-#         btnsizer.Add(yes, 0, wx.EXPAND)
-#         if yesToAll_btn:
-#             btnsizer.Add(yes_to_all, 0, wx.EXPAND)
-#         btnsizer.Add(no, 0, wx.EXPAND)
-#         if noToAll_btn:
-#             btnsizer.Add(no_all, 0, wx.EXPAND)
-#
-#         box.Add(text, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-#         box.Add(btnsizer, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-#
-#         self.SetSizer(box)
-#         # box.Fit(self)
-#         self.SetSize((400, 150))
-#
-#     def onYes(self, event):
-#         self.EndModal(self.id_yes)
-#
-#     def onYesAll(self, event):
-#         self.EndModal(self.id_yes_all)
-#
-#     def onNo(self, event):
-#         self.EndModal(self.id_no)
-#
-#     def onNoAll(self, event):
-#         self.EndModal(self.id_no_all)
+
+class ExportImages:
+    def __init__(
+            self,
+            parent,
+            s_data,
+            active_plots,
+            plots,
+            outputdir,
+            images_dir,
+            active_ass,
+            active_att,
+            active_samp,
+            grid,
+            legend,
+            saving_ppt_file=False,
+            selection=0,
+            dpi=128,
+            abspath=None):
+        print("saving images")
+        self.s_data = s_data
+
+        self.active_plots = active_plots  # plots for exporting
+        self.outputdir = outputdir  # directory for saving all files
+        self.plots = plots
+
+        self.parent = parent
+
+        self.summary = ""
+
+        self.active_ass = active_ass
+        self.active_att = active_att
+        self.active_samp = active_samp
+
+        # plot data:
+        self.mm_anova1_plot_data = None  # plot data for Mixed Model ANOVA
+        self.mm_anova2_plot_data = None  # plot data for Mixed Model ANOVA
+        self.anova_plot_data = None  # plot data for all F and p plots
+        self.pca_plot_data = None  # plot data for all tucker1 plots
+        self.coll_calc_plot_data = None
+        self.manhattan_plot_data = None
+
+        self.view_grid = grid
+        self.view_legend = legend
+        self.progPathAbs = abspath
+        self.image_files = []
+
+        folder = "_data_set_" + self.s_data.filename
+        if not saving_ppt_file:
+            self.im_out_dir = outputdir + "/" + folder
+        else:
+            self.im_out_dir = images_dir + "/" + folder
+
+        if not os.path.isdir(self.im_out_dir):  # if folder not exists:
+            if not saving_ppt_file:
+                os.mkdir(self.im_out_dir)
+            else:
+                if selection == 0:
+                    os.mkdir(self.im_out_dir)
+
+        # plot_data = PlotData(self.active_ass, self.active_att, self.active_samp, [self.active_samp[0], self.active_ass[0], self.s_data.ReplicateList[0]], False, False) # no legend
+        # plot_data.set_limits(self.s_data.scale_limits)
+        #plot_data = ReplicateLinePlotter(self.s_data, plot_data)
+        self.canvas = FigureCanvasAgg(Figure(None))
+        filename = self.im_out_dir + "_null_.png"
+
+        #filename = str(filename)
+        self.canvas.print_figure(filename, dpi=dpi)
+        os.remove(filename)
+
+        if saving_ppt_file:
+            if selection == 0:
+                self.save_image_files(self.im_out_dir, dpi)
+            else:
+                self.find_image_files(images_dir)
+            self.save_ppt_file(self.image_files, self.outputdir)
+        else:
+            if selection == 0:
+                self.save_image_files(self.im_out_dir, dpi,abspath=abspath)
+            else:
+                self.save_image_files(self.im_out_dir, dpi, ext=".eps",abspath=abspath)
+
+    def find_image_files(self, images_dir):
+        files = glob.glob(images_dir + "/*.png")
+        files.extend(glob.glob(images_dir + "/*.eps"))
+        files.extend(glob.glob(images_dir + "/*.bmp"))
+        files.extend(glob.glob(images_dir + "/*.jpg"))
+        files.extend(glob.glob(images_dir + "/*.gif"))
+        self.image_files = files
+
+    def canvas_ok(self, plot_data, plotter):
+        if hasattr(plot_data, "fig") and plot_data.fig is not None:
+            self.canvas.figure = plot_data.fig
+            self.canvas.figure.set_canvas(self.canvas)
+            return True
+        else:
+            self.summary += "Plot method failed: " + str(plotter) + "\n"
+            return False
+
+    def plot_ok(self, tree_path, plotter, selection=0):
+        if plotter == FPlotter_Attribute_General or plotter == FPlotter_Attribute_Specific or plotter == FPlotter_Assessor_General or plotter == FPlotter_Assessor_Specific \
+                or plotter == MSEPlotter_Attribute_General or plotter == MSEPlotter_Attribute_Specific or plotter == MSEPlotter_Assessor_General or plotter == MSEPlotter_Assessor_Specific \
+                or plotter == pmsePlotter:
+            if self.anova_plot_data is None:
+                self.anova_plot_data = ANOVA_PlotData(
+                    self.active_ass,
+                    self.active_att,
+                    self.active_samp,
+                    tree_path,
+                    self.view_grid,
+                    self.view_legend)
+                self.anova_plot_data.set_limits(self.s_data.scale_limits)
+                self.anova_plot_data = plotter(
+                    self.s_data, self.anova_plot_data, selection=selection)
+                return self.canvas_ok(self.anova_plot_data, plotter)
+            else:
+                self.anova_plot_data.tree_path = tree_path
+                self.anova_plot_data.fig = None  # reset Figure
+                self.anova_plot_data = plotter(
+                    self.s_data, self.anova_plot_data, selection=selection)
+                return self.canvas_ok(self.anova_plot_data, plotter)
+
+        elif plotter == EggshellPlotter or plotter == profilePlotter or plotter == RawDataAttributePlotter:
+            if self.coll_calc_plot_data is None:
+                self.coll_calc_plot_data = CollectionCalcPlotData(
+                    self.active_ass,
+                    self.active_att,
+                    self.active_samp,
+                    tree_path,
+                    self.view_grid,
+                    self.view_legend)
+                self.coll_calc_plot_data.set_limits(self.s_data.scale_limits)
+                self.coll_calc_plot_data = plotter(
+                    self.s_data, self.coll_calc_plot_data)
+                return self.canvas_ok(self.coll_calc_plot_data, plotter)
+            else:
+                self.coll_calc_plot_data.tree_path = tree_path
+                self.coll_calc_plot_data.fig = None  # reset Figure
+                self.coll_calc_plot_data = plotter(
+                    self.s_data, self.coll_calc_plot_data)
+                return self.canvas_ok(self.coll_calc_plot_data, plotter)
+
+        elif plotter == Tucker1Plotter:
+            if self.pca_plot_data is None or self.pca_plot_data.selection != selection:
+                self.pca_plot_data = PCA_PlotData(
+                    self.active_ass,
+                    self.active_att,
+                    self.active_samp,
+                    tree_path,
+                    self.view_grid,
+                    self.view_legend)
+                self.pca_plot_data.set_limits(self.s_data.scale_limits)
+                self.pca_plot_data = plotter(
+                    self.s_data, self.pca_plot_data, selection=selection)
+                return self.canvas_ok(self.pca_plot_data, plotter)
+            else:
+                self.pca_plot_data.tree_path = tree_path
+                self.pca_plot_data.fig = None  # reset Figure
+                self.pca_plot_data = plotter(
+                    self.s_data, self.pca_plot_data, selection=selection)
+                return self.canvas_ok(self.pca_plot_data, plotter)
+
+        elif plotter == ManhattanPlotter:
+            if self.manhattan_plot_data is None or self.manhattan_plot_data.selection != selection:
+                self.manhattan_plot_data = CollectionCalcPlotData(
+                    self.active_ass,
+                    self.active_att,
+                    self.active_samp,
+                    tree_path,
+                    self.view_grid,
+                    self.view_legend)
+                self.manhattan_plot_data.set_limits(self.s_data.scale_limits)
+                self.manhattan_plot_data.maxPCs = int(
+                    self.parent.manh_spin_txt.GetValue())
+                self.manhattan_plot_data = plotter(
+                    self.s_data, self.manhattan_plot_data, selection=selection)
+                return self.canvas_ok(self.manhattan_plot_data, plotter)
+            else:
+                self.manhattan_plot_data.tree_path = tree_path
+                self.manhattan_plot_data.fig = None  # reset Figure
+                self.manhattan_plot_data.maxPCs = int(
+                    self.parent.manh_spin_txt.GetValue())
+                self.manhattan_plot_data = plotter(
+                    self.s_data, self.manhattan_plot_data, selection=selection)
+                return self.canvas_ok(self.manhattan_plot_data, plotter)
+
+        elif plotter == MixModel_ANOVA_Plotter_2way or plotter == MixModel_ANOVA_LSD_Plotter_2way or plotter == MixModel_ANOVA_Plotter_3way or plotter == MixModel_ANOVA_LSD_Plotter_3way:
+            if self.mm_anova2_plot_data is None:
+                self.mm_anova2_plot_data = MM_ANOVA_PlotData(
+                    self.active_ass,
+                    self.active_att,
+                    self.active_samp,
+                    tree_path,
+                    self.view_grid,
+                    self.view_legend)
+                self.mm_anova2_plot_data.set_limits(self.s_data.scale_limits)
+                self.mm_anova2_plot_data = plotter(
+                    self.s_data, self.mm_anova2_plot_data,abspath=self.progPathAbs)
+                return self.canvas_ok(self.mm_anova2_plot_data, plotter)
+            else:
+                self.mm_anova2_plot_data.tree_path = tree_path
+                self.mm_anova2_plot_data.fig = None  # reset Figure
+                self.mm_anova2_plot_data = plotter(
+                    self.s_data, self.mm_anova2_plot_data, selection=selection,abspath=self.progPathAbs)
+                return self.canvas_ok(self.mm_anova2_plot_data, plotter)
+
+        elif plotter == MixModel_ANOVA_Plotter_2way1rep or plotter == MixModel_ANOVA_LSD_Plotter_2way1rep:
+            if self.mm_anova1_plot_data is None:
+                self.mm_anova1_plot_data = MM_ANOVA_PlotData(
+                    self.active_ass,
+                    self.active_att,
+                    self.active_samp,
+                    tree_path,
+                    self.view_grid,
+                    self.view_legend)
+                self.mm_anova1_plot_data.set_limits(self.s_data.scale_limits)
+                self.mm_anova1_plot_data = plotter(
+                    self.s_data, self.mm_anova1_plot_data, selection=selection)
+                return self.canvas_ok(self.mm_anova1_plot_data, plotter)
+            else:
+                self.mm_anova1_plot_data.tree_path = tree_path
+                self.mm_anova1_plot_data.fig = None  # reset Figure
+                self.mm_anova1_plot_data = plotter(
+                    self.s_data, self.mm_anova1_plot_data)
+                return self.canvas_ok(self.mm_anova1_plot_data, plotter)
+
+        else:
+            plot_data = PlotData(
+                self.active_ass,
+                self.active_att,
+                self.active_samp,
+                tree_path,
+                self.view_grid,
+                self.view_legend)
+            plot_data.set_limits(self.s_data.scale_limits)
+            plot_data = plotter(self.s_data, plot_data, selection=selection)
+            return self.canvas_ok(plot_data, plotter)
+
+    def int2str(self, num, digits=3):
+        str_num = str(num)
+        len_num = len(str_num)
+        _zeros = ""
+        while len_num < digits:
+            _zeros += "0"
+            len_num += 1
+        return _zeros + str_num
+
+    def save_image_files(self, outputdir, dpi, ext=".png",abspath=None):
+        self.yes_to_all = False
+        self.no_to_all = False
+        progress = Progress(None,abspath=abspath)
+        progress.set_gauge(
+            value=0,
+            text="Saving images...\nThis may take several minutes.\nPlease wait...\n")
+        _num = len(self.active_plots)
+        part = 100 / _num
+        _index = 0
+        plot_ind = 0
+        current_value = int(math.ceil(part))
+        _index += 1
+
+        # Line Sample Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for samp in self.active_samp:
+                if self.plot_ok([samp], SampleLinePlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_line_samp" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            progress.set_gauge(value=current_value)
+            _index += 1
+
+        plot_ind += 1
+        # Line Assessor Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for samp in self.active_samp:
+                for ass in self.active_ass:
+                    if self.plot_ok([samp, ass], AssessorLinePlotter):
+                        filename = outputdir + "/" + self.int2str(plot_ind) + "_line_samp_ass" + self.int2str(
+                            _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                        self.save_image_file(self.canvas, filename, dpi=dpi)
+                        _nr += 1
+                        if self.no_to_all:
+                            progress.Destroy()
+                            return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Mean && STD Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], RawDataAssessorPlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_mean_std_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            for att in self.active_att:
+                if self.plot_ok([att], RawDataAttributePlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_mean_std_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Correlation Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for ass in self.active_ass:
+                for att in self.active_att:
+                    if self.plot_ok([ass, att], CorrelationPlotter):
+                        filename = outputdir + "/" + self.int2str(plot_ind) + "_corr_ass_att" + self.int2str(
+                            _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                        self.save_image_file(self.canvas, filename, dpi=dpi)
+                        _nr += 1
+                        if self.no_to_all:
+                            progress.Destroy()
+                            return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Profile Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for att in self.active_att:
+                if self.plot_ok([att], profilePlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_profile" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Eggshell Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for att in self.active_att:
+                if self.plot_ok([att], EggshellPlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_eggshell" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # F Assessor Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            if self.plot_ok(['F-values', 'General Plot'],
+                            FPlotter_Attribute_General):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_f_ass_general" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            for att in self.active_att:
+                if self.plot_ok(['F-values', att], FPlotter_Assessor_Specific):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_f_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # F Attribute Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            if self.plot_ok(['F-values', 'General Plot'],
+                            FPlotter_Attribute_General):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_f_att_general" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            for ass in self.active_ass:
+                if self.plot_ok(['F-values', ass],
+                                FPlotter_Attribute_Specific):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_f_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # p Assessor Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            if self.plot_ok(['p-values', 'General Plot'],
+                            FPlotter_Assessor_General):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_p_ass_general" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            for att in self.active_att:
+                if self.plot_ok(['p-values', att], FPlotter_Assessor_Specific):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_p_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # p Attribute Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            if self.plot_ok(['p-values', 'General Plot'],
+                            FPlotter_Attribute_General):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_p_att_general" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            for ass in self.active_ass:
+                if self.plot_ok(['p-values', ass],
+                                FPlotter_Attribute_Specific):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_p_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # MSE Assessor Plots
+        if self.plots[plot_ind] in self.active_plots:
+            if self.plot_ok(['General Plot'], MSEPlotter_Assessor_General):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_mse_ass_general" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+            if self.no_to_all:
+                progress.Destroy()
+                return
+            _nr = 1
+            for att in self.active_att:
+                if self.plot_ok([att], MSEPlotter_Assessor_Specific):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_mse_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # MSE Attribute Plots
+        if self.plots[plot_ind] in self.active_plots:
+            if self.plot_ok(['General Plot'], MSEPlotter_Attribute_General):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_mse_att_general" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            _nr = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], MSEPlotter_Attribute_Specific):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_mse_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # p-MSE Assessor Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], pmsePlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_pmse_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # p-MSE Attribute Plots
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            for att in self.active_att:
+                if self.plot_ok([att], pmsePlotter):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_pmse_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Tucker-1 Plots
+        if self.plots[plot_ind] in self.active_plots:
+            if self.plot_ok(['Common Scores'], Tucker1Plotter, selection=0):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_tucker1_common_scores" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            _nr = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], Tucker1Plotter, selection=0):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_tucker1_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            for att in self.active_att:
+                if self.plot_ok([att], Tucker1Plotter, selection=0):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "c_tucker1_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Tucker-1 Standardize Plots
+        if self.plots[plot_ind] in self.active_plots:
+            if self.plot_ok(['Common Scores'], Tucker1Plotter, selection=1):
+                filename = outputdir + "/" + self.int2str(
+                    plot_ind) + "_tucker1_standard_common_scores" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            _nr = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], Tucker1Plotter, selection=1):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "b_tucker1_standard_ass" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            for att in self.active_att:
+                if self.plot_ok([att], Tucker1Plotter, selection=1):
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "c_tucker1_standard_att" + self.int2str(
+                        _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    _nr += 1
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Consensus Original
+        if self.plots[plot_ind] in self.active_plots:
+            _list = [
+                u'PCA Scores',
+                u'PCA Loadings',
+                u'PCA Correlation Loadings',
+                u'PCA Explained Variance',
+                'Spiderweb Plot',
+                'Bi-Plot']
+            type_ind = 1
+            for type in _list:
+                if self.plot_ok([type], PCA_plotter, selection=0):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_consensus_original" + str(type_ind) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+                type_ind += 1
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Consensus Standardized
+        if self.plots[plot_ind] in self.active_plots:
+            _list = [
+                u'PCA Scores',
+                u'PCA Loadings',
+                u'PCA Correlation Loadings',
+                u'PCA Explained Variance',
+                'Spiderweb Plot',
+                'Bi-Plot']
+            type_ind = 1
+            for type in _list:
+                if self.plot_ok([type], PCA_plotter, selection=1):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_consensus_standardized" + str(type_ind) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+                type_ind += 1
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # STATIS Cov
+        if self.plots[plot_ind] in self.active_plots:
+            selection = 0  # covariance
+            _list = [
+                u'PCA Scores',
+                u'PCA Loadings',
+                u'PCA Correlation Loadings',
+                u'PCA Explained Variance',
+                'Spiderweb Plot',
+                'Bi-Plot']
+            type_ind = 1
+            for type in _list:
+                if self.plot_ok([type], STATIS_PCA_Plotter, selection):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_statis" + str(type_ind) + "_cov" + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+                type_ind += 1
+            if self.plot_ok(
+                [u'Assessor Weight'],
+                STATIS_AssWeight_Plotter,
+                    selection):
+                filename = outputdir + "/" + \
+                    self.int2str(plot_ind) + "_statis5_cov_ass_weight" + ext
+                self.save_image_file(self.canvas, filename, dpi=dpi)
+                if self.no_to_all:
+                    progress.Destroy()
+                    return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # STATIS Corr
+        if self.plots[plot_ind] in self.active_plots:
+            selection = 1  # correlation
+            _list = [
+                u'PCA Scores',
+                u'PCA Loadings',
+                u'PCA Correlation Loadings',
+                u'PCA Explained Variance',
+                'Spiderweb Plot',
+                'Bi-Plot',
+                'Assessor Weight']
+            type_ind = 1
+            for type in _list:
+                if type == "Assessor Weight":
+                    plotter = STATIS_AssWeight_Plotter
+                else:
+                    plotter = STATIS_AssWeight_Plotter
+                if self.plot_ok([type], plotter, selection):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_statis" + str(type_ind) + "_corr" + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+                type_ind += 1
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Manhattan Original
+        if self.plots[plot_ind] in self.active_plots:
+            type_ind = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], ManhattanPlotter, selection=0):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_manhattan_original" + str(type_ind) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+                type_ind += 1
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Manhattan Standardized
+        if self.plots[plot_ind] in self.active_plots:
+            type_ind = 1
+            for ass in self.active_ass:
+                if self.plot_ok([ass], ManhattanPlotter, selection=1):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_manhattan_standardized" + str(type_ind) + ext
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+                type_ind += 1
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Mixed Model ANOVA
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            _types = ['F1', 'F2']
+            for _type in _types:
+                if self.plot_ok([_type], MixModel_ANOVA_Plotter_2way1rep):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_mm_anova_f_" + str(_nr) + ext
+                    _nr += 1
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            lsd_types = ['LSD1', 'LSD2']
+            _nr = 1
+            for _type in lsd_types:
+                if self.plot_ok([_type], MixModel_ANOVA_LSD_Plotter_2way1rep):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_mm_anova_lsd_" + str(_nr) + ext
+                    _nr += 1
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Mixed Model ANOVA
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            _types = ['F1', 'F2', 'F3']
+            for _type in _types:
+                if self.plot_ok([_type], MixModel_ANOVA_Plotter_2way):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_mm_anova_f_" + str(_nr) + ext
+                    _nr += 1
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            lsd_types = ['LSD1', 'LSD2']
+            _nr = 1
+            for _type in lsd_types:
+                if self.plot_ok([_type], MixModel_ANOVA_LSD_Plotter_2way):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_mm_anova_lsd_" + str(_nr) + ext
+                    _nr += 1
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        plot_ind += 1
+        # Mixed Model ANOVA
+        if self.plots[plot_ind] in self.active_plots:
+            _nr = 1
+            _types = ['F1', 'F2', 'F3', 'F4']
+            for _type in _types:
+                if self.plot_ok([_type], MixModel_ANOVA_Plotter_3way):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_mm_anova_f_" + str(_nr) + ext
+                    _nr += 1
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            lsd_types = ['LSD1', 'LSD2']
+            _nr = 1
+            for _type in lsd_types:
+                if self.plot_ok([_type], MixModel_ANOVA_LSD_Plotter_3way):
+                    filename = outputdir + "/" + self.int2str(
+                        plot_ind) + "_mm_anova_lsd_" + str(_nr) + ext
+                    _nr += 1
+                    self.save_image_file(self.canvas, filename, dpi=dpi)
+                    if self.no_to_all:
+                        progress.Destroy()
+                        return
+            current_value = int(math.ceil(part * _index))
+            _index += 1
+            progress.set_gauge(value=current_value)
+
+        progress.set_gauge(value=100, text="Done\n")
+        progress.Destroy()
+
+    def save_ppt_file(self, image_files, pdf_file):
+        plt.savefigure(pdf_file)
+
+    def char_ok(self, c):
+        test_pattern = r'[a-zA-Z_0-9]'
+        if re.search(test_pattern, c) is not None:
+            return True
+        else:
+            return False
+
+    def ascii_encode(self, obj):
+        """
+        returns the decoded unicode representation of obj
+
+        Also removes some characters not used in dir or file names ie.
+        """
+        return obj.encode('ascii', 'ignore')  # remove bad characters
+
+    def ascii_enc(self, obj):
+        """
+        returns the decoded unicode representation of obj
+
+        Also removes some characters not used in dir or file names ie.
+        """
+        # new_obj = obj.encode('ascii', 'ignore') # remove bad characters
+
+        ret_obj = ""
+        # for each character
+        for c in obj:
+            if self.char_ok(c):
+                ret_obj += c
+        return ret_obj
+
+    def save_image_file(self, canvas, file, dpi):
+        """
+        Saves image file
+
+        @type file:    string
+        @param file:    absolute file path
+
+        @type image:    wx.Image
+        @param image:    image data to be saved
+
+        @type type:    int
+        @param type:    file type
+        """
+        file = file
+
+        canvas.figure.text(
+            0.01,
+            0.01,
+            "PanelCheck",
+            fontdict={
+                'fontname': 'Arial Narrow',
+                'color': 'black',
+                'fontweight': 'bold',
+                'fontsize': 14,
+                'alpha': 0.25})
+
+        if self.yes_to_all:
+            canvas.print_figure(file, dpi=dpi)
+            self.image_files.append(file)
+        elif os.path.isfile(file):  # does file exist?
+            save = False
+            #splitted = split_path(file)
+            string = file
+            if len(string) > 55:
+                string = string[:15] + " ... " + string[-35:]
+            dlg = SaveDialog(self.parent, string)
+            dlg.CenterOnScreen()
+            code = dlg.ShowModal()
+            if code == dlg.id_yes:
+                save = True
+            elif code == dlg.id_yes_all:
+                self.yes_to_all = True
+                save = True
+            elif code == dlg.id_no:
+                save = False
+            else:
+                self.no_to_all = True
+                save = False  # no to all
+            dlg.Destroy()
+            if save:
+                canvas.print_figure(file, dpi=dpi)
+                self.image_files.append(file)
+        else:
+            print(file)
+            canvas.print_figure(file, dpi=dpi)
+            self.image_files.append(file)
+
+            del canvas.figure.texts[-1]
+
+
+class SaveDialog(wx.Dialog):
+    """
+    Custom dialog class, for having the "Yes to all" button
+    """
+
+    def __init__(self, prnt, file, yesToAll_btn=True, noToAll_btn=True):
+        wx.Dialog.__init__(self, parent=prnt, id=-1,
+                           pos=wx.DefaultPosition, size=wx.DefaultSize,
+                           style=wx.DEFAULT_DIALOG_STYLE, title=u'Overwrite?')
+
+        box = wx.BoxSizer(wx.VERTICAL)
+        text = wx.StaticText(
+            self,
+            id=wx.NewId(),
+            label=u'File exists:\n' +
+            file +
+            '\n\nDo you wish to overwrite?')
+
+        btnsizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.id_yes = wx.NewId()
+        self.id_yes_all = wx.NewId()
+        self.id_no = wx.NewId()
+        self.id_no_all = wx.NewId()
+        yes = wx.Button(self, id=self.id_yes, label=u'Yes')
+        yes.Bind(wx.EVT_BUTTON, self.onYes, id=self.id_yes)
+        if yesToAll_btn:
+            yes_to_all = wx.Button(
+                self, id=self.id_yes_all, label=u'Yes to all')
+            yes_to_all.Bind(wx.EVT_BUTTON, self.onYesAll, id=self.id_yes_all)
+        no = wx.Button(self, id=self.id_no, label=u'No')
+        no.Bind(wx.EVT_BUTTON, self.onNo, id=self.id_no)
+        if noToAll_btn:
+            no_all = wx.Button(self, id=self.id_no_all, label=u'No to all')
+            no_all.Bind(wx.EVT_BUTTON, self.onNoAll, id=self.id_no_all)
+
+        btnsizer.Add(yes, 0, wx.EXPAND)
+        if yesToAll_btn:
+            btnsizer.Add(yes_to_all, 0, wx.EXPAND)
+        btnsizer.Add(no, 0, wx.EXPAND)
+        if noToAll_btn:
+            btnsizer.Add(no_all, 0, wx.EXPAND)
+
+        box.Add(text, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        box.Add(btnsizer, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+
+        self.SetSizer(box)
+        # box.Fit(self)
+        self.SetSize((400, 150))
+
+    def onYes(self, event):
+        self.EndModal(self.id_yes)
+
+    def onYesAll(self, event):
+        self.EndModal(self.id_yes_all)
+
+    def onNo(self, event):
+        self.EndModal(self.id_no)
+
+    def onNoAll(self, event):
+        self.EndModal(self.id_no_all)

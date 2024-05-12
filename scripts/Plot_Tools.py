@@ -15,8 +15,8 @@ import wx
 import os
 import sys
 # import rpy2
-# from rpy2.robjects import r, pandas2ri
-# import rpy2.robjects as ro
+#from rpy2.robjects import r, pandas2ri
+#import rpy2.robjects as ro
 # pandas2ri.activate()
 
 def save_rdata_file(df, filename):
