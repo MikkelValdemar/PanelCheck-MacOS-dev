@@ -152,17 +152,19 @@ def RawDataAssessorPlotter(s_data, plot_data, num_subplot=[1, 1, 1], abspath=Non
 
     _title = "Mean & STD Plot: " + itemID[0]
     limits = plot_data.limits
+    if len(activeAttributesList) > 7:
+        set_xlabeling_rotation(ax, 'vertical', fontsize=10)
+
     if not subplot:
         axes_setup(
             ax, 'Attributes', 'Score', _title, [
                 0, len(activeAttributesList) + 1, 0, limits[3]])
         set_xlabeling(ax, activeAttributesList)
-    if len(activeAttributesList) > 7:
-        set_xlabeling_rotation(ax, 'vertical', fontsize=10)
     else:
         axes_setup(
             ax, '', '', _title, [
                 0, len(activeAttributesList) + 1, 0, limits[3]], font_size=10)
+        set_xlabeling(ax, np.arange(1, len(activeAttributesList) + 1))
 
     # update plot-data variables:
     plot_data.point_label_line_width = width * 0.5
@@ -314,17 +316,20 @@ def RawDataAttributePlotter(
 
     _title = "Mean & STD Plot: " + itemID[0]
     limits = plot_data.limits
+
+    if len(activeAssessorsList) > 7:
+        set_xlabeling_rotation(ax, 'vertical', fontsize=10)
+
     if not subplot:
         axes_setup(
             ax, 'Assessors', 'Score', _title, [
                 0, len(activeAssessorsList) + 1, 0, limits[3]])
         set_xlabeling(ax, activeAssessorsList)
-    if len(activeAssessorsList) > 7:
-        set_xlabeling_rotation(ax, 'vertical', fontsize=10)
     else:
         axes_setup(
             ax, '', '', _title, [
                 0, len(activeAssessorsList) + 1, 0, limits[3]], font_size=10)
+        set_xlabeling(ax, np.arange(1, len(activeAssessorsList) + 1))
 
     # TODO MVK: Fix colored frame
     # frame_colored = colored_frame(
@@ -348,7 +353,6 @@ def RawDataAttributePlotter(
     # Frame draw, for standard Matplotlib frame only use show()
     return plot_data
 
-
 def RawDataAssessorOverviewPlotter(s_data, plot_data, abspath, **kwargs):
     itemID_list = []  # takes part in what to be plotted
     for ass in plot_data.activeAssessorsList:
@@ -360,7 +364,6 @@ def RawDataAssessorOverviewPlotter(s_data, plot_data, abspath, **kwargs):
         RawDataAssessorPlotter,
         plot_data.activeAssessorsList,
         abspath=abspath)
-
 
 def RawDataAttributeOverviewPlotter(s_data, plot_data, abspath, **kwargs):
     itemID_list = []  # takes part in what to be plotted

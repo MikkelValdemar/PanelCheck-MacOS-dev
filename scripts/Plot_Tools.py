@@ -3,9 +3,9 @@
 """
 Plot tools module
 """
-from scripts.Math_Tools import *
-from numpy import transpose
-from scripts.PlotData import PlotData, CollectionCalcPlotData, MM_ANOVA_PlotData
+#from scripts.Math_Tools import *
+#from numpy import transpose
+from scripts.PlotData import CollectionCalcPlotData, MM_ANOVA_PlotData
 from scripts.Progress_Info import Progress
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FixedLocator
@@ -14,6 +14,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import wx
 import os
 import sys
+import numpy as np
 # import rpy2
 #from rpy2.robjects import r, pandas2ri
 #import rpy2.robjects as ro
@@ -21,7 +22,7 @@ import sys
 
 def save_rdata_file(df, filename):
     #r_data = ro.conversion.py2ri(transpose(df))
-    r_data = ro.conversion.py2rpy(transpose(df))
+    r_data = ro.conversion.py2rpy(np.transpose(df))
     ro.r.assign("my_df", r_data)
     ro.r("save(my_df, file='{}')".format(filename))
     os.chmod(filename, 0o777)
@@ -30,7 +31,7 @@ def save_rdata_file(df, filename):
 def data_frame(data):
     #data = pd.DataFrame(data)
     #    print(data)
-    r_dataframe = ro.conversion.py2rpy(transpose(data))
+    r_dataframe = ro.conversion.py2rpy(np.transpose(data))
 #    save_rdata_file(data,'/Users/linder2411/Desktop/r_data.Rdata')
     return r_dataframe
 
@@ -652,7 +653,7 @@ def check_columns(X):
     for col_ind in range(cols):
         # print std(X[:, col_ind])
 
-        if std(X[:, col_ind]) == 0:
+        if np.std(X[:, col_ind]) == 0:
             out_cols.append(col_ind)
         else:
             in_cols.append(col_ind)
@@ -731,7 +732,7 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
     else:
         plot_data.accepted_active_attributes = new_active_attributes_list
 
-    raw = hstack((matrix_num_lables, matrix_selected_scores))
+    raw = np.hstack((matrix_num_lables, matrix_selected_scores))
 
     pathname = os.path.dirname(sys.argv[0])
     progPath = os.path.abspath(pathname)
@@ -920,13 +921,13 @@ def OverviewPlotter(
         show_err_msg('No plots to view. Check selections.')
         return
 
-    num_edge = int(ceil(sqrt(num_plots)))
+    num_edge = int(np.ceil(np.sqrt(num_plots)))
     # print num_edge
 
     c_list = current_list[:]
     progress = Progress(None, abspath)
     progress.set_gauge(value=0, text="Calculating...\n")
-    part = int(floor(100 / num_plots))
+    part = int(np.floor(100 / num_plots))
     val = part
 
     #import pdb; pdb.set_trace()
