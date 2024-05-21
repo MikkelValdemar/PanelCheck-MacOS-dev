@@ -4,7 +4,7 @@ import sys
 import wx
 import wx.grid as gridlib
 import pandas as pd
-from scripts.PlotData import CollectionCalcPlotData
+from PlotData import CollectionCalcPlotData
 
 class DataTable(gridlib.GridTableBase):
 

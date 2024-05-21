@@ -17,21 +17,21 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 
-from scripts.PlotData import ANOVA_PlotData, MM_ANOVA_PlotData, PlotData, CollectionCalcPlotData, PCA_PlotData
-from scripts.Progress_Info import Progress
+from PlotData import ANOVA_PlotData, MM_ANOVA_PlotData, PlotData, CollectionCalcPlotData, PCA_PlotData
+from Progress_Info import Progress
 
-from scripts.plots.F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
-from scripts.plots.MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific
-from scripts.plots.MM_ANOVA_Plot import MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
-from scripts.plots.Tucker1_Plot import Tucker1Plotter
-from scripts.plots.pmse_Plot import pmsePlotter
-from scripts.plots.Eggshell_Plot import EggshellPlotter
-from scripts.plots.profile_Plot import profilePlotter
-from scripts.plots.rawData_Plot import RawDataAttributePlotter, RawDataAssessorPlotter
-from scripts.plots.Manhattan_Plot import ManhattanPlotter
-from scripts.plots.Consensus_Plot import STATIS_PCA_Plotter, STATIS_AssWeight_Plotter, PCA_plotter
-from scripts.plots.Line_Plot import AssessorLinePlotter, SampleLinePlotter
-from scripts.plots.Correlation_Plot import CorrelationPlotter
+from F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
+from MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific
+from MM_ANOVA_Plot import MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
+from Tucker1_Plot import Tucker1Plotter
+from pmse_Plot import pmsePlotter
+from Eggshell_Plot import EggshellPlotter
+from profile_Plot import profilePlotter
+from rawData_Plot import RawDataAttributePlotter, RawDataAssessorPlotter
+from Manhattan_Plot import ManhattanPlotter
+from Consensus_Plot import STATIS_PCA_Plotter, STATIS_AssWeight_Plotter, PCA_plotter
+from Line_Plot import AssessorLinePlotter, SampleLinePlotter
+from Correlation_Plot import CorrelationPlotter
 
 class Export_Images_Dialog(wx.Dialog):
     def __init__(

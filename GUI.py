@@ -2,34 +2,34 @@ import subprocess
 import os
 import sys
 import wx.lib.colourdb
-from scripts.About import *
-from scripts.LoadData import PlainText, Excel
-from scripts.FileOpen_Summary import Summary
-from scripts.PlotFrame import PlotFrame, PlotData
+from About import AboutFrame
+from LoadData import PlainText, Excel
+from FileOpen_Summary import Summary
+from PlotFrame import PlotFrame, PlotData
 from Export import Export_Images_Dialog  # ExportImages, SaveDialog
-from scripts.SessionData import SessionData, load_session_data
+from SessionData import SessionData, load_session_data
 from Tools import summaryConstructor2, save_dataset
-from scripts.TabbedPanel import TabPanel, RadioTabPanel
+from TabbedPanel import TabPanel, RadioTabPanel
 
-from scripts.plots.Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPlotter, AssessorLinePlotter, \
+from Line_Plot import ReplicateLinePlotter, AssessorLineOverviewPlotter, AssessorLinePlotter, \
     SampleLineOverviewPlotter, SampleLinePlotter
-from scripts.plots.rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter, RawDataAssessorOverviewPlotter, RawDataAttributeOverviewPlotter
-from scripts.plots.Correlation_Plot import CorrelationOverviewPlotter, CorrelationPlotter
-from scripts.plots.Tucker1_Plot import Tucker1AssOverviewPlotter, Tucker1AttOverviewPlotter
-from scripts.plots.profile_Plot import profileOverviewPlotter, profilePlotter
-from scripts.plots.Consensus_Plot import STATIS_Averaged_Data_Grid, Averaged_Data_Grid, STATIS_PCA_Plotter, STATIS_AssWeight_Plotter
-from scripts.plots.MM_ANOVA_Plot import MixModel_ANOVA_LSD_OverviewPlotter, MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_OverviewPlotter, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
-from scripts.plots.Eggshell_Plot import EggshellOverviewPlotter, EggshellPlotter
-from scripts.plots.F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
-from scripts.plots.pmse_Plot import pmse_OverviewPlotter, pmsePlotter
-from scripts.plots.MSE_Plot import MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific, MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific
-from scripts.plots.Manhattan_Plot import ManhattanPlotter, ManhattanAttOverviewPlotter, ManhattanAssOverviewPlotter
+from rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter, RawDataAssessorOverviewPlotter, RawDataAttributeOverviewPlotter
+from Correlation_Plot import CorrelationOverviewPlotter, CorrelationPlotter
+from Tucker1_Plot import Tucker1AssOverviewPlotter, Tucker1AttOverviewPlotter
+from profile_Plot import profileOverviewPlotter, profilePlotter
+from Consensus_Plot import STATIS_Averaged_Data_Grid, Averaged_Data_Grid, STATIS_PCA_Plotter, STATIS_AssWeight_Plotter
+from MM_ANOVA_Plot import MixModel_ANOVA_LSD_OverviewPlotter, MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_OverviewPlotter, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
+from Eggshell_Plot import EggshellOverviewPlotter, EggshellPlotter
+from F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
+from pmse_Plot import pmse_OverviewPlotter, pmsePlotter
+from MSE_Plot import MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific, MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific
+from Manhattan_Plot import ManhattanPlotter, ManhattanAttOverviewPlotter, ManhattanAssOverviewPlotter
 
-from scripts.Plot_Tools import CollectionCalcPlotData
-from scripts.PlotData import PCA_PlotData, MM_ANOVA_PlotData, ANOVA_PlotData
+from Plot_Tools import CollectionCalcPlotData
+from PlotData import PCA_PlotData, MM_ANOVA_PlotData, ANOVA_PlotData
 
-from scripts.plots.Tucker1_Plot import Tucker1Plotter
-from scripts.plots.Consensus_Plot import PCA_plotter
+from Tucker1_Plot import Tucker1Plotter
+from Consensus_Plot import PCA_plotter
 
 from Grid import GridFrame
 
