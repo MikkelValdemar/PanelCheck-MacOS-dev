@@ -116,7 +116,7 @@ class Main_Frame(wx.Frame):
         parent.Append(
             #
             id=wxID_MAIN_FRAMEMENUHELPMANUAL,
-            kind=wx.ITEM_NORMAL, item=u'Manual (V1.5.0)')
+            kind=wx.ITEM_NORMAL, item=u'Manual (V2.0.0)')
         parent.Append(
             #
             id=wxID_MAIN_FRAMEMENUHELPABOUT,
@@ -342,7 +342,7 @@ class Main_Frame(wx.Frame):
         wx.Frame.__init__(
             self, id=wx.NewId(), name=u'Main_Frame', parent=prnt, pos=wx.Point(
                 331, 1700), size=wx.Size(
-                8705, 5060), style=wx.CLOSE_BOX | wx.RESIZE_BORDER, title='PanelCheck V1.5.0')
+                8705, 5060), style=wx.CLOSE_BOX | wx.RESIZE_BORDER, title='PanelCheck V2.0.0')
         self._init_utils()
         self.SetClientSize(wx.Size(875, 560))
         self.SetAutoLayout(True)
@@ -1174,7 +1174,7 @@ class Main_Frame(wx.Frame):
         @param event:    An event is a structure holding information about an
         event passed to a callback or member function.
         """
-        filename = self.progPath + u"/help.pdf"
+        filename = self.progPath + u"/resources/help.pdf"
         # os.startfile(fil)
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filename])
@@ -1187,7 +1187,7 @@ class Main_Frame(wx.Frame):
         @param event:    An event is a structure holding information about an
         event passed to a callback or member function.
         """
-        filename = self.progPath + u"/workflow.pdf"
+        filename = self.progPath + u"/resources/workflow.pdf"
         # os.startfile(fil)
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filename])
