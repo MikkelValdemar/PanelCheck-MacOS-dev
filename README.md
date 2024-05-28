@@ -1,1 +1,1 @@
-# PanelCheck-MacOS
+# PanelCheck-MacOS developer version
