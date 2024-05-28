@@ -8,14 +8,10 @@ Usage:
 from setuptools import setup
 
 icon = "./resources/fig.ico"
-r_path = '/Library/Frameworks/R.framework/Resources/'
-
-r_dependencies = [
-    r_path
-]
+#r_path = '/Library/Frameworks/R.framework/Resources/'
 
 resources = [
-    ('resources', r_dependencies),
+ #   ('resources', [r_path]),
     ("resources/R_scripts", [
         r"./resources/R_scripts/sensmixedVer4.2.R",
         r"./resources/R_scripts/sensmixedNoRepVer1.1.R"

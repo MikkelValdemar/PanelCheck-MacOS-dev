@@ -15,32 +15,28 @@ import wx
 import os
 import sys
 import numpy as np
-#import rpy2
-
-if os.path.exists('/Library/Frameworks/R.framework/Resources/'):
-    r_executable = '/Library/Frameworks/R.framework/Resources/'
-else:
-    r_executable = os.path.join(os.path.dirname(__file__), 'resources', 'R')
-
-os.environ['R_HOME'] = os.path.dirname(r_executable)
-from rpy2.robjects import r, pandas2ri
-import rpy2.robjects as ro
-pandas2ri.activate()
-
-def save_rdata_file(df, filename):
-    #r_data = ro.conversion.py2ri(transpose(df))
-    r_data = ro.conversion.py2rpy(np.transpose(df))
-    ro.r.assign("my_df", r_data)
-    ro.r("save(my_df, file='{}')".format(filename))
-    os.chmod(filename, 0o777)
+import pandas as pd
 
 
-def data_frame(data):
-    #data = pd.DataFrame(data)
-    #    print(data)
-    r_dataframe = ro.conversion.py2rpy(np.transpose(data))
-#    save_rdata_file(data,'/Users/linder2411/Desktop/r_data.Rdata')
-    return r_dataframe
+#from rpy2.robjects import r, pandas2ri
+#import rpy2.robjects as ro
+#pandas2ri.activate()
+
+# TODO MVK: Outcommented R code
+# def save_rdata_file(df, filename):
+#     #r_data = ro.conversion.py2ri(transpose(df))
+#     r_data = ro.conversion.py2rpy(np.transpose(df))
+#     ro.r.assign("my_df", r_data)
+#     ro.r("save(my_df, file='{}')".format(filename))
+#     os.chmod(filename, 0o777)
+
+# TODO MVK: Outcommented R code
+# def data_frame(data):
+#     #data = pd.DataFrame(data)
+#     #    print(data)
+#     r_dataframe = ro.conversion.py2rpy(np.transpose(data))
+# #    save_rdata_file(data,'/Users/linder2411/Desktop/r_data.Rdata')
+#     return r_dataframe
 
 
 # custom colormap
@@ -686,7 +682,7 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
     activeSamplesList = plot_data.activeSamplesList
     new_active_attributes_list = activeAttributesList
 
-    matrix_num_lables = s_data.MatrixNumLables(
+    matrix_num_labels = s_data.MatrixNumLables(
         assessors=activeAssessorsList, samples=activeSamplesList)
     matrix_selected_scores = s_data.MatrixDataSelected(
         assessors=activeAssessorsList,
@@ -718,28 +714,28 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
 
         # show_info_msg(msg)
 
-        lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
+        labels = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
         for i in range(
                 s_data.value_index,
                 len(new_active_attributes_list) +
                 s_data.value_index):
-            lables.append(i)
+            labels.append(i)
 
         # return None
     else:
-        lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
+        labels = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
         for i in range(
                 s_data.value_index,
                 len(activeAttributesList) +
                 s_data.value_index):
-            lables.append(i)
+            labels.append(i)
 
     if isinstance(plot_data, (CollectionCalcPlotData)):
         plot_data.collection_calc_data["accepted_active_attributes"] = new_active_attributes_list
     else:
         plot_data.accepted_active_attributes = new_active_attributes_list
 
-    raw = np.hstack((matrix_num_lables, matrix_selected_scores))
+    raw = np.hstack((matrix_num_labels, matrix_selected_scores))
 
     pathname = os.path.dirname(sys.argv[0])
     progPath = os.path.abspath(pathname)
@@ -755,16 +751,18 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
 
     # Need to transpose the raw data matrix np.since rpy transposes when transferring
     # it to an R-data frame
-    part = np.transpose(raw[:, :])
+    #part = np.transpose(raw[:, :])
+    #frame = pd.DataFrame(part, columns=labels)
 
     # Constructing the data frame in R:
     # Switch to 'no conversion', such that everything that is created now
     # is an R object and NOT Python object (in this case 'frame' and 'names').
     # set_default_mode(NO_CONVERSION)
-    names = r.get('names<-')
-
-    frame = data_frame(part)
-    frame = names(frame, lables)
+    # TODO MVK: Outcommented R code
+    # names = r.get('names<-')
+    #
+    # frame = data_frame(part)
+    # frame = names(frame, labels)
     # r.print_(frame)
 
     # Switch back to basic conversion, so that variable res (see below) will be a

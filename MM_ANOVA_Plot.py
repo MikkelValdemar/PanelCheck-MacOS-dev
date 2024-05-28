@@ -18,6 +18,7 @@ from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from matplotlib.collections import LineCollection
 from Plot_Tools import OverviewPlotter, str_row, set_xlabeling, axes_create, axes_setup, set_xlabeling_rotation, raw_data_grid
+from Sensmixed import sensmixed_ver42, sensmixed_no_rep_11
 
 def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
 
@@ -63,13 +64,13 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
             plot_data.accepted_active_attributes = new_active_attributes_list
             show_info_msg(msg)
 
-        lables = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
+        labels = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
         for i in range(
                 s_data.value_index,
                 len(new_active_attributes_list) -
                 len(out_cols) +
                 s_data.value_index):
-            lables.append(i)
+            labels.append(i)
 
         _list = []
         for att_ind in range(len(new_active_attributes_list)):
@@ -78,7 +79,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
                 #plot_data.accepted_active_attributes = _list
                 #add_p_matr = False
             else:
-                lables = [
+                labels = [
                     s_data.ass_index,
                     s_data.samp_index,
                     s_data.rep_index]
@@ -86,7 +87,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
                         s_data.value_index,
                         len(new_active_attributes_list) +
                         s_data.value_index):
-                    lables.append(i)
+                    labels.append(i)
                 #plot_data.accepted_active_attributes = plot_data.activeAttributesList
         #print(matrix_num_lables)
 
@@ -106,15 +107,17 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
         # Need to transpose the raw data matrix np.since rpy transposes when transferring
         # it to an R-data frame
         part = raw[:, :]
+        frame = pd.DataFrame(part, columns=labels)
 
         # Constructing the data frame in R:
         # Switch to 'no conversion', such that everything that is created now
         # is an R object and NOT Python object (in this case 'frame' and 'names').
         # set_default_mode(NO_CONVERSION)
-        names = r.get('names<-')
-
-        frame = ro.conversion.py2rpy(part)
-        frame = names(frame, lables)
+        # TODO MVK: Outcommented R code
+        # names = r.get('names<-')
+        #
+        # frame = ro.conversion.py2rpy(part)
+        # frame = names(frame, labels)
         # r.print_(frame)
 
         # Switch back to basic conversion, so that variable res (see below) will be a
@@ -131,15 +134,19 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
         if 'Exports' in abspath:
             os.chdir(abspath.replace('Exports',''))
             if one_rep:
-                script_source = 'source(\"resources/R_scripts/sensmixedNoRepVer1.1.R\")'
-                progress.set_gauge(value=7, text="Running R script...\n")
-                r(script_source)
-                res = r.sensmixedNoRep11(frame)
+                # TODO MVK: Outcommented R script
+                # script_source = 'source(\"resources/R_scripts/sensmixedNoRepVer1.1.R\")'
+                # progress.set_gauge(value=7, text="Running R script...\n")
+                #r(script_source)
+                #res = r.sensmixedNoRep11(frame)
+                res = sensmixed_no_rep_11(frame)
             else:
-                script_source = 'source(\"resources/R_scripts/sensmixedVer4.2.R\")'
-                progress.set_gauge(value=7, text="Running R script...\n")
-                r(script_source)
-                res = r.sensmixedVer42(frame)
+                # TODO MVK: Outcommented R script
+                #script_source = 'source(\"resources/R_scripts/sensmixedVer4.2.R\")'
+                #progress.set_gauge(value=7, text="Running R script...\n")
+                #r(script_source)
+                #res = r.sensmixedVer42(frame)
+                res = sensmixed_ver42(frame)
                 if add_p_matr:
                     plot_data.p_matr = res[2][6]
                 else:
@@ -151,13 +158,17 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
             if one_rep:
                 script_source = 'source(\"resources/R_scripts/sensmixedNoRepVer1.1.R\")'
                 progress.set_gauge(value=7, text="Running R script...\n")
-                r(script_source)
-                res = r.sensmixedNoRep11(frame)
+                # TODO MVK: Outcommented R script
+                # r(script_source)
+                # res = r.sensmixedNoRep11(frame)
+                res = sensmixed_no_rep_11(frame)
             else:
                 script_source = 'source(\"resources/R_scripts/sensmixedVer4.2.R\")'
                 progress.set_gauge(value=7, text="Running R script...\n")
-                r(script_source)
-                res = r.sensmixedVer42(frame)
+                # TODO MVK: Outcommented R script
+                # r(script_source)
+                # res = r.sensmixedVer42(frame)
+                res = sensmixed_ver42(frame)
                 if add_p_matr:
                     plot_data.p_matr = res[2][6]
                 else:
