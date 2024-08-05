@@ -1,15 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import sys  # for Rpy i/o sources (for correct paths for the scripts)
-from Plot_Tools import *
 import pandas as pd
-#import rpy2.rpy_classic as rpy
-#from rpy2.rpy_classic import *
-#from rpy2 import *
-#from rpy2.robjects import r, pandas2ri
-#import rpy2.robjects as ro
-# pandas2ri.activate()
 import wx
 import numpy as np
 from Progress_Info import Progress
@@ -17,18 +9,19 @@ from Plot_Tools import check_columns, show_info_msg
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from matplotlib.collections import LineCollection
-from Plot_Tools import OverviewPlotter, str_row, set_xlabeling, axes_create, axes_setup, set_xlabeling_rotation, raw_data_grid
+from Plot_Tools import OverviewPlotter, str_row, set_xlabeling, axes_create, axes_setup, set_xlabeling_rotation, \
+    raw_data_grid
 from Sensmixed import sensmixed_ver42, sensmixed_no_rep_11
 
-def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
 
+def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
     activeAssessorsList = plot_data.activeAssessorsList
     activeAttributesList = plot_data.activeAttributesList
     plot_data.accepted_active_attributes = plot_data.activeAttributesList
     new_active_attributes_list = activeAttributesList
     activeSamplesList = plot_data.activeSamplesList
     itemID = plot_data.tree_path
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     if 'sensmixed_data' not in plot_data.__dict__.keys() or plot_data.sensmixed_data is None:
         matrix_num_lables = s_data.MatrixNumLables(
             assessors=activeAssessorsList, samples=activeSamplesList)
@@ -76,8 +69,8 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
         for att_ind in range(len(new_active_attributes_list)):
             if att_ind not in out_cols:
                 _list.append(new_active_attributes_list[att_ind])
-                #plot_data.accepted_active_attributes = _list
-                #add_p_matr = False
+                # plot_data.accepted_active_attributes = _list
+                # add_p_matr = False
             else:
                 labels = [
                     s_data.ass_index,
@@ -88,8 +81,8 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
                         len(new_active_attributes_list) +
                         s_data.value_index):
                     labels.append(i)
-                #plot_data.accepted_active_attributes = plot_data.activeAttributesList
-        #print(matrix_num_lables)
+                # plot_data.accepted_active_attributes = plot_data.activeAttributesList
+        # print(matrix_num_lables)
 
         raw = np.hstack((matrix_num_lables, matrix_selected_scores))
 
@@ -99,9 +92,9 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
         # Need to convert unicode-strings to non-unicode strings
 
         # get program absolute-path:
-        #pathname = os.path.dirname(sys.argv[0])
-        #progPath = os.path.abspath(pathname).decode(sys.getfilesystemencoding())
-        #last_dir = os.getcwd()
+        # pathname = os.path.dirname(sys.argv[0])
+        # progPath = os.path.abspath(pathname).decode(sys.getfilesystemencoding())
+        # last_dir = os.getcwd()
         # os.chdir(abspath) # go to program path (for R script source)
 
         # Need to transpose the raw data matrix np.since rpy transposes when transferring
@@ -132,20 +125,20 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
 
         # First initialise Per's function, then run it with our data-frame.
         if 'Exports' in abspath:
-            os.chdir(abspath.replace('Exports',''))
+            os.chdir(abspath.replace('Exports', ''))
             if one_rep:
                 # TODO MVK: Outcommented R script
                 # script_source = 'source(\"resources/R_scripts/sensmixedNoRepVer1.1.R\")'
                 # progress.set_gauge(value=7, text="Running R script...\n")
-                #r(script_source)
-                #res = r.sensmixedNoRep11(frame)
+                # r(script_source)
+                # res = r.sensmixedNoRep11(frame)
                 res = sensmixed_no_rep_11(frame)
             else:
                 # TODO MVK: Outcommented R script
-                #script_source = 'source(\"resources/R_scripts/sensmixedVer4.2.R\")'
-                #progress.set_gauge(value=7, text="Running R script...\n")
-                #r(script_source)
-                #res = r.sensmixedVer42(frame)
+                # script_source = 'source(\"resources/R_scripts/sensmixedVer4.2.R\")'
+                # progress.set_gauge(value=7, text="Running R script...\n")
+                # r(script_source)
+                # res = r.sensmixedVer42(frame)
                 res = sensmixed_ver42(frame)
                 if add_p_matr:
                     plot_data.p_matr = res[2][6]
@@ -177,7 +170,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
 
         plot_data.sensmixed_data = res
 
-    # print res
+        # print res
 
         # os.chdir(last_dir) # go back
         progress.set_gauge(value=100, text="Done\n")
@@ -230,21 +223,13 @@ def get_grid_data(s_data, plot_data, f_mat, p_mat, lsd_mat, plot_type):
                 'Assessor*Product Interaction',
                 'Product*Replicate Interaction',
                 'Assessor*Replicate Interaction']
-            p_matr1 = p_mat[7]
-            p_matr2 = p_mat[9]
         elif plot_type == "2way":
             _types = [
                 'Assessor Effect',
                 'Product Effect',
                 'Assessor*Product Interaction']
-            p_matr1 = p_mat[4]
-            p_matr2 = p_mat[5]
         elif plot_type == "2way1rep":
             _types = ['Assessor Effect', 'Product Effect']
-            p_matr1 = p_mat[1]
-            #p_matr2 = p_list[5]
-
-        #lsd_types = ['LSD values', 'Bonferroni LSD values']
 
         # add header text
         numeric_data.append([''])
@@ -260,13 +245,10 @@ def get_grid_data(s_data, plot_data, f_mat, p_mat, lsd_mat, plot_type):
             active_attributes=activeAttributesList)
 
         # calculate sample averages
-        samples_averages = {}
-        ass_att_matrix = np.zeros(
-            (len(activeAssessorsList), len(activeAttributesList)), float)
+        ass_att_matrix = np.zeros((len(activeAssessorsList), len(activeAttributesList)), float)
         samp_ind = 0
         for sample in activeSamplesList:
-            ass_ind = 0
-            for ass in activeAssessorsList:
+            for ass_ind in range(len(activeAssessorsList)):
                 att_matrix = m_data[ass_ind, samp_ind, :]
                 # average all replicates
                 ass_att_matrix[ass_ind] = np.average(att_matrix, 0)
@@ -301,26 +283,26 @@ def get_grid_data(s_data, plot_data, f_mat, p_mat, lsd_mat, plot_type):
                 numeric_data.append([_types[ind] + " (F values)"])
                 _index += 1
                 numeric_data[_index].extend(str_row(f_mat[ind]))
-                #numeric_data.append(["p-values"]); _index += 1
+                # numeric_data.append(["p-values"]); _index += 1
                 # numeric_data[_index].extend(str_row(p_mat[ind], fmt="%.3f"))
                 # # p_matr2
                 numeric_data.append(newline)
                 _index += 1
         else:
-            #numeric_data.append(["F ass*prod interaction"]); _index += 1
+            # numeric_data.append(["F ass*prod interaction"]); _index += 1
             # numeric_data[_index].extend(str_row(f_mat[2]))
-            #row_ind = 1
+            # row_ind = 1
             # for p_val in p_matr2:
             #    key = (_index, row_ind)
             #    config[key] = {"back_color": colors[int(p_val)]}
             #    row_ind += 1
 
-            #numeric_data.append(["F prod / F ass*prod interaction"]); _index += 1
-            #temp = []
+            # numeric_data.append(["F prod / F ass*prod interaction"]); _index += 1
+            # temp = []
             # for ind in range(len(f_mat[1])):
             #    temp.append(num2str(f_mat[1][ind]/f_mat[2][ind]))
             # numeric_data[_index].extend(temp)
-            #numeric_data.append(newline); _index += 1
+            # numeric_data.append(newline); _index += 1
 
             for ind in range(len(f_mat)):
                 numeric_data.append([_types[ind] + " (F values)"])
@@ -348,8 +330,8 @@ def get_grid_data(s_data, plot_data, f_mat, p_mat, lsd_mat, plot_type):
 
 
 def MixModel_ANOVA_Plotter_2way1rep(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], **kwargs):
+        s_data, plot_data, num_subplot=[
+            1, 1, 1], **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -488,7 +470,7 @@ def MixModel_ANOVA_Plotter_2way1rep(
     limits = [0, len(activeAttributesList) + 1, 0, y_max]
     ax.grid(plot_data.view_grid)
 
-    #texts = figlegend.get_texts()
+    # texts = figlegend.get_texts()
     # texts[0]._fontproperties.set_size(14)
 
     if not subplot:
@@ -511,8 +493,8 @@ def MixModel_ANOVA_Plotter_2way1rep(
         lables = ['', 'ns', 'p<0.05', 'p<0.01', 'p<0.001']
         i = 0
         for c in colors:
-            #p = Patch(facecolor = c)
-            #p = Rectangle((0,0), 1, 1, facecolor = c)
+            # p = Patch(facecolor = c)
+            # p = Rectangle((0,0), 1, 1, facecolor = c)
             # plotList.append(p)
             plotList.append(Line2D([], [], color=c, linewidth=5))
             i += 1
@@ -537,8 +519,8 @@ def MixModel_ANOVA_Plotter_2way1rep(
 
 
 def MixModel_ANOVA_LSD_Plotter_2way1rep(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], **kwargs):
+        s_data, plot_data, num_subplot=[
+            1, 1, 1], **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -679,7 +661,7 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
     plot_data.lsd_points = []
     for i in range(len(activeAttributesList)):
         plot_data.lsd_points.append([])
-    #plot_data.lsd_ypoints = [[]] * len(activeAttributesList)
+    # plot_data.lsd_ypoints = [[]] * len(activeAttributesList)
     vertices = []
     extra_space = 0
     c_index = 0
@@ -690,11 +672,11 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
         for j in range(len(activeAttributesList)):
             ax.text(j + 0.25 + extra_space,
                     averages_matrix[i,
-                                    j],
+                    j],
                     str(i + 1),
                     fontsize=13,
                     color=colors[c_index])
-            #x_samples.append(j+0.225+extra_space); y_samples.append(averages_matrix[i,j])
+            # x_samples.append(j+0.225+extra_space); y_samples.append(averages_matrix[i,j])
             plot_data.lsd_points[j].append(
                 ax.plot(
                     [j + 0.225 + extra_space],
@@ -704,7 +686,7 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
             pt = ((j + 0.225 + extra_space, averages_matrix[i, j]))
             vertices.append(pt)
             _label = "Average (" + activeSamplesList[i] + \
-                ": " + activeAttributesList[j] + ")"
+                     ": " + activeAttributesList[j] + ")"
             pointAndLabelList.append(
                 [j + 0.25 + extra_space, averages_matrix[i, j], _label])
         # ax.scatter(x_samples, y_samples, s = 2, color="#999999")
@@ -741,7 +723,7 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
     # lc2 = LineCollection(vertices, colors='#FF0000', linewidths=3)
     # plot_data.ax.add_collection(lc2)
     upperlim = max(max_aver_list) + \
-        (max(max_aver_list) - min(min_aver_list)) * 0.1
+               (max(max_aver_list) - min(min_aver_list)) * 0.1
     limits = [0, len(activeAttributesList), min(min_aver_list), upperlim]
     vertices = []
     for att_ind in att_indices:
@@ -749,16 +731,16 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
         vertices.append(pt)
     lc3 = LineCollection(vertices, colors='#000000', linestyle='dashed')
     plot_data.ax.add_collection(lc3)
-    #ax.vlines(att_indices, limits[2], limits[3], fmt='k--')
+    # ax.vlines(att_indices, limits[2], limits[3], fmt='k--')
     ax.grid(plot_data.view_grid)
     if plot_data.view_legend:
         c_i = 0
         plotList = []
-    # labels = activeSamplesList[:]
+        # labels = activeSamplesList[:]
         labels = []
         samp_nr = 1
         for samp in activeSamplesList:
-            #p = Patch(facecolor = colors[c_i])
+            # p = Patch(facecolor = colors[c_i])
             # plotList.append(p)
             labels.append(str(samp_nr) + ": " + samp)
             samp_nr += 1
@@ -774,14 +756,14 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
     labels.extend(['', '', 'SIGNIFICANCE:', 'ns',
                    'p<0.05', 'p<0.01', 'p<0.001'])
     for c in s_colors:
-        #p = Patch(facecolor = c)
+        # p = Patch(facecolor = c)
         # plotList.append(p)
         plotList.append(Line2D([], [], color=c, linewidth=5))
         c_i += 1
     # CircleLegend(fig, [['#FF0000', '#00FF00', '#0000FF'], ['dommer1',
     # 'dommer2', 'dommer3']])
     figlegend = fig.legend(plotList, labels, loc='upper right')
-    #texts = figlegend.get_texts()
+    # texts = figlegend.get_texts()
     # texts[0]._fontproperties.set_size(14)
     if not subplot:
         axes_setup(ax, 'Attributes', 'Score', _title, limits)
@@ -813,9 +795,7 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
     return plot_data
 
 
-def MixModel_ANOVA_Plotter_2way(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], abspath='None', **kwargs):
+def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspath='None', **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -890,7 +870,7 @@ def MixModel_ANOVA_Plotter_2way(
     # 0 1 2
     # One of these types have been selected:
     _types = [u'F1', u'F2', u'F3']
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     if itemID[0] == _types[0]:  # REP*SAMP vs ERROR
         _title = "Assessor Effect"
         # f_matr = res[0].rx(8,True) # 7
@@ -900,16 +880,16 @@ def MixModel_ANOVA_Plotter_2way(
         # print 'Third if statement yields f_matr as: {} with type: {} and
         # res[0]: with type {} and values \n
         # {}'.format(f_matr,type(f_matr),type(res[0]),res[0])
-    elif itemID[0] == _types[2]:  # SAMP*ASS vs ERROR
+    elif itemID[0] == _types[1]:  # SAMP*ASS vs ERROR
         _title = "Product Effect"
-        #f_matr = res[0].rx(7,True)
-        #p_matr = res[2].rx(7,True)
+        # f_matr = res[0].rx(7,True)
+        # p_matr = res[2].rx(7,True)
         f_matr = res[0][6]
         p_matr = res[2][6]
-    elif itemID[0] == _types[1]:  # SAMP vs SAMP*ASS
+    elif itemID[0] == _types[2]:  # SAMP vs SAMP*ASS
         _title = "Assessor*Product Interaction"
-        #f_matr = res[0].rx(9,True)
-        #p_matr = res[2].rx(9,True)
+        # f_matr = res[0].rx(9,True)
+        # p_matr = res[2].rx(9,True)
         f_matr = res[0][8]
         p_matr = res[2][8]
     else:
@@ -969,7 +949,7 @@ def MixModel_ANOVA_Plotter_2way(
         i = 0
         for att in s_data.AttributeList:
             if att in activeAttributesList:
-                #print("Index: {} and atrribute: {}".format(i, att))
+                # print("Index: {} and atrribute: {}".format(i, att))
                 ax.bar(att_indices[i] + (1 - _width) + (_width / 2),
                        f_matr[i],
                        _width,
@@ -982,13 +962,11 @@ def MixModel_ANOVA_Plotter_2way(
         y_max = max(f_matr) + max(f_matr) * 0.1
         limits = [0, len(activeAttributesList) + 1, 0, y_max]
     ax.grid(plot_data.view_grid)
-    #texts = figlegend.get_texts()
+    # texts = figlegend.get_texts()
     # texts[0]._fontproperties.set_size(14)
     if not subplot:
         axes_setup(ax, 'Attributes', 'F value', _title, limits)
         set_xlabeling(ax, activeAttributesList)
-    if len(activeAttributesList) > 9:
-        set_xlabeling_rotation(ax, 'vertical')
     else:
         axes_setup(ax, '', '', _title, limits, font_size=10)
         actives_cutted = activeAttributesList[:]
@@ -1003,8 +981,8 @@ def MixModel_ANOVA_Plotter_2way(
         lables = ['', 'ns', 'p<0.05', 'p<0.01', 'p<0.001']
     i = 0
     for c in colors:
-        #p = Patch(facecolor = c)
-        #p = Rectangle((0,0), 1, 1, facecolor = c)
+        # p = Patch(facecolor = c)
+        # p = Rectangle((0,0), 1, 1, facecolor = c)
         # plotList.append(p)
         plotList.append(Line2D([], [], color=c, linewidth=5))
         i += 1
@@ -1029,8 +1007,8 @@ def MixModel_ANOVA_Plotter_2way(
 
 
 def MixModel_ANOVA_LSD_Plotter_2way(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], abspath=None, **kwargs):
+        s_data, plot_data, num_subplot=[
+            1, 1, 1], abspath=None, **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -1148,11 +1126,9 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         # print averages_samp
         averages_matrix = np.vstack((averages_matrix, averages_samp))
     averages_matrix = averages_matrix[1:, :]
-    # averages_matrix = center(averages_matrix) # centered (between all active samples)
-    # print averages_matrix
-    colors = ['#FF0000', '#D3A400', '#009900', '#CC00EE', '#006CFF', '#00AD94',
-              '#666666', '#A4A4A4',
-              '#B7685D', '#BDAB65', '#6CB771', '#A0699F', '#6375B5', '#77A69F']
+    colors = ['#FF0000', '#D3A400', '#009900', '#CC00EE', '#006CFF', '#00AD94', '#666666',
+              '#A4A4A4', '#B7685D', '#BDAB65', '#6CB771', '#A0699F', '#6375B5', '#77A69F']
+
     # Figure
     replot = False
     subplot = plot_data.overview_plot
@@ -1177,7 +1153,7 @@ def MixModel_ANOVA_LSD_Plotter_2way(
     plot_data.lsd_points = []
     for i in range(len(activeAttributesList)):
         plot_data.lsd_points.append([])
-    #plot_data.lsd_ypoints = [[]] * len(activeAttributesList)
+    # plot_data.lsd_ypoints = [[]] * len(activeAttributesList)
     vertices = []
     extra_space = 0
     c_index = 0
@@ -1186,26 +1162,13 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         x_samples = []
         y_samples = []
         for j in range(len(activeAttributesList)):
-            ax.text(j + 0.25 + extra_space,
-                    averages_matrix[i,
-                                    j],
-                    str(i + 1),
-                    fontsize=13,
-                    color=colors[c_index])
-            #x_samples.append(j+0.225+extra_space); y_samples.append(averages_matrix[i,j])
-            plot_data.lsd_points[j].append(
-                ax.plot(
-                    [j + 0.225 + extra_space],
-                    [averages_matrix[i, j]],
-                    'k'))
-            # plot_data.lsd_ypoints[j].append(averages_matrix[i,j])
+            ax.text(j + 0.25 + extra_space, averages_matrix[i, j], str(i + 1), fontsize=13, color=colors[c_index])
+            plot_data.lsd_points[j].append(ax.plot([j + 0.225 + extra_space], [averages_matrix[i, j]], 'k'))
             pt = ((j + 0.225 + extra_space, averages_matrix[i, j]))
             vertices.append(pt)
-            _label = "Average (" + activeSamplesList[i] + \
-                ": " + activeAttributesList[j] + ")"
-            pointAndLabelList.append(
-                [j + 0.25 + extra_space, averages_matrix[i, j], _label])
-        # ax.scatter(x_samples, y_samples, s = 2, color="#999999")
+            _label = "Average (" + activeSamplesList[i] + ": " + activeAttributesList[j] + ")"
+            pointAndLabelList.append([j + 0.25 + extra_space, averages_matrix[i, j], _label])
+
         c_index += 1
         if c_index == len(colors):
             c_index = 0
@@ -1213,57 +1176,45 @@ def MixModel_ANOVA_LSD_Plotter_2way(
             extra_space = 0
         else:
             extra_space = 0.5
-    # lc = LineCollection(vertices, colors='#000000')
-    # plot_data.ax.add_collection(lc)
+
     vertices = []
-    # print plot_data.lsd_points
     plot_data.lsd_lines = []
-    lsd_colors = {
-        0.0: '#999999',
-        1.0: '#FFD800',
-        2.0: '#FF8A00',
-        3.0: '#E80B0B'}
+    lsd_colors = {0.0: '#999999', 1.0: '#FFD800', 2.0: '#FF8A00', 3.0: '#E80B0B'}
+
     for i in range(len(activeAttributesList)):
         max_aver = max_aver_list[i]
         lsd_color = lsd_colors[res[2][5][i]]
         plot_data.lsd_lines.append(
-            ax.plot(
-                [i + 0.5, i + 0.5],
-                [max_aver, max_aver - lsd_matr[i]],
-                lsd_color, linewidth=3))
+            ax.plot([i + 0.5, i + 0.5], [max_aver, max_aver - lsd_matr[i]], lsd_color, linewidth=3))
         pt = (i + 0.5, i + 0.5), (max_aver, max_aver - lsd_matr[i])
         vertices.append(pt)
-        set_points_in_range(
-            ax, [max_aver, max_aver - lsd_matr[i]],
-            i + 1, plot_data.lsd_points)
-    # lc2 = LineCollection(vertices, colors='#FF0000', linewidths=3)
-    # plot_data.ax.add_collection(lc2)
-    upperlim = max(max_aver_list) + \
-        (max(max_aver_list) - min(min_aver_list)) * 0.1
+        set_points_in_range(ax, [max_aver, max_aver - lsd_matr[i]], i + 1, plot_data.lsd_points)
+
+    upperlim = max(max_aver_list) + (max(max_aver_list) - min(min_aver_list)) * 0.1
     limits = [0, len(activeAttributesList), min(min_aver_list), upperlim]
+
     vertices = []
     for att_ind in att_indices:
         pt = ((att_ind, limits[2]), (att_ind, limits[3]))
         vertices.append(pt)
     lc3 = LineCollection(vertices, colors='#000000', linestyle='dashed')
     plot_data.ax.add_collection(lc3)
-    #ax.vlines(att_indices, limits[2], limits[3], fmt='k--')
     ax.grid(plot_data.view_grid)
+
     if plot_data.view_legend:
         c_i = 0
         plotList = []
-        # labels = activeSamplesList[:]
         labels = []
         samp_nr = 1
     for samp in activeSamplesList:
-        #p = Patch(facecolor = colors[c_i])
-        # plotList.append(p)
         labels.append(str(samp_nr) + ": " + samp)
         samp_nr += 1
         plotList.append(Line2D([], [], color=colors[c_i], linewidth=5))
         c_i += 1
+
         if c_i == len(colors):
             c_i = 0
+
     plotList.append(None)
     plotList.append(None)
     plotList.append(None)
@@ -1272,35 +1223,26 @@ def MixModel_ANOVA_LSD_Plotter_2way(
     labels.extend(['', '', 'SIGNIFICANCE:', 'ns',
                    'p<0.05', 'p<0.01', 'p<0.001'])
     for c in s_colors:
-        #p = Patch(facecolor = c)
-        # plotList.append(p)
         plotList.append(Line2D([], [], color=c, linewidth=5))
         c_i += 1
-    # CircleLegend(fig, [['#FF0000', '#00FF00', '#0000FF'], ['dommer1',
-    # 'dommer2', 'dommer3']])
-    figlegend = fig.legend(plotList, labels, loc='upper right')
-    #texts = figlegend.get_texts()
-    # texts[0]._fontproperties.set_size(14)
+
     if not subplot:
         axes_setup(ax, 'Attributes', 'Score', _title, limits)
         set_xlabeling(ax, activeAttributesList)
-    if len(activeAttributesList) > 11:
-        set_xlabeling_rotation(ax, 'vertical')
     else:
         axes_setup(ax, '', '', _title, limits, font_size=10)
         actives_cutted = activeAttributesList[:]
         if len(activeAttributesList) > 5:  # cut labels
             for i in range(len(actives_cutted)):
                 actives_cutted[i] = actives_cutted[i][0:6] + ".."
-    set_xlabeling(ax, actives_cutted)
+        set_xlabeling(ax, actives_cutted)
+
     if len(activeAttributesList) > 7:
         set_xlabeling_rotation(ax, 'vertical')
 
-    # One element in the pointAndLabelList will always contain 3 items [x, y,
-    # label]
+    # One element in the pointAndLabelList will always contain 3 items [x, y, label]
+    rawDataList, resultList = get_grid_data(s_data, plot_data, f_list, p_list, lsd_list, "2way")
 
-    rawDataList, resultList = get_grid_data(
-        s_data, plot_data, f_list, p_list, lsd_list, "2way")
     # update plot-data variables:
     plot_data.point_lables = pointAndLabelList
     plot_data.raw_data = rawDataList
@@ -1312,9 +1254,7 @@ def MixModel_ANOVA_LSD_Plotter_2way(
     return plot_data
 
 
-def MixModel_ANOVA_Plotter_3way(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], abspath=None, **kwargs):
+def MixModel_ANOVA_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -1428,7 +1368,6 @@ def MixModel_ANOVA_Plotter_3way(
     p_list.append(res[1][3])
     p_list.append(res[1][5])
     p_list.append(res[1][4])
-    # p_matr2
     p_list.append(res[2][0])
     p_list.append(res[2][1])
     p_list.append(res[2][2])
@@ -1439,21 +1378,19 @@ def MixModel_ANOVA_Plotter_3way(
     lsd_list.append(res[3][0])
     lsd_list.append(res[3][1])
     # Figure
-    replot = False
     subplot = plot_data.overview_plot
-    scatter_width = 35
     if plot_data.fig is not None:
         replot = True
     else:
         plot_data.fig = Figure(None)
+
     if subplot:  # is subplot
         plot_data.ax = plot_data.fig.add_subplot(
             num_subplot[0], num_subplot[1], num_subplot[2])
-        scatter_width = 15
     else:
         plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
+
     ax = plot_data.ax
-    fig = plot_data.fig
     # colors:   grey       yellow     orange      red
     colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
     pointAndLabelList = []
@@ -1462,8 +1399,8 @@ def MixModel_ANOVA_Plotter_3way(
     j = 0
     for att in s_data.AttributeList:
         if att in activeAttributesList:
-            #print(j)
             j += 1
+
     i = 0
     for att in s_data.AttributeList:
         if att in activeAttributesList:
@@ -1476,16 +1413,13 @@ def MixModel_ANOVA_Plotter_3way(
             pointAndLabelList.append(
                 [i + 1, f_matr[i], att + ": " + str(f_matr[i]), att])
             i += 1
+
     y_max = max(f_matr) + max(f_matr) * 0.1
     limits = [0, len(activeAttributesList) + 1, 0, y_max]
     ax.grid(plot_data.view_grid)
-    #texts = figlegend.get_texts()
-    # texts[0]._fontproperties.set_size(14)
     if not subplot:
         axes_setup(ax, 'Attributes', 'F value', _title, limits)
         set_xlabeling(ax, activeAttributesList)
-    if len(activeAttributesList) > 9:
-        set_xlabeling_rotation(ax, 'vertical')
     else:
         axes_setup(ax, '', '', _title, limits, font_size=10)
         actives_cutted = activeAttributesList[:]
@@ -1493,27 +1427,20 @@ def MixModel_ANOVA_Plotter_3way(
             for i in range(len(actives_cutted)):
                 actives_cutted[i] = actives_cutted[i][0:5] + ".."
         set_xlabeling(ax, actives_cutted)
-    if len(activeAttributesList) > 5:
+
+    if len(activeAttributesList) > 7:
         set_xlabeling_rotation(ax, 'vertical')
+
     if plot_data.view_legend:
         plotList = [None]
-        lables = ['', 'ns', 'p<0.05', 'p<0.01', 'p<0.001']
         i = 0
         for c in colors:
-            #p = Patch(facecolor = c)
-            #p = Rectangle((0,0), 1, 1, facecolor = c)
-            # plotList.append(p)
             plotList.append(Line2D([], [], color=c, linewidth=5))
             i += 1
-        # CircleLegend(fig, [['#FF0000', '#00FF00', '#0000FF'], ['dommer1',
-        # 'dommer2', 'dommer3']])
-        figlegend = fig.legend(plotList, lables, loc='upper right', title='SIGNIFICANCE:')
 
-    # One element in the pointAndLabelList will always contain 3 items [x, y,
-    # label]
+    # One element in the pointAndLabelList will always contain 3 items [x, y, label]
+    rawDataList, resultList = get_grid_data(s_data, plot_data, f_list, p_list, lsd_list, "3way")
 
-    rawDataList, resultList = get_grid_data(
-        s_data, plot_data, f_list, p_list, lsd_list, "3way")
     # update plot-data variables:
     plot_data.point_label_line_width = _width * 0.5
     plot_data.point_lables = pointAndLabelList
@@ -1526,9 +1453,7 @@ def MixModel_ANOVA_Plotter_3way(
     return plot_data
 
 
-def MixModel_ANOVA_LSD_Plotter_3way(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], abspath=None, **kwargs):
+def MixModel_ANOVA_LSD_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -1624,7 +1549,6 @@ def MixModel_ANOVA_LSD_Plotter_3way(
     p_list.append(res[1][3])
     p_list.append(res[1][5])
     p_list.append(res[1][4])
-    # p_matr2
     p_list.append(res[2][0])
     p_list.append(res[2][1])
     p_list.append(res[2][2])
@@ -1635,8 +1559,8 @@ def MixModel_ANOVA_LSD_Plotter_3way(
     lsd_list.append(res[3][0])
     lsd_list.append(res[3][1])
     att_indices = np.arange(len(activeAttributesList))
-    num_active_samps = len(activeSamplesList)
     averages_matrix = np.zeros((1, len(activeAttributesList)), float)
+
     for samp in activeSamplesList:
         samp_scores_matrix = []
         stacking = 0
@@ -1648,88 +1572,66 @@ def MixModel_ANOVA_LSD_Plotter_3way(
                 stacking = 1
             else:
                 samp_scores_matrix = np.vstack((samp_scores_matrix, att_column))
+
         samp_scores_matrix = np.transpose(samp_scores_matrix)
-        # print samp_scores_matrix
-        # average of the attributes for a given sample
         averages_samp = np.average(samp_scores_matrix, 0)
-        # print averages_samp
         averages_matrix = np.vstack((averages_matrix, averages_samp))
+
     averages_matrix = averages_matrix[1:, :]
-    # averages_matrix = center(averages_matrix) # centered (between all active samples)
-    # print averages_matrix
-    colors = ['#FF0000', '#D3A400', '#009900', '#CC00EE', '#006CFF', '#00AD94',
-              '#666666', '#A4A4A4',
-              '#B7685D', '#BDAB65', '#6CB771', '#A0699F', '#6375B5', '#77A69F']
-    # Figure
-    replot = False
+    colors = ['#FF0000', '#D3A400', '#009900', '#CC00EE', '#006CFF', '#00AD94', '#666666',
+              '#A4A4A4', '#B7685D', '#BDAB65', '#6CB771', '#A0699F', '#6375B5', '#77A69F']
+
     subplot = plot_data.overview_plot
-    scatter_width = 35
     if plot_data.fig is not None:
         replot = True
     else:
         plot_data.fig = Figure(None)
+
     if subplot:  # is subplot
         plot_data.ax = plot_data.fig.add_subplot(
             num_subplot[0], num_subplot[1], num_subplot[2])
-        scatter_width = 15
     else:
         plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
+
     ax = plot_data.ax
     fig = plot_data.fig
+
     max_aver_list = []
     min_aver_list = []
     for i in range(len(activeAttributesList)):
         max_aver_list.append(max(averages_matrix[:, i]))
         min_aver_list.append(min(averages_matrix[:, i]))
+
     plot_data.lsd_points = []
     for i in range(len(activeAttributesList)):
         plot_data.lsd_points.append([])
-    #plot_data.lsd_ypoints = [[]] * len(activeAttributesList)
+
     vertices = []
     extra_space = 0
     c_index = 0
     pointAndLabelList = []
     for i in range(len(activeSamplesList)):
-        x_samples = []
-        y_samples = []
         for j in range(len(activeAttributesList)):
-            ax.text(j + 0.25 + extra_space,
-                    averages_matrix[i,
-                                    j],
-                    str(i + 1),
-                    fontsize=13,
-                    color=colors[c_index])
-            #x_samples.append(j+0.225+extra_space); y_samples.append(averages_matrix[i,j])
-            plot_data.lsd_points[j].append(
-                ax.plot(
-                    [j + 0.225 + extra_space],
-                    [averages_matrix[i, j]],
-                    'k'))
-            # plot_data.lsd_ypoints[j].append(averages_matrix[i,j])
+            ax.text(j + 0.25 + extra_space, averages_matrix[i, j], str(i + 1), fontsize=13, color=colors[c_index])
+            plot_data.lsd_points[j].append(ax.plot([j + 0.225 + extra_space], [averages_matrix[i, j]], 'k'))
             pt = ((j + 0.225 + extra_space, averages_matrix[i, j]))
             vertices.append(pt)
-            _label = "Average (" + activeSamplesList[i] + \
-                ": " + activeAttributesList[j] + ")"
-            pointAndLabelList.append(
-                [j + 0.25 + extra_space, averages_matrix[i, j], _label])
-        # ax.scatter(x_samples, y_samples, s = 2, color="#999999")
+            _label = "Average (" + activeSamplesList[i] + ": " + activeAttributesList[j] + ")"
+            pointAndLabelList.append([j + 0.25 + extra_space, averages_matrix[i, j], _label])
+
         c_index += 1
         if c_index == len(colors):
             c_index = 0
+
         if extra_space == 0.5:
             extra_space = 0
         else:
             extra_space = 0.5
-    # lc = LineCollection(vertices, colors='#000000')
-    # plot_data.ax.add_collection(lc)
+
     vertices = []
-    # print plot_data.lsd_points
     plot_data.lsd_lines = []
-    lsd_colors = {
-        0.0: '#999999',
-        1.0: '#FFD800',
-        2.0: '#FF8A00',
-        3.0: '#E80B0B'}
+    lsd_colors = {0.0: '#999999', 1.0: '#FFD800', 2.0: '#FF8A00', 3.0: '#E80B0B'}
+
     for i in range(len(activeAttributesList)):
         max_aver = max_aver_list[i]
         lsd_color = lsd_colors[res[2][0][i]]
@@ -1743,71 +1645,61 @@ def MixModel_ANOVA_LSD_Plotter_3way(
         set_points_in_range(
             ax, [max_aver, max_aver - lsd_matr[i]],
             i + 1, plot_data.lsd_points)
-    # lc2 = LineCollection(vertices, colors='#FF0000', linewidths=3)
-    # plot_data.ax.add_collection(lc2)
-    upperlim = max(max_aver_list) + \
-        (max(max_aver_list) - min(min_aver_list)) * 0.1
+
+    upperlim = max(max_aver_list) + (max(max_aver_list) - min(min_aver_list)) * 0.1
     limits = [0, len(activeAttributesList), min(min_aver_list), upperlim]
+
     vertices = []
     for att_ind in att_indices:
         pt = ((att_ind, limits[2]), (att_ind, limits[3]))
         vertices.append(pt)
+
     lc3 = LineCollection(vertices, colors='#000000', linestyle='dashed')
     plot_data.ax.add_collection(lc3)
-    #ax.vlines(att_indices, limits[2], limits[3], fmt='k--')
     ax.grid(plot_data.view_grid)
     if plot_data.view_legend:
         c_i = 0
         plotList = []
-        # labels = activeSamplesList[:]
         labels = []
         samp_nr = 1
+
     for samp in activeSamplesList:
-        #p = Patch(facecolor = colors[c_i])
-        # plotList.append(p)
         labels.append(str(samp_nr) + ": " + samp)
         samp_nr += 1
         plotList.append(Line2D([], [], color=colors[c_i], linewidth=5))
         c_i += 1
         if c_i == len(colors):
             c_i = 0
+
     plotList.append(None)
     plotList.append(None)
     plotList.append(None)
+
     #   colors:   grey       yellow     orange      red
     s_colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
     labels.extend(['', '', 'SIGNIFICANCE:', 'ns',
                    'p<0.05', 'p<0.01', 'p<0.001'])
     for c in s_colors:
-        #p = Patch(facecolor = c)
-        # plotList.append(p)
         plotList.append(Line2D([], [], color=c, linewidth=5))
         c_i += 1
-    # CircleLegend(fig, [['#FF0000', '#00FF00', '#0000FF'], ['dommer1',
-    # 'dommer2', 'dommer3']])
-    figlegend = fig.legend(plotList, labels, loc='upper right')
-    #texts = figlegend.get_texts()
-    # texts[0]._fontproperties.set_size(14)
+
     if not subplot:
         axes_setup(ax, 'Attributes', 'Score', _title, limits)
         set_xlabeling(ax, activeAttributesList)
-    if len(activeAttributesList) > 11:
-        set_xlabeling_rotation(ax, 'vertical')
     else:
         axes_setup(ax, '', '', _title, limits, font_size=10)
         actives_cutted = activeAttributesList[:]
         if len(activeAttributesList) > 5:  # cut labels
             for i in range(len(actives_cutted)):
                 actives_cutted[i] = actives_cutted[i][0:6] + ".."
-    set_xlabeling(ax, actives_cutted)
+        set_xlabeling(ax, actives_cutted)
+
     if len(activeAttributesList) > 7:
         set_xlabeling_rotation(ax, 'vertical')
 
-    # One element in the pointAndLabelList will always contain 3 items [x, y,
-    # label]
-
-    rawDataList, resultList = get_grid_data(
-        s_data, plot_data, f_list, p_list, lsd_list, "3way")
+    # One element in the pointAndLabelList will always contain 3 items [x, y, label]
+    rawDataList, resultList = get_grid_data(s_data, plot_data, f_list, p_list, lsd_list, "3way")
+    
     # update plot-data variables:
     plot_data.point_lables = pointAndLabelList
     plot_data.raw_data = rawDataList

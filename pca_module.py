@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-
 from numpy.linalg import svd
 import numpy as np
 
 try:
     import c_nipals
+
     import_ok = True
 except BaseException:
     import_ok = False
@@ -22,10 +21,9 @@ def mean_center(X):
 
 
 def standardization(X):
-    #import pdb; pdb.set_trace()
     (rows, cols) = np.shape(X)
     new_X = np.zeros((rows, cols))
-    _STDs = np.std(X, 0)+0.1
+    _STDs = np.std(X, 0) + 0.1
 
     for value in _STDs:
         if value == 0:
@@ -48,7 +46,7 @@ def get_column(E):
         if (eigenvalue_vec(t) > 0):
             return t
     # error: sum of matrix is 0
-    raise(ValueError, 'all column vectors in E have zero-eigenvalues')
+    raise (ValueError, 'all column vectors in E have zero-eigenvalues')
 
 
 def eigenvalue_vec(v):
@@ -63,8 +61,8 @@ def mat_prod(A, x):
     returns: b of b = Ax
     product of:  matrix A (m,n) * vector x (n) = vector b (m)
     """
-    #m = A.shape[0]
-    #b = np.zeros((m), float)
+    # m = A.shape[0]
+    # b = np.zeros((m), float)
 
     # calc: Ax = b
     # for i in range(m):
@@ -138,7 +136,7 @@ def nipals_mat(X, PCs, threshold, E_matrices):
         # total object residual variance for PC[0] (calculating from E[0])
         e_tot0 = 0  # for E[0] the total object residual variance is 100%
         for k in range(rows):
-            e_k = np.array(E[k, :])**2
+            e_k = np.array(E[k, :]) ** 2
             e_tot0 += sum(e_k)
 
     t = get_column(E)  # extract a column
@@ -156,7 +154,7 @@ def nipals_mat(X, PCs, threshold, E_matrices):
 
             _p = float(np.transpose(p) * p)
             # ............................................... step 2
-            p = p * _p**(-0.5)
+            p = p * _p ** (-0.5)
             # ..................................... step 3
             t = (E * p) / (np.transpose(p) * p)
 
@@ -235,7 +233,7 @@ def nipals_arr(X, PCs, threshold, E_matrices):
         # total object residual variance for PC[0] (calculating from E[0])
         e_tot0 = 0  # for E[0] the total object residual variance is 100%
         for k in range(rows):
-            e_k = E[k, :]**2
+            e_k = E[k, :] ** 2
             e_tot0 += sum(e_k)
 
     t = get_column(E)  # extract a column
@@ -250,16 +248,16 @@ def nipals_arr(X, PCs, threshold, E_matrices):
         while not convergence:
             _temp = eigenvalue_vec(t)
             # ..................................... step 1
-            #import pdb; pdb.set_trace()
-            #p = mat_prod(E_t, t) / _temp
+            # import pdb; pdb.set_trace()
+            # p = mat_prod(E_t, t) / _temp
             p = np.matmul(E_t, t) / _temp
 
-            _temp = eigenvalue_vec(p)**(-0.5)
+            _temp = eigenvalue_vec(p) ** (-0.5)
             p = p * _temp  # .................................................... step 2
 
             _temp = eigenvalue_vec(p)
             # ....................................... step 3
-            #t = mat_prod(E, p) / _temp
+            # t = mat_prod(E, p) / _temp
             t = np.matmul(E, p) / _temp
             eigenval_new = eigenvalue_vec(t)
             if not ready_for_compare:
@@ -288,7 +286,7 @@ def nipals_arr(X, PCs, threshold, E_matrices):
             # total object residual variance for E[i]
             e_tot = 0
             for k in range(rows):
-                e_k = E[k, :]**2
+                e_k = E[k, :] ** 2
                 e_tot += sum(e_k)
             tot_obj_residual_var = (e_tot / e_tot0)
             explained_var[i] = 1 - tot_obj_residual_var - tot_explained_var
@@ -311,7 +309,7 @@ def nipals_c(X, PCs, threshold, E_matrices):
     """
 
     if not import_ok:
-        raise(ImportError, "could not import c_nipals python extension")
+        raise (ImportError, "could not import c_nipals python extension")
     else:
 
         (rows, cols) = np.shape(X)
@@ -401,7 +399,7 @@ def PCA_svd(X, standardize=True):
     Scores = U * S  # all Scores (T)
     Loadings = V  # all Loadings (P)
 
-    variances = S**2 / cols
+    variances = S ** 2 / cols
     variances_sum = sum(variances)
     explained_var = variances / variances_sum
 

@@ -8,7 +8,9 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.cm import ScalarMappable
 from Math_Tools import PCA
 from pca_module import mean_center, standardization
-from Plot_Tools import OverviewPlotter, set_xlabeling, num2str, axes_create, axes_setup, set_xlabeling_rotation, raw_data_grid, significance_legend, set_ylabeling, show_err_msg, show_info_msg, colormaps, colored_frame
+from Plot_Tools import OverviewPlotter, set_xlabeling, num2str, axes_create, axes_setup, set_xlabeling_rotation, \
+    raw_data_grid, significance_legend, set_ylabeling, show_err_msg, show_info_msg, colormaps, colored_frame
+
 
 def ManhattanCalc(X, PCs=14, standardize=False):
     """
@@ -45,8 +47,8 @@ def ManhattanCalc(X, PCs=14, standardize=False):
     # residual variable variances of E[i])
     variable_residual_variances_0 = np.zeros((cols), float)
     for var_ind in range(cols):
-        variable_residual_variances_0[var_ind] = sum(E0[:, var_ind]**2)
-    #tot_residual_variance_0 = sum(tot_variable_residual_variances_0)
+        variable_residual_variances_0[var_ind] = sum(E0[:, var_ind] ** 2)
+    # tot_residual_variance_0 = sum(tot_variable_residual_variances_0)
 
     # Scores
     # T[1] ... T[PCs]
@@ -67,20 +69,19 @@ def ManhattanCalc(X, PCs=14, standardize=False):
     explained_variable_variances = np.zeros((actual_PCs, variables), float)
 
     variable_residual_variances_i = np.zeros((variables), float)
-    #variable_cloumn_squares = np.zeros((objects), float)
+    # variable_cloumn_squares = np.zeros((objects), float)
 
     # for each PC
     for i in range(actual_PCs):
         for var_ind in range(variables):
-
             # calculate residual variable variances for PC[i] and current variable
             # normalize for current variable
             variable_residual_variances_i[var_ind] = sum(
-                E[i, :, var_ind]**2) / float(variable_residual_variances_0[var_ind])
+                E[i, :, var_ind] ** 2) / float(variable_residual_variances_0[var_ind])
 
         # calculate explained variance for all variables for PC[i]
         explained_variable_variances[i, :] = 1.0 - \
-            variable_residual_variances_i[:]
+                                             variable_residual_variances_i[:]
 
     return [Scores, Loadings, explained_variable_variances]
 
@@ -103,7 +104,7 @@ def get_leave_out_variables(X):
     # check for variables to be left out:
     leave_out_inds = []
     for var_ind in range(cols):
-        variable_residual_var = sum(E0[:, var_ind]**2)
+        variable_residual_var = sum(E0[:, var_ind] ** 2)
         if abs(variable_residual_var) < 0.000000001:
             leave_out_inds.append(var_ind)
 
@@ -258,8 +259,8 @@ def get_plot_data_matrix(c_data, plot_data, projection_type, current_active):
         # fetch data:
         for ind in range(len(new_active_ass)):  # for each assessor
             all_current_active_variable_variances[0:PCs,
-                                                  ind] = c_data[new_active_ass[ind]][2][0:PCs,
-                                                                                        var_inds[ind]]
+            ind] = c_data[new_active_ass[ind]][2][0:PCs,
+                   var_inds[ind]]
 
         return all_current_active_variable_variances, new_active_ass
 
@@ -562,7 +563,7 @@ def ManhattanPlotImage(s_data, plot_data, m_data, col_list, cmap=None):
                 _color = get_normalized_color(
                     (m_data[y_value][col],
                      m_data[y_value][col],
-                        m_data[y_value][col]),
+                     m_data[y_value][col]),
                     color_range=(
                         0.0,
                         1.0))
@@ -639,17 +640,14 @@ def set_manhattan_colorbar(fig, colormap):
     """
 
     # set color map mappable
-    #import pdb; pdb.set_trace()
     colormap_mappable = ScalarMappable(cmap=colormap)
 
     colormap_mappable.set_array(np.array([100, 0]))
-    #colormap_mappable.set_clim(vmin=(100, 0))
     colorbar = fig.colorbar(colormap_mappable)
-    # flip colorbar vertically
-    # colormap_mappable.colorbar[1].invert_yaxis()
-
     colorbar.set_label('Explained Variance [%]')
+    colorbar.set_ticks(np.arange(0, 101, 10))
     colorbar.ax.invert_yaxis()
+
     return colorbar
 
 
@@ -680,11 +678,8 @@ def has_error(plot_data):
 def ManhattanPlotter(
         s_data,
         plot_data,
-        num_subplot=[
-            1,
-            1,
-            1],
-    selection=0,
+        num_subplot=[1, 1, 1],
+        selection=0,
         abspath=None):
     """
 
@@ -801,14 +796,14 @@ def ManhattanPlotter(
         c_data, plot_data, plot_type, current_active)
 
     if not isinstance(plot_data_matrix, (np.ndarray, list)):
-        raise(TypeError, "plot_data_matrix is not an array object")
+        raise (TypeError, "plot_data_matrix is not an array object")
         # return -1 # TypeError of m_data
 
     (rows, cols) = np.shape(plot_data_matrix)
 
     if rows < 1 or cols < 1:
         _msg = "Cannot produce plot. All data has been left out of analysis for " + \
-            current_active + "."
+               current_active + "."
         show_info_msg(_msg)
         return
         # raise ValueError, "incorret dimensions of m_data" # Error in
@@ -970,7 +965,7 @@ def set_plot_adjustments(
         # vertical labeling:
         set_ylabeling(ax, y_string_list)
         _range = np.arange(0.5, (rows) + 0.5, 1)
-        #_range = np.arange(1, (rows)+1, 1)
+        # _range = np.arange(1, (rows)+1, 1)
         ax.set_yticks(_range)
 
         # colormap: from Plot_Tools
@@ -1101,7 +1096,7 @@ def ManhattanAttOverviewPlotter(s_data, plot_data, selection=0, abspath=None):
     if res is None:
         return None
 
-    #res.fig.add_axes([0.45, 0.05, 0.45, 0.9], frameon=False, visible=False)
+    # res.fig.add_axes([0.45, 0.05, 0.45, 0.9], frameon=False, visible=False)
 
     if plot_data.view_legend:
         res.fig.subplots_adjust(

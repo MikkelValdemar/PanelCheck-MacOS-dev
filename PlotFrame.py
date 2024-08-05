@@ -5,37 +5,37 @@ import wx
 import time
 import wx.lib.buttons as buttons
 
-#from scripts.PlotPanel import *
-#from Tools import *
+# from scripts.PlotPanel import *
+# from Tools import *
 from PlotData import PlotData, CollectionCalcPlotData
 
-#import wx.lib.dialogs
+# import wx.lib.dialogs
 import os
 import sys
 import matplotlib
 # matplotlib.use('WXAgg')
 
-#from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
+# from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg
 from matplotlib.ticker import FixedLocator
 from matplotlib.artist import Artist
-#from matplotlib.widgets import RectangleSelector
+# from matplotlib.widgets import RectangleSelector
 from matplotlib.backend_bases import NavigationToolbar2, LocationEvent, MouseEvent
-#from matplotlib.legend import Legend
-#from matplotlib.backends.backend_agg import FigureCanvasAgg
-#from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
-#import gtk
+# from matplotlib.legend import Legend
+# from matplotlib.backends.backend_agg import FigureCanvasAgg
+# from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
+# import gtk
 
 # matplotlib.use('WX')
-#from matplotlib.backends.backend_wx import FigureCanvasWx as FigureCanvas
+# from matplotlib.backends.backend_wx import FigureCanvasWx as FigureCanvas
 
-#from matplotlib.figure import Figure
-#from matplotlib.numerix.mlab import rand
+# from matplotlib.figure import Figure
+# from matplotlib.numerix.mlab import rand
 
 
 # for custom matplotlib drawing
-#from matplotlib.artist import Artist
-#from matplotlib.patches import Patch, Rectangle, Circle, bbox_artist, draw_bbox
-#from matplotlib.font_manager import FontProperties
+# from matplotlib.artist import Artist
+# from matplotlib.patches import Patch, Rectangle, Circle, bbox_artist, draw_bbox
+# from matplotlib.font_manager import FontProperties
 # from matplotlib.transforms import Bbox, Point, Value, get_bbox_transform, bbox_all,\
 #     unit_bbox, inverse_transform_bbox, lbwh_to_bbox
 
@@ -49,18 +49,21 @@ from PlotPanel import PlotPanel, PointLabel
 from Line_Plot import SampleLinePlotter, AssessorLinePlotter, ReplicateLinePlotter
 from Tucker1_Plot import Tucker1Plotter
 from Consensus_Plot import PCA_plotter, STATIS_PCA_Plotter, STATIS_AssWeight_Plotter
-from MM_ANOVA_Plot import set_points_in_range, MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_Plotter_2way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_3way
+from MM_ANOVA_Plot import set_points_in_range, MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, \
+    MixModel_ANOVA_Plotter_2way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_Plotter_3way, \
+    MixModel_ANOVA_LSD_Plotter_3way
 from rawData_Plot import RawDataAssessorPlotter, RawDataAttributePlotter
 from Correlation_Plot import CorrelationPlotter
 from profile_Plot import profilePlotter
 from Eggshell_Plot import EggshellPlotter
-from F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
-from MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific
+from F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, \
+    FPlotter_Attribute_Specific
+from MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, \
+    MSEPlotter_Attribute_Specific
 from pmse_Plot import pmsePlotter
 from Manhattan_Plot import ManhattanPlotter
 
 from PlotData import PCA_PlotData, ANOVA_PlotData, MM_ANOVA_PlotData
-
 
 """
 
@@ -156,7 +159,7 @@ class PlotFrame(wx.Frame):
         # frame initilization
         frame_id = wx.NewId()
         _title = fig_title["fig"] + ": " + \
-            fig_title["plot"] + " (" + s_data.abspath + ")"
+                 fig_title["plot"] + " (" + s_data.abspath + ")"
         wx.Frame.__init__(self, parent, frame_id, _title, (-1, -1), (-1, -1))
         self.fig_title = fig_title
 
@@ -182,7 +185,7 @@ class PlotFrame(wx.Frame):
             figure=self.plot_data.fig,
             overview_plot=self.overview_plot)
 
-        #self.plot_panel.canvas.Bind(wx.EVT_MOTION, self.on_panel_motion)
+        # self.plot_panel.canvas.Bind(wx.EVT_MOTION, self.on_panel_motion)
         self.plot_panel.canvas.Bind(
             wx.EVT_LEFT_DCLICK,
             self.on_panel_left_double_click)
@@ -240,7 +243,7 @@ class PlotFrame(wx.Frame):
         self.rawData = self.plot_data.raw_data
         self.results = self.plot_data.numeric_data
         self.plot_type = self.plot_data.plot_type
-        #self.plotter = self.set_plotter(self.plot_type)
+        # self.plotter = self.set_plotter(self.plot_type)
 
         print("plot type: " + self.plot_type)
 
@@ -288,8 +291,8 @@ class PlotFrame(wx.Frame):
         # print(self.epsilonY)
 
         # setting the icon for frame
-        #pathname = os.path.dirname(sys.argv[0])
-        #abspath = os.path.abspath(pathname)
+        # pathname = os.path.dirname(sys.argv[0])
+        # abspath = os.path.abspath(pathname)
         self.icon = wx.Icon(self.ProgPathAbs + "/resources/fig.ico", wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
 
@@ -324,8 +327,8 @@ class PlotFrame(wx.Frame):
         buttNextPlot_id = wx.NewId()
         butt_close = wx.NewId()
 
-        #self.button_print = wx.Button(self.button_panel, butt_print, "Print")
-        #self.button_save = wx.Button(self.button_panel, butt_save, "Save")
+        # self.button_print = wx.Button(self.button_panel, butt_print, "Print")
+        # self.button_save = wx.Button(self.button_panel, butt_save, "Save")
 
         # self.button_print = wx.BitmapButton(
         #     bitmap=wx.Bitmap(
@@ -429,7 +432,6 @@ class PlotFrame(wx.Frame):
         # self.button_close.SetToolTipString(u'Close')
 
         if self.pc_ctrl_on:
-
             self.buttUp = wx.BitmapButton(
                 bitmap=wx.Bitmap(
                     self.ProgPathAbs +
@@ -574,10 +576,10 @@ class PlotFrame(wx.Frame):
         self.SetStatusBar(self.statusBar)
 
         # event binding
-        #EVT_PAINT(self, self.onPaint)
+        # EVT_PAINT(self, self.onPaint)
         # print(self.plot_panel.canvas)
 
-        #self.plot_panel.canvas.Bind(wx.EVT_KEY_DOWN, self.onKeyEvent, id=self.plot_panel_id)
+        # self.plot_panel.canvas.Bind(wx.EVT_KEY_DOWN, self.onKeyEvent, id=self.plot_panel_id)
 
         self.Bind(wx.EVT_BUTTON, self.onPrint, id=butt_print)
         self.Bind(wx.EVT_BUTTON, self.onPrintSetup, id=butt_print_setup)
@@ -599,15 +601,15 @@ class PlotFrame(wx.Frame):
             self.Bind(wx.EVT_BUTTON, self.prevPC_x, id=buttLeft_id)
             self.Bind(wx.EVT_BUTTON, self.nextPC_x, id=buttRight_id)
             if self.plot_data.tree_path[0] == u'PCA Explained Variance' or self.plot_data.tree_path[
-                    0] == u'Assessor Weights' or self.plot_data.tree_path[0] == u'Spiderweb Plot':
+                0] == u'Assessor Weights' or self.plot_data.tree_path[0] == u'Spiderweb Plot':
                 self.enable_pc_ctrl(False)
 
         self.Bind(wx.EVT_BUTTON, self.prevPlot, id=buttPrevPlot_id)
         self.Bind(wx.EVT_BUTTON, self.nextPlot, id=buttNextPlot_id)
         self.Bind(wx.EVT_BUTTON, self.onClose, id=butt_close)
 
-        #self.rect_select = RectangleSelector(self.plot_panel.subplot, self.zoom, drawtype='box', useblit=True)
-        #self.enable_rs(self.rect_select, False)
+        # self.rect_select = RectangleSelector(self.plot_panel.subplot, self.zoom, drawtype='box', useblit=True)
+        # self.enable_rs(self.rect_select, False)
 
         # adjusting sizer
         # self.SetBackgroundColour(wx.Colour(192,192,192))
@@ -636,11 +638,11 @@ class PlotFrame(wx.Frame):
     def on_panel_left_double_click(self, evt):
 
         if self.plot_type == "tucker1" or \
-           self.plot_type == "statis_consensus" or \
-           self.plot_type == "pmse" or \
-           self.plot_type == "mm_anova_f_3way" or self.plot_type == "mm_anova_f_2way" or self.plot_type == "mm_anova_f_2way1rep" or \
-           self.plot_type == "consensus" or \
-           self.plot_type == "corr":
+                self.plot_type == "statis_consensus" or \
+                self.plot_type == "pmse" or \
+                self.plot_type == "mm_anova_f_3way" or self.plot_type == "mm_anova_f_2way" or self.plot_type == "mm_anova_f_2way1rep" or \
+                self.plot_type == "consensus" or \
+                self.plot_type == "corr":
 
             if self.dclick_data is not None:
                 if self.plot_type == "pmse":
@@ -1004,7 +1006,7 @@ class PlotFrame(wx.Frame):
                 self.printLabelIfCorrectPoint(x, y)
             elif self.labeling_type == 1:
                 self.printLabelIfCorrectLine(x, y)
-            #self.statusBar.SetStatusText(a.get_label() + "x=%f  y=%f"% (x, y))
+            # self.statusBar.SetStatusText(a.get_label() + "x=%f  y=%f"% (x, y))
         else:
             if not self.cursor_set:
                 if self.plot_type == "manhattan_ass" or self.plot_type == "manhattan_att":
@@ -1163,8 +1165,8 @@ class PlotFrame(wx.Frame):
         wx.TheClipboard.Open()
         wx.TheClipboard.SetData(bmp_obj)
         wx.TheClipboard.Close()
-        #bitmap = self.plot_panel.subplot.figure.canvas.bitmap
-        #self.plot_panel.canvas.Copy_to_Clipboard(event=event, bmp=bitmap)
+        # bitmap = self.plot_panel.subplot.figure.canvas.bitmap
+        # self.plot_panel.canvas.Copy_to_Clipboard(event=event, bmp=bitmap)
         # self.plot_panel.canvas.Copy_to_Clipboard(event=event)
 
     def on_key_event(self, event=None):
@@ -1207,7 +1209,7 @@ class PlotFrame(wx.Frame):
             path = dlg.GetPath()
             filedir = split_path(path)[0]
             self.mother.image_save_path = filedir
-            #path = str(path)
+            # path = str(path)
             self.plot_panel.figure.text(
                 0.01,
                 0.01,
@@ -1242,7 +1244,7 @@ class PlotFrame(wx.Frame):
 
         self.summFrame.Show()
         self.summaryFrameShowing = True
-        #self.summary_changed == True
+        # self.summary_changed == True
 
     def get_summary_text(self, plot_type):
         """
@@ -1324,7 +1326,7 @@ class PlotFrame(wx.Frame):
     def onRawData(self, event=None):
         if not self.gridFrameShowingRawData or self.raw_data_changed:
             _title = self.fig_title["fig"] + ": " + \
-                self.fig_title["plot"] + " (" + self.s_data.abspath + ")"
+                     self.fig_title["plot"] + " (" + self.s_data.abspath + ")"
             self.gridFrame_raw = GridFrame(
                 self, _title, self.rawData, abspath=self.ProgPathAbs)
             self.gridFrame_raw.grid.set_color_on_pos(
@@ -1336,7 +1338,7 @@ class PlotFrame(wx.Frame):
 
         self.gridFrame_raw.Show()
         self.gridFrameShowingRawData = True
-        #self.gridFrameShowingNumericalResults = False
+        # self.gridFrameShowingNumericalResults = False
 
     def onNumericalResults(self, event=None):
         if not self.gridFrameShowingNumericalResults or self.num_res_changed:
@@ -1344,7 +1346,7 @@ class PlotFrame(wx.Frame):
             if plotType == u'AGR prod' or plotType == u'AGR att' or plotType == u'REP prod' or plotType == u'REP att':
                 print("GridFramePerfInd")
                 _title = self.fig_title["fig"] + ": " + \
-                    self.fig_title["plot"] + " (" + self.s_data.abspath + ")"
+                         self.fig_title["plot"] + " (" + self.s_data.abspath + ")"
                 self.gridFrame_num = GridFramePerfInd(
                     self,
                     _title,
@@ -1355,7 +1357,7 @@ class PlotFrame(wx.Frame):
                 self.num_res_changed = False
             else:
                 _title = self.fig_title["fig"] + ": " + \
-                    self.fig_title["plot"] + " (" + self.s_data.abspath + ")"
+                         self.fig_title["plot"] + " (" + self.s_data.abspath + ")"
                 self.gridFrame_num = GridFrame(
                     self, _title, self.results,
                     config=self.plot_data.numeric_data_config,
@@ -1366,7 +1368,7 @@ class PlotFrame(wx.Frame):
 
         self.gridFrame_num.Show()
         self.gridFrameShowingNumericalResults = True
-        #self.gridFrameShowingRawData = False
+        # self.gridFrameShowingRawData = False
 
     def prevPC_y(self, event=None):
         self.pc_y_index -= 1
@@ -1398,15 +1400,15 @@ class PlotFrame(wx.Frame):
         self.replot_pc(self.plot_type, self.pc_x_index, self.pc_y_index)
 
     def update_variables(self):
-        #self.fig = fig
+        # self.fig = fig
         # self.fig.add_axes(self.axes)
-        #self.canvas= FigureCanvasWx(self, -1, self.fig)
+        # self.canvas= FigureCanvasWx(self, -1, self.fig)
         # self.fig.set_canvas(self.canvas)
-        #self.canvas.figure = self.fig
-        #self.canvas.__init__(self, -1, self.fig)
+        # self.canvas.figure = self.fig
+        # self.canvas.__init__(self, -1, self.fig)
         # self.fig.draw_artist(self.axes)
-        #self.canvas.mpl_connect('motion_notify_event', self.mouse_move)
-        #self.canvas.mpl_connect('button_press_event', self.mouse_click)
+        # self.canvas.mpl_connect('motion_notify_event', self.mouse_move)
+        # self.canvas.mpl_connect('button_press_event', self.mouse_click)
 
         # draw()
 
@@ -1645,7 +1647,8 @@ class PlotFrame(wx.Frame):
             else:
                 i = self.get_pos(self.plot_data.tree_path[0], _list, index)
             tree_path.append(_list[i])
-            if tree_path[0] == u'PCA Explained Variance' or tree_path[0] == u'Assessor Weights' or tree_path[0] == u'Spiderweb Plot':
+            if tree_path[0] == u'PCA Explained Variance' or tree_path[0] == u'Assessor Weights' or tree_path[
+                0] == u'Spiderweb Plot':
                 self.enable_pc_ctrl(False)
             else:
                 self.enable_pc_ctrl(True)
@@ -1829,7 +1832,7 @@ class PlotFrame(wx.Frame):
                 self.plot_data,
                 selection=self.average_mode,
                 pc_x=pc_x,
-                pc_y=pc_y)    # 0: PC1, 1: PC2
+                pc_y=pc_y)  # 0: PC1, 1: PC2
         elif plot_type == "statis_consensus":
             self.plot_panel.figure.clear()
             self.plot_data = STATIS_PCA_Plotter(
@@ -1837,7 +1840,7 @@ class PlotFrame(wx.Frame):
                 self.plot_data,
                 selection=self.statis_mode,
                 pc_x=pc_x,
-                pc_y=pc_y)    # 0: PC1, 1: PC2
+                pc_y=pc_y)  # 0: PC1, 1: PC2
 
         self.plot_panel.subplot = self.plot_data.ax
         self.plot_panel.figure = self.plot_data.fig
@@ -1881,17 +1884,17 @@ class PlotFrame(wx.Frame):
                 self.plot_data.view_grid,
                 self.plot_data.view_legend)  # overview_plot = False
             plot_data.copy_data(self.plot_data)
-            #plot_data.selection = self.plot_data.selection
-            #plot_data.max_PCs = self.plot_data.max_PCs
-            #plot_data.Scores = self.plot_data.Scores;
-            #plot_data.Loadings = self.plot_data.Loadings;
-            #plot_data.E = self.plot_data.E
-            #plot_data.CorrLoadings = self.plot_data.CorrLoadings
-            #plot_data.numeric_data_tucker1matrix = self.plot_data.numeric_data_tucker1matrix
-            #plot_data.newActiveAttributesList = self.plot_data.newActiveAttributesList
-            #plot_data.raw_data = self.plot_data.raw_data
+            # plot_data.selection = self.plot_data.selection
+            # plot_data.max_PCs = self.plot_data.max_PCs
+            # plot_data.Scores = self.plot_data.Scores;
+            # plot_data.Loadings = self.plot_data.Loadings;
+            # plot_data.E = self.plot_data.E
+            # plot_data.CorrLoadings = self.plot_data.CorrLoadings
+            # plot_data.numeric_data_tucker1matrix = self.plot_data.numeric_data_tucker1matrix
+            # plot_data.newActiveAttributesList = self.plot_data.newActiveAttributesList
+            # plot_data.raw_data = self.plot_data.raw_data
             plot_data.aspect = self.plot_data.aspect
-            #plot_data.p_matr = self.plot_data.p_matr
+            # plot_data.p_matr = self.plot_data.p_matr
             return plotter(
                 self.s_data,
                 plot_data,
@@ -1906,13 +1909,13 @@ class PlotFrame(wx.Frame):
                 self.plot_data.view_grid,
                 self.plot_data.view_legend)  # overview_plot = False
             plot_data.copy_data(self.plot_data)
-            #plot_data.ANOVA_F = self.plot_data.ANOVA_F
-            #plot_data.ANOVA_p = self.plot_data.ANOVA_p
-            #plot_data.ANOVA_MSE = self.plot_data.ANOVA_MSE
-            #plot_data.F_significances = self.plot_data.F_significances
-            #plot_data.raw_data = self.plot_data.raw_data
-            #plot_data.numeric_data = self.plot_data.numeric_data
-            #plot_data.p_matr = self.plot_data.p_matr
+            # plot_data.ANOVA_F = self.plot_data.ANOVA_F
+            # plot_data.ANOVA_p = self.plot_data.ANOVA_p
+            # plot_data.ANOVA_MSE = self.plot_data.ANOVA_MSE
+            # plot_data.F_significances = self.plot_data.F_significances
+            # plot_data.raw_data = self.plot_data.raw_data
+            # plot_data.numeric_data = self.plot_data.numeric_data
+            # plot_data.p_matr = self.plot_data.p_matr
 
         elif plot_type == "manhattan_ass" or plot_type == "manhattan_att":
             plot_data = CollectionCalcPlotData(
@@ -1923,7 +1926,7 @@ class PlotFrame(wx.Frame):
                 self.plot_data.view_grid,
                 self.plot_data.view_legend)  # overview_plot = False
             plot_data.copy_data(self.plot_data)
-            #plot_data.collection_calc_data = self.plot_data.collection_calc_data
+            # plot_data.collection_calc_data = self.plot_data.collection_calc_data
             plot_data.maxPCs = self.plot_data.maxPCs
             plot_data.selection = self.plot_data.selection
 
@@ -1936,7 +1939,7 @@ class PlotFrame(wx.Frame):
                 self.plot_data.view_grid,
                 self.plot_data.view_legend)  # overview_plot = False
             plot_data.copy_data(self.plot_data)
-            #plot_data.collection_calc_data = self.plot_data.collection_calc_data
+            # plot_data.collection_calc_data = self.plot_data.collection_calc_data
 
         elif plot_type == "perf_ind":
             plot_data = CollectionCalcPlotData(
@@ -2020,17 +2023,17 @@ class PlotFrame(wx.Frame):
             self.plot_data = CorrelationPlotter(self.s_data, self.plot_data)
             # if self.plot_data.tree_path[1] in self.s_data.AttributeList:
             #    self.plot_data.activeAttributesList = [self.plot_data.tree_path[1]]
-            #self.active_att = [self.plot_data.tree_path[1]]
+            # self.active_att = [self.plot_data.tree_path[1]]
 
         elif plot_type == "profile":
-            #self.plot_data.activeAttributesList = [self.plot_data.tree_path[0]]
+            # self.plot_data.activeAttributesList = [self.plot_data.tree_path[0]]
             self.plot_data = profilePlotter(self.s_data, self.plot_data)
-            #self.active_att = [self.plot_data.tree_path[0]]
+            # self.active_att = [self.plot_data.tree_path[0]]
 
         elif plot_type == "egg":
-            #self.plot_data.activeAttributesList = [self.plot_data.tree_path[0]]
+            # self.plot_data.activeAttributesList = [self.plot_data.tree_path[0]]
             self.plot_data = EggshellPlotter(self.s_data, self.plot_data)
-            #self.active_att = [self.plot_data.tree_path[0]]
+            # self.active_att = [self.plot_data.tree_path[0]]
 
         elif plot_type == "f_ass":
             if i == 0:
@@ -2141,18 +2144,18 @@ class PlotFrame(wx.Frame):
         # self.plot_panel.canvas.figure.set_canvas(self.plot_panel.canvas)
 
         # print datasets
-        #self.plot_panel.canvas = self.plot_data.fig.canvas
+        # self.plot_panel.canvas = self.plot_data.fig.canvas
 
-        #self.plot_panel.canvas = self.plot_panel.figure.canvas
+        # self.plot_panel.canvas = self.plot_panel.figure.canvas
         # print self.plot_panel.canvas.GetId()
 
-        #self.plot_panel.canvas = self.plot_data.fig.canvas
+        # self.plot_panel.canvas = self.plot_data.fig.canvas
         self.plot_panel.subplot.figure.canvas.draw()
         # print self.plot_panel.canvas.bitmap
-        #self.Bind(wx.EVT_KEY_DOWN, self.onKeyEvent, id=self.plot_panel.figure.canvas.GetId())
-        #self.plot_panel.subplot.figure.canvas.Bind(wx.EVT_KEY_DOWN, self.onKeyEvent)
+        # self.Bind(wx.EVT_KEY_DOWN, self.onKeyEvent, id=self.plot_panel.figure.canvas.GetId())
+        # self.plot_panel.subplot.figure.canvas.Bind(wx.EVT_KEY_DOWN, self.onKeyEvent)
         # self.plot_panel.subplot.figure.canvas.draw()
-        #self.plot_panel.canvas = self.plot_panel.subplot.figure.canvas
+        # self.plot_panel.canvas = self.plot_panel.subplot.figure.canvas
         # self.Refresh()
 
     def prevPlot(self, event=None):
@@ -2174,6 +2177,9 @@ class NavigationToolbar2Wx(NavigationToolbar2, wx.ToolBar):
         self._idle = True
         self.statbar = None
         self.overlay = wx.Overlay()
+        self._parent = self.canvas.GetParent()
+        self._NTB2_PAN = wx.NewId()
+        self._NTB2_ZOOM = wx.NewId()
 
     def _init_toolbar(self):
         self._parent = self.canvas.GetParent()
@@ -2318,7 +2324,7 @@ def axes_create(legend, fig):
     @param legend: Whether legend is on or off.
     """
     ax = 0
-    if(legend):  # if legend to be drawn
+    if (legend):  # if legend to be drawn
         # [left, bottom, width, height]
         ax = fig.add_axes([0.1, 0.1, 0.65, 0.8])
     else:
@@ -2357,7 +2363,6 @@ def axes_setup(ax, xLabel, yLabel, title, limits):
     ax.set_title(title, font)
     ax.set_xlim(limits[0], limits[1])
     ax.set_ylim(limits[2], limits[3])
-
 
 # def printLabelIfCorrectPoint(self, x, y):
 # """

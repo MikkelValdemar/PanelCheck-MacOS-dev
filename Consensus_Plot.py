@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import wx
 import numpy as np
 from scipy.linalg import svd
@@ -9,14 +7,11 @@ from matplotlib.collections import LineCollection
 
 from Math_Tools import PCA, STD, center, rotate_vec2d, lerp
 from pca_module import CorrelationLoadings
-from Plot_Tools import raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, numerical_data_add_loadings, num2str, colors_rgb_list, set_xlabeling_rotation
+from Plot_Tools import raw_data_grid, axes_create, axes_setup, numerical_data_add_scores, numerical_data_add_loadings, \
+    num2str, colors_rgb_list, set_xlabeling_rotation
 
-def numerical_data_add_average_mat(
-        resultList,
-        average_mat,
-        activeAttributesList,
-        activeSamplesList):
 
+def numerical_data_add_average_mat(resultList, average_mat, activeAttributesList, activeSamplesList):
     headerLine = ['Averaged data:']
     resultList.append(headerLine)
     attributesLine = ['Samples']
@@ -33,16 +28,7 @@ def numerical_data_add_average_mat(
     return resultList
 
 
-def PCA_plotter(
-        s_data,
-        plot_data,
-        num_subplot=[
-            1,
-            1,
-            1],
-    selection=0,
-    pc_x=0,
-        pc_y=1):
+def PCA_plotter(s_data, plot_data, num_subplot=[1, 1, 1], selection=0, pc_x=0, pc_y=1):
     """
     This is the PCA plot function. It plots the PCA scores of the averaged
     matrix (over assessors and replicates).
@@ -88,47 +74,34 @@ def PCA_plotter(
     itemID = plot_data.tree_path
     interact = False  # interactivity on or off
 
-    title_pca_type = ""
     if selection == 1:
         title_pca_type = "Standardized: "
     else:
         title_pca_type = "Original: "
 
-    # print itemID[0], ' was selected'
-
     if len(activeAssessorsList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeAttributesList) < 3:  # no active assessors
-        dlg = wx.MessageDialog(
-            None,
-            'There must be a minimum of 3 attributes.',
-            'Error Message',
-            wx.OK | wx.ICON_INFORMATION)
+        dlg = wx.MessageDialog(None, 'There must be a minimum of 3 attributes.', 'Error Message',
+                               wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeSamplesList) < 3:  # no active samples
-        dlg = wx.MessageDialog(None, 'There must be a minimum of 3 samples.',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'There must be a minimum of 3 samples.', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
 
     # Construction of consensus matrix depending on which tab is active
-    numberOfAssessors = len(activeAssessorsList)
-    numberOfAttributes = len(activeAttributesList)
-    numberOfSamples = len(activeSamplesList)
-    numberOfReplicates = len(s_data.ReplicateList)
     pointAndLabelList = []
 
-    # 'Standardized' tab is active then standardize data, calculate average
-    # and compute the required values
+    # 'Standardized' tab is active then standardize data, calculate average and compute the required values
     if selection == 1:
         print('do standardisation')
 
@@ -143,23 +116,18 @@ def PCA_plotter(
             for sample in activeSamplesList:
 
                 for replicate in s_data.ReplicateList:
-                    dataRow = s_data.SparseMatrix[(
-                        assessor, sample, replicate)]
+                    dataRow = s_data.SparseMatrix[(assessor, sample, replicate)]
 
-                    # Here all strings from s_data.SparseMatrix are converted
-                    # to floats
+                    # Here all strings from s_data.SparseMatrix are converted to floats
                     floatRow = []
                     for eachValue in dataRow:
                         floatRow.append(float(eachValue))
 
-                    # Leave out the values of those attributes that are not
-                    # selected
+                    # Leave out the values of those attributes that are not selected
                     newFloatRow = []
                     for attribute in s_data.AttributeList:
                         if attribute in activeAttributesList:
-                            newFloatRow.append(
-                                floatRow
-                                [s_data.AttributeList.index(attribute)])
+                            newFloatRow.append(floatRow[s_data.AttributeList.index(attribute)])
 
                     oneAssessorList.append(newFloatRow)
 
@@ -170,7 +138,6 @@ def PCA_plotter(
         # by calculating a matrix that contains the STD's for each
         # assessor. Also averages for each assessor are calculated.
         STDmatrix = np.zeros((1, len(activeAttributesList)), float)
-        # print STDmatrix
         meanMatrix = np.zeros((1, len(activeAttributesList)), float)
 
         leaveOutAtts = []
@@ -178,7 +145,6 @@ def PCA_plotter(
 
             check = np.array(STD(assessor, 0), copy=False)
             assMean = np.array(np.average(assessor, 0), copy=False)
-            # ipshell()
             STDmatrix = np.vstack((STDmatrix, check))
             meanMatrix = np.vstack((meanMatrix, assMean))
 
@@ -186,9 +152,7 @@ def PCA_plotter(
 
             position = 0
             for item in newCheck:
-
                 if item == 0.0:
-
                     if position not in leaveOutAtts:
                         leaveOutAtts.append(position)
                 position += 1
@@ -223,9 +187,7 @@ def PCA_plotter(
 
             message = messagePart1 + messagePart2 + messagePart3
 
-            dlg = wx.MessageDialog(None, message,
-                                   'Important information',
-                                   wx.OK | wx.ICON_INFORMATION)
+            dlg = wx.MessageDialog(None, message, 'Important information', wx.OK | wx.ICON_INFORMATION)
             dlg.ShowModal()
             dlg.Destroy()
 
@@ -236,9 +198,7 @@ def PCA_plotter(
         for attribute in range(len(activeAttributesList)):
             checkCol = STDarray[:, attribute]
             checkCol2 = meanMatrix[:, attribute]
-            # ipshell()
             if 0 in checkCol:
-                # print 'zero in column ', attribute
                 pass
 
             else:
@@ -251,13 +211,8 @@ def PCA_plotter(
         nextAssMeanArray = realAssMeanArray[1:, :].copy()
         finalAssMeanArray = np.transpose(nextAssMeanArray)
 
-        # print finalSTDarray
-        # print
-        # print finalAssMeanArray
-
         for attribute in leaveOutAttributes:
             activeAttributesList.remove(attribute)
-        # print activeAttributesList
 
     elif selection == 0:
         print('do average')
@@ -270,7 +225,6 @@ def PCA_plotter(
     columns = len(activeAttributesList)
     replicates = len(s_data.ReplicateList)
 
-    rowsSampleAverageMatrix = replicates * len(activeAssessorsList)
     averageMatrix = np.zeros((rowsAverageMatrix, columns), float)
 
     for sample in activeSamplesList:
@@ -283,66 +237,40 @@ def PCA_plotter(
                 valueCollectionList = []
                 for attribute in activeAttributesList:
                     if selection == 1:  # average std
-                        value = float(s_data.SparseMatrix[(
-                            assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
-                        STDvalue = finalSTDarray[activeAssessorsList.index(
-                            assessor), activeAttributesList.index(attribute)]
-                        averValue = finalAssMeanArray[activeAssessorsList.index(
-                            assessor), activeAttributesList.index(attribute)]
+                        value = float(
+                            s_data.SparseMatrix[(assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
+                        STDvalue = finalSTDarray[
+                            activeAssessorsList.index(assessor), activeAttributesList.index(attribute)]
+                        averValue = finalAssMeanArray[
+                            activeAssessorsList.index(assessor), activeAttributesList.index(attribute)]
                         calc = (value - averValue) / STDvalue
-                        # print value, averValue,STDvalue, calc
-
-                        # print
-                        # finalSTDarray[activeAssessorsList.index(assessor),
-                        # activeAttributesList.index(attribute)]
-                        valueCollectionList.append(
-                            (value - averValue) / STDvalue)
+                        valueCollectionList.append(calc)
 
                     elif selection == 0:  # average original
-                        value = float(s_data.SparseMatrix[(
-                            assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
+                        value = float(
+                            s_data.SparseMatrix[(assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
                         valueCollectionList.append(value)
 
                 oneMatrixRow = np.array(valueCollectionList)
-
-                # print '*******************************'
-                constructSampleAverageMatrix = np.vstack(
-                    (constructSampleAverageMatrix, oneMatrixRow))
+                constructSampleAverageMatrix = np.vstack((constructSampleAverageMatrix, oneMatrixRow))
 
         # Remove first row that contains only zeros
         sampleAverageMatrix = constructSampleAverageMatrix[1:, :].copy()
-        # print sampleAverageMatrix
 
-        # Now calculate average for that sample and copy values
-        # in to averageMatrix
+        # Now calculate average for that sample and copy values in to averageMatrix
         sampleAverage = np.average(sampleAverageMatrix, 0)
         averageMatrix[activeSamplesList.index(sample)] = sampleAverage.copy()
 
     averageMatrixForAnalysis = averageMatrix.copy()
 
-    # ipshell()
-
     # Do PCA and get all results
-    #PCAanalysis = PCA(averageMatrixForAnalysis.copy(), 1)
-    #scores = PCAanalysis.GetScores()
-    #loadings = PCAanalysis.GetLoadings()
-    #corrLoadings = PCAanalysis.GetCorrelationLoadings()
-    #transCorrLoadings = np.transpose(corrLoadings)
-    #explVar = PCAanalysis.GetExplainedVariances()
     scores, loadings, explVar = PCA(averageMatrixForAnalysis)
     explVar = list(explVar)
     corrLoadings = CorrelationLoadings(averageMatrixForAnalysis, scores)
-    transCorrLoadings = np.transpose(corrLoadings)
 
-    font = {'family': 'sans-serif',
-            'color': 'k',
-            'weight': 'normal',
-            'size': 11,
-            }
+    font = {'family': 'sans-serif', 'color': 'k', 'weight': 'normal', 'size': 11, }
 
-    # Starting generation of the list that contains the raw data
-    # that is shown in "Raw Data" when pushing the button in the plot
-
+    # Starting generation of the list that contains the raw data that is shown in "Raw Data" when pushing the button in the plot
     rawDataList = raw_data_grid(s_data, plot_data)
 
     resultList = []
@@ -350,15 +278,10 @@ def PCA_plotter(
 
     # Continue building resultList
     # Limiting PC's in 'Numeric Results' to 10
-    [PCs, activeAttributes] = np.shape(corrLoadings)
-    [Samples, PCs] = np.shape(scores)
-
     maxPCs = 10
-    [Samples, PCs] = np.shape(scores)
+    [_, PCs] = np.shape(scores)
     if PCs < maxPCs:
         maxPCs = PCs
-
-    # print itemID[0]
 
     # Figure
     aspect = plot_data.aspect
@@ -375,8 +298,7 @@ def PCA_plotter(
     else:
         plot_data.fig = Figure(None)
     if subplot:  # is subplot
-        plot_data.ax = plot_data.fig.add_subplot(
-            num_subplot[0], num_subplot[1], num_subplot[2], aspect=aspect)
+        plot_data.ax = plot_data.fig.add_subplot(num_subplot[0], num_subplot[1], num_subplot[2], aspect=aspect)
     else:
         plot_data.ax = axes_create(legend, plot_data.fig, aspect=aspect)
     ax = plot_data.ax
@@ -390,24 +312,13 @@ def PCA_plotter(
 
         interact = True
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
         resultList.append(emptyLine)
 
-        #headerLine = ['PCA scores']
-        # resultList.append(headerLine)
-        # resultList.append(emptyLine)
-
-        matrixHeaderLine = ['']
-
-        numerical_data_add_scores(
-            scores, activeSamplesList, maxPCs, resultList)
+        numerical_data_add_scores(scores, activeSamplesList, maxPCs, resultList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -419,8 +330,6 @@ def PCA_plotter(
         varianceLine = ['']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -433,41 +342,40 @@ def PCA_plotter(
 
         ax.grid(plot_data.view_grid)
 
-     # Get the first and second column from the scores matrix
+        # Get the first and second column from the scores matrix
         scoresXCoordinates = np.take(scores, (pc_x,), 1)
         scoresYCoordinates = np.take(scores, (pc_y,), 1)
 
-        # Catch max and min values in PC1 and PC2 scores
-        # for defining axis-limits in the common scores plot.
-        x_max = np.ceil(max(scoresXCoordinates))
-        x_min = np.floor(min(scoresXCoordinates))
+        # Catch max and min values in PC1 and PC2 scores for defining axis-limits in the common scores plot.
+        if max(scoresXCoordinates) > 1 or min(scoresXCoordinates) < -1:
+            x_max = np.ceil(max(scoresXCoordinates))
+            x_min = np.floor(min(scoresXCoordinates))
+        else:
+            x_max = np.ceil(max(scoresXCoordinates) * 10) / 10 + .1
+            x_min = np.floor(min(scoresXCoordinates) * 10) / 10 - .1
 
-        y_max = np.ceil(max(scoresYCoordinates))
-        y_min = np.floor(min(scoresYCoordinates))
+        if max(scoresYCoordinates) > 1 or min(scoresYCoordinates) < -1:
+            y_max = np.ceil(max(scoresYCoordinates))
+            y_min = np.floor(min(scoresYCoordinates))
+        else:
+            y_max = np.ceil(max(scoresYCoordinates) * 10) / 10 + .1
+            y_min = np.floor(min(scoresYCoordinates) * 10) / 10 - .1
 
         # Defining the titles, axes names, etc
         myTitle = title_pca_type + 'PCA scores'
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
         axes_setup(ax, xAx, yAx, myTitle, [x_min, x_max, y_min, y_max])
 
         scores_x = []
         for element in scoresXCoordinates:
             scores_x.append(element[0])
-        # print scoresXCoordinates; print scores_x
         scores_y = []
         for element in scoresYCoordinates:
             scores_y.append(element[0])
-        # print scoresYCoordinates; print scores_y
 
         ax.scatter(scores_x, scores_y, s=25, c='b', marker='s')
-
-        #ax.plot([x_min, x_max], [0, 0], 'b--')
-        #ax.plot([0, 0], [y_min, y_max], 'b--')
-        #axes_setup(ax, xAx, yAx, myTitle, [x_min, x_max, y_min, y_max])
 
         lims = []
         xlims = ax.get_xlim()
@@ -486,45 +394,26 @@ def PCA_plotter(
         axes_setup(ax, xAx, yAx, myTitle, lims)
 
         for sample in range(len(activeSamplesList)):
+            textXCoord = scoresXCoordinates[sample] + (x_max + abs(x_min)) * 0.015
+            textYCoord = scoresYCoordinates[sample] - (y_max + abs(y_min)) * 0.01
 
-            textXCoord = scoresXCoordinates[sample] + \
-                (x_max + abs(x_min)) * 0.015
-            textYCoord = scoresYCoordinates[sample] - \
-                (y_max + abs(y_min)) * 0.01
-
-            # print activeSamplesList[sample], textXCoord, textYCoord
-
-            ax.text(
-                textXCoord[0],
-                textYCoord[0],
-                activeSamplesList[sample],
-                font)
+            ax.text(textXCoord[0], textYCoord[0], activeSamplesList[sample], font)
             pointAndLabelList.append(
-                [scoresXCoordinates[sample],
-                 scoresYCoordinates[sample],
-                 "PCA Scores: " + activeSamplesList[sample],
+                [scoresXCoordinates[sample], scoresYCoordinates[sample], "PCA Scores: " + activeSamplesList[sample],
                  [activeSamplesList[sample]]])
 
     # for choice: PCA Loadings
     # ************************
     elif itemID[0] == u'PCA Loadings':
-        # This constructs the resultList that shows the sample scores
-        # in 'Show Data'
+        # This constructs the resultList that shows the sample scores in 'Show Data'
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
         resultList.append(emptyLine)
 
-        matrixHeaderLine = ['']
-
-        numerical_data_add_loadings(
-            loadings, activeAttributesList, maxPCs, resultList)
+        numerical_data_add_loadings(loadings, activeAttributesList, maxPCs, resultList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -543,8 +432,6 @@ def PCA_plotter(
         varianceLine = ['']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -561,8 +448,7 @@ def PCA_plotter(
         loadingsXCoordinates = loadings[pc_x, :].copy()
         loadingsYCoordinates = loadings[pc_y, :].copy()
 
-        # Catch max and min values in PC1 and PC2 scores
-        # for defining axis-limits in the common scores plot.
+        # Catch max and min values in PC1 and PC2 scores for defining axis-limits in the common scores plot.
         x_max = np.ceil(max(loadingsXCoordinates))
         x_min = np.floor(min(loadingsXCoordinates))
 
@@ -571,17 +457,10 @@ def PCA_plotter(
 
         # Defining the titles, axes names, etc
         myTitle = title_pca_type + 'PCA loadings'
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
-        ax.scatter(
-            loadingsXCoordinates,
-            loadingsYCoordinates,
-            s=25,
-            c='r',
-            marker='s')
+        ax.scatter(loadingsXCoordinates, loadingsYCoordinates, s=25, c='r', marker='s')
 
         lims = []
         xlims = ax.get_xlim()
@@ -600,23 +479,12 @@ def PCA_plotter(
         axes_setup(ax, xAx, yAx, myTitle, lims)
 
         for attribute in range(len(activeAttributesList)):
+            textXCoord = loadingsXCoordinates[attribute] + (x_max + abs(x_min)) * 0.015
+            textYCoord = loadingsYCoordinates[attribute] - (y_max + abs(y_min)) * 0.01
 
-            textXCoord = loadingsXCoordinates[attribute] + \
-                (x_max + abs(x_min)) * 0.015
-            textYCoord = loadingsYCoordinates[attribute] - \
-                (y_max + abs(y_min)) * 0.01
-
-            # print activeAttributesList[attribute], textXCoord, textYCoord
-
-            ax.text(textXCoord, textYCoord,
-                    activeAttributesList[attribute],
-                    font)
-            pointAndLabelList.append(
-                [
-                    loadingsXCoordinates[attribute],
-                    loadingsYCoordinates[attribute],
-                    "PCA Loadings: " +
-                    activeAttributesList[attribute]])
+            ax.text(textXCoord, textYCoord, activeAttributesList[attribute], font)
+            pointAndLabelList.append([loadingsXCoordinates[attribute], loadingsYCoordinates[attribute],
+                                      "PCA Loadings: " + activeAttributesList[attribute]])
 
     # for choice: PCA correlation loadings
     # ************************************
@@ -645,8 +513,7 @@ def PCA_plotter(
         ax.plot(xcords50percent, ycords50percent, 'b-')
 
         # Plotting the correlation loadings
-        # Using 'scatter' instead of 'plot', np.since this allows sizable points
-        # in plot
+        # Using 'scatter' instead of 'plot', np.since this allows sizable points in plot
         xCorrLoadings = corrLoadings[pc_x]
         yCorrLoadings = corrLoadings[pc_y]
 
@@ -655,44 +522,27 @@ def PCA_plotter(
         textXCoord = xCorrLoadings + 0.02
         textYCoord = yCorrLoadings - 0.022
 
-        font = {'family': 'sans-serif',
-                'color': 'k',
-                'weight': 'normal',
-                'size': 13,
-                }
+        font = {'family': 'sans-serif', 'color': 'k', 'weight': 'normal', 'size': 13, }
 
         # Plot label of each variable
         for coords in range(len(activeAttributesList)):
-            # print activeAttributesList[coords]
-            ax.text(textXCoord[coords], textYCoord[coords],
-                    activeAttributesList[coords],
-                    font)
+            ax.text(textXCoord[coords], textYCoord[coords], activeAttributesList[coords], font)
 
         # Defining the titles, axes names, etc
         myTitle = title_pca_type + 'PCA Correlation loadings'
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
         axes_setup(ax, xAx, yAx, myTitle, [-1, 1, -1, 1])
-
-        matrixHeaderLine = ['']
 
         # for points and labels:
         xCorrs = corrLoadings[pc_x]
         yCorrs = corrLoadings[pc_y]
         for i in range(len(xCorrs)):
-            #pointAndLabelList.append([xCorrs[i],yCorrs[i], activeAttributesList[i+1]])
-            pointAndLabelList.append(
-                [xCorrs[i], yCorrs[i], activeAttributesList[i]])
+            pointAndLabelList.append([xCorrs[i], yCorrs[i], activeAttributesList[i]])
 
-        numerical_data_add_loadings(
-            corrLoadings,
-            activeAttributesList,
-            maxPCs,
-            resultList,
-            header_txt='CORRELATION LOADINGS:')
+        numerical_data_add_loadings(corrLoadings, activeAttributesList, maxPCs, resultList,
+                                    header_txt='CORRELATION LOADINGS:')
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -711,8 +561,6 @@ def PCA_plotter(
         varianceLine = ['']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -747,11 +595,7 @@ def PCA_plotter(
         _range = np.arange(maxPCs + 1)
         ax.set_xticks(_range)
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -771,8 +615,6 @@ def PCA_plotter(
         varianceLine = ['expl. var']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -785,8 +627,6 @@ def PCA_plotter(
         # that has been used for plotting line (see above)
         del cumulativeExplVar[0]
         for variance in cumulativeExplVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if cumulativeExplVar.index(variance) == maxPCs:
                 break
             value = str(round(variance, 1)) + '%'
@@ -796,58 +636,32 @@ def PCA_plotter(
 
     elif itemID[0] == u'Spiderweb Plot':
         if selection == 1:
-            spiderweb_plot(
-                ax,
-                fig,
-                plot_data,
-                averageMatrixForAnalysis,
-                activeAttributesList,
-                selection,
-                pointAndLabelList,
-                _title="Standardized")
+            spiderweb_plot(ax, fig, plot_data, averageMatrixForAnalysis, activeAttributesList, selection,
+                           pointAndLabelList, _title="Standardized")
         else:
-            spiderweb_plot_lim(
-                ax,
-                fig,
-                plot_data,
-                averageMatrixForAnalysis,
-                activeAttributesList,
-                selection,
-                pointAndLabelList,
-                _title="Original")
+            spiderweb_plot_lim(ax, fig, plot_data, averageMatrixForAnalysis, activeAttributesList, selection,
+                               pointAndLabelList, _title="Original")
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
     elif itemID[0] == u'Bi-Plot':
 
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
         lims = [-1.2, 1.2, -1.2, 1.2]
         ax.plot([lims[0], lims[1]], [0, 0], 'b--')
         ax.plot([0, 0], [lims[2], lims[3]], 'b--')
         ax.grid(plot_data.view_grid)
 
-        scaled_scores_x, scaled_scores_y, scaled_loadings_x, scaled_loadings_y = biplot(
-            ax, fig, scores, loadings, pc_x=pc_x, pc_y=pc_y)
+        scaled_scores_x, scaled_scores_y, scaled_loadings_x, scaled_loadings_y = biplot(ax, fig, scores, loadings,
+                                                                                        pc_x=pc_x, pc_y=pc_y)
 
         axes_setup(ax, xAx, yAx, title_pca_type + "Bi-Plot", lims)
 
-        font1 = {'family': 'sans-serif',
-                 'color': 'b',
-                 'weight': 'normal',
-                 'size': 13}
+        font1 = {'family': 'sans-serif', 'color': 'b', 'weight': 'normal', 'size': 13}
 
-        font2 = {'family': 'sans-serif',
-                 'color': 'r',
-                 'weight': 'normal',
-                 'size': 13}
+        font2 = {'family': 'sans-serif', 'color': 'r', 'weight': 'normal', 'size': 13}
 
         scaled_scores_x_list = []
         scaled_scores_y_list = []
@@ -855,44 +669,28 @@ def PCA_plotter(
         scaled_loadings_y_list = []
 
         for sample in range(len(activeSamplesList)):
-
             textXCoord = scaled_scores_x[sample] + 0.02  # +1% of x length
             textYCoord = scaled_scores_y[sample]
 
             ax.text(textXCoord, textYCoord, activeSamplesList[sample], font1)
             pointAndLabelList.append(
-                [scaled_scores_x[sample],
-                 scaled_scores_y[sample],
-                 "Scaled PCA Scores: " + activeSamplesList[sample]])
+                [scaled_scores_x[sample], scaled_scores_y[sample], "Scaled PCA Scores: " + activeSamplesList[sample]])
 
             scaled_scores_x_list.append(num2str(scaled_scores_x[sample]))
             scaled_scores_y_list.append(num2str(scaled_scores_y[sample]))
 
         for attribute in range(len(activeAttributesList)):
-
             textXCoord = scaled_loadings_x[attribute] + 0.02  # +1% of x length
             textYCoord = scaled_loadings_y[attribute]
 
-            ax.text(textXCoord, textYCoord,
-                    activeAttributesList[attribute],
-                    font2)
-            pointAndLabelList.append(
-                [
-                    scaled_loadings_x[attribute],
-                    scaled_loadings_y[attribute],
-                    "Scaled PCA Loadings: " +
-                    activeAttributesList[attribute]])
+            ax.text(textXCoord, textYCoord, activeAttributesList[attribute], font2)
+            pointAndLabelList.append([scaled_loadings_x[attribute], scaled_loadings_y[attribute],
+                                      "Scaled PCA Loadings: " + activeAttributesList[attribute]])
 
-            scaled_loadings_x_list.append(
-                num2str(scaled_loadings_x[attribute]))
-            scaled_loadings_y_list.append(
-                num2str(scaled_loadings_y[attribute]))
+            scaled_loadings_x_list.append(num2str(scaled_loadings_x[attribute]))
+            scaled_loadings_y_list.append(num2str(scaled_loadings_y[attribute]))
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
         resultList.append([""])
         resultList.append([""])
@@ -939,24 +737,14 @@ def PCA_plotter(
     return plot_data
 
 
-def spiderweb_plot(
-        ax,
-        fig,
-        plot_data,
-        averageMatrix,
-        activeAttributes,
-        selection,
-        pointAndLabelList,
-        _title="Original"):
+def spiderweb_plot(ax, fig, plot_data, averageMatrix, activeAttributes, selection, pointAndLabelList,
+                   _title="Original"):
     """
     """
     print("spiderweb plot")
     ax.grid(plot_data.view_grid)
 
-    font = {'family': 'sans-serif',
-            'color': 'k',
-            'weight': 'normal',
-            'size': 13}
+    font = {'family': 'sans-serif', 'color': 'k', 'weight': 'normal', 'size': 13}
 
     max_values = np.zeros((averageMatrix.shape[0]), float)
     min_values = np.zeros((averageMatrix.shape[0]), float)
@@ -994,8 +782,6 @@ def spiderweb_plot(
             # set current angle
             if att_ind > 0:
                 current_angle += angle_step
-                # if current_angle > 360.0:
-                #    current_angle = current_angle - 360.0
 
                 # rotate vector:
                 current_vec = rotate_vec2d(vec, current_angle)
@@ -1013,12 +799,6 @@ def spiderweb_plot(
 
         # add level number
         ax.text(-(6 * unit), (lvl + diff) - unit, str(lvl), font)
-
-    # print "circles"
-    # print vertices_circles
-
-    # print "lines"
-    # print vertices_lines
 
     lc_1 = LineCollection(vertices_circles, colors='#999999')
     lc_2 = LineCollection(vertices_lines, colors='#999999')
@@ -1066,21 +846,11 @@ def spiderweb_plot(
 
     # add sample-ring points
     for samp_ind in range(num_of_samps):
-        ax.scatter(
-            x_values[samp_ind],
-            y_values[samp_ind],
-            s=40,
-            color=ring_colors[samp_ind],
-            marker='o')
+        ax.scatter(x_values[samp_ind], y_values[samp_ind], s=40, color=ring_colors[samp_ind], marker='o')
         for att_ind in range(num_of_vars):
             value = averageMatrix[samp_ind, att_ind]
-            pointAndLabelList.append(
-                [
-                    x_values[samp_ind][att_ind],
-                    y_values[samp_ind][att_ind],
-                    plot_data.activeSamplesList[samp_ind] +
-                    ": " +
-                    str(value)])
+            pointAndLabelList.append([x_values[samp_ind][att_ind], y_values[samp_ind][att_ind],
+                                      plot_data.activeSamplesList[samp_ind] + ": " + str(value)])
 
     # add attribute names
     center_lim = 25 * unit
@@ -1088,97 +858,50 @@ def spiderweb_plot(
     under = 3 * unit
     for att_ind in range(num_of_vars):
         if att_ind == 0:
-            txt = ax.text(
-                0,
-                top_lvl +
-                diff +
-                2 *
-                unit,
-                activeAttributes[att_ind],
-                font)
+            txt = ax.text(0, top_lvl + diff + 2 * unit, activeAttributes[att_ind], font)
             txt.set_horizontalalignment('center')
         else:
             top_xy = vertices_lines[att_ind][1]
         if top_xy[1] > 0:
             if top_xy[0] > center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] + over,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] + over, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('left')
             elif top_xy[0] < -center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] + over,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] + over, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('right')
             else:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] + over,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] + over, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('center')
         else:
             if top_xy[0] > center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] - under,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] - under, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('left')
             elif top_xy[0] < -center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] - under,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] - under, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('right')
             else:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] - under,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] - under, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('center')
 
     if plot_data.view_legend:
         plotList = []
     for samp_ind in range(num_of_samps):
-        plotList.append(
-            Line2D(
-                [],
-                [],
-                color=ring_colors[samp_ind],
-                linewidth=5))
+        plotList.append(Line2D([], [], color=ring_colors[samp_ind], linewidth=5))
     fig.legend(plotList, plot_data.activeSamplesList, loc='upper right')
 
     top_lvl_lim = top_lvl + diff + (10 * unit)
-    lims = [-top_lvl_lim - (10 * unit), top_lvl_lim +
-            (10 * unit), -top_lvl_lim, top_lvl_lim]
+    lims = [-top_lvl_lim - (10 * unit), top_lvl_lim + (10 * unit), -top_lvl_lim, top_lvl_lim]
     axes_setup(ax, "", "", _title + ": Spider Plot", lims)
 
 
-def spiderweb_plot_lim(
-        ax,
-        fig,
-        plot_data,
-        averageMatrix,
-        activeAttributes,
-        selection,
-        pointAndLabelList,
-        _title="Original"):
+def spiderweb_plot_lim(ax, fig, plot_data, averageMatrix, activeAttributes, selection, pointAndLabelList,
+                       _title="Original"):
     """
     """
     print("spiderweb plot")
     ax.grid(plot_data.view_grid)
 
-    font = {'family': 'sans-serif',
-            'color': 'k',
-            'weight': 'normal',
-            'size': 13}
+    font = {'family': 'sans-serif', 'color': 'k', 'weight': 'normal', 'size': 13}
 
     max_values = np.zeros((averageMatrix.shape[0]), float)
     for row_ind in range(averageMatrix.shape[0]):
@@ -1188,8 +911,6 @@ def spiderweb_plot_lim(
     bottom_lvl = int(np.floor(plot_data.limits[2]))  # ymin
     step_lvl = int(np.ceil((top_lvl - bottom_lvl) * 0.1))
 
-    max_value = max(max_values)
-    #top_lvl = int(ceil(max_value))
     num_of_vars = len(activeAttributes)
     num_of_samps = len(plot_data.activeSamplesList)
 
@@ -1217,8 +938,6 @@ def spiderweb_plot_lim(
             # set current angle
             if att_ind > 0:
                 current_angle += angle_step
-                # if current_angle > 360.0:
-                #    current_angle = current_angle - 360.0
 
                 # rotate vector:
                 current_vec = rotate_vec2d(vec, current_angle)
@@ -1237,12 +956,6 @@ def spiderweb_plot_lim(
 
         # add level number
         ax.text(-(2 * unit), (lvl + diff) - (0.5 * unit), str(lvl), font)
-
-    # print "circles"
-    # print vertices_circles
-
-    # print "lines"
-    # print vertices_lines
 
     lc_1 = LineCollection(vertices_circles, colors='#999999')
     lc_2 = LineCollection(vertices_lines, colors='#999999')
@@ -1291,21 +1004,11 @@ def spiderweb_plot_lim(
 
     # add sample-ring points
     for samp_ind in range(num_of_samps):
-        ax.scatter(
-            x_values[samp_ind],
-            y_values[samp_ind],
-            s=40,
-            color=ring_colors[samp_ind],
-            marker='o')
+        ax.scatter(x_values[samp_ind], y_values[samp_ind], s=40, color=ring_colors[samp_ind], marker='o')
         for att_ind in range(num_of_vars):
             value = averageMatrix[samp_ind, att_ind]
-            pointAndLabelList.append(
-                [
-                    x_values[samp_ind][att_ind],
-                    y_values[samp_ind][att_ind],
-                    plot_data.activeSamplesList[samp_ind] +
-                    ": " +
-                    str(value)])
+            pointAndLabelList.append([x_values[samp_ind][att_ind], y_values[samp_ind][att_ind],
+                                      plot_data.activeSamplesList[samp_ind] + ": " + str(value)])
 
     # add attribute names
     center_lim = 25 * unit
@@ -1313,76 +1016,39 @@ def spiderweb_plot_lim(
     under = 3 * unit
     for att_ind in range(num_of_vars):
         if att_ind == 0:
-            txt = ax.text(
-                0,
-                top_lvl +
-                diff +
-                2 *
-                unit,
-                activeAttributes[att_ind],
-                font)
+            txt = ax.text(0, top_lvl + diff + 2 * unit, activeAttributes[att_ind], font)
             txt.set_horizontalalignment('center')
         else:
             top_xy = vertices_lines[att_ind][1]
         if top_xy[1] > 0:
             if top_xy[0] > center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] + over,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] + over, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('left')
             elif top_xy[0] < -center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] + over,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] + over, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('right')
             else:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] + over,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] + over, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('center')
         else:
             if top_xy[0] > center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] - under,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] - under, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('left')
             elif top_xy[0] < -center_lim:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] - under,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] - under, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('right')
             else:
-                txt = ax.text(
-                    top_xy[0],
-                    top_xy[1] - under,
-                    activeAttributes[att_ind],
-                    font)
+                txt = ax.text(top_xy[0], top_xy[1] - under, activeAttributes[att_ind], font)
                 txt.set_horizontalalignment('center')
 
     if plot_data.view_legend:
         plotList = []
     for samp_ind in range(num_of_samps):
-        plotList.append(
-            Line2D(
-                [],
-                [],
-                color=ring_colors[samp_ind],
-                linewidth=5))
+        plotList.append(Line2D([], [], color=ring_colors[samp_ind], linewidth=5))
     fig.legend(plotList, plot_data.activeSamplesList, loc='upper right')
 
     top_lvl_lim = top_lvl + diff + (5 * unit)
-    lims = [-top_lvl_lim - (10 * unit), top_lvl_lim +
-            (10 * unit), -top_lvl_lim, top_lvl_lim]
+    lims = [-top_lvl_lim - (10 * unit), top_lvl_lim + (10 * unit), -top_lvl_lim, top_lvl_lim]
     axes_setup(ax, "", "", _title + ": Spider Plot", lims)
 
 
@@ -1393,8 +1059,8 @@ def biplot(ax, fig, scores, loadings, pc_x=0, pc_y=1):
     print("biplot")
 
     # get scaled values (numpy arrays):
-    scaled_scores_x, scaled_scores_y, scaled_loadings_x, scaled_loadings_y = BiplotCalc(
-        scores, loadings, pc_x=pc_x, pc_y=pc_y)
+    scaled_scores_x, scaled_scores_y, scaled_loadings_x, scaled_loadings_y = BiplotCalc(scores, loadings, pc_x=pc_x,
+                                                                                        pc_y=pc_y)
 
     ax.scatter(scaled_scores_x, scaled_scores_y, s=25, c='b', marker='s')
     ax.scatter(scaled_loadings_x, scaled_loadings_y, s=25, c='r', marker='s')
@@ -1420,8 +1086,7 @@ def BiplotCalc(scores, loadings, pc_x=0, pc_y=1):
     abs_horLoadings = abs(horLoadings)
     abs_vertLoadings = abs(vertLoadings)
 
-    # Find highest absoulte value for submitted scores and loading. Needed
-    # for scaling
+    # Find highest absoulte value for submitted scores and loading. Needed for scaling
     max_horScores = max(abs_horScores)
     max_vertScores = max(abs_vertScores)
 
@@ -1444,8 +1109,7 @@ def average_data(s_data, plot_data, selection=0):
     activeAttributesList = plot_data.activeAttributesList[:]
     activeSamplesList = plot_data.activeSamplesList[:]
 
-    # 'Standardized' tab is active then standardize data, calculate average
-    # and compute the required values
+    # 'Standardized' tab is active then standardize data, calculate average and compute the required values
     if selection == 1:
         print('do standardisation')
 
@@ -1460,32 +1124,26 @@ def average_data(s_data, plot_data, selection=0):
             for sample in activeSamplesList:
 
                 for replicate in s_data.ReplicateList:
-                    dataRow = s_data.SparseMatrix[(
-                        assessor, sample, replicate)]
+                    dataRow = s_data.SparseMatrix[(assessor, sample, replicate)]
 
-                    # Here all strings from s_data.SparseMatrix are converted
-                    # to floats
+                    # Here all strings from s_data.SparseMatrix are converted to floats
                     floatRow = []
                     for eachValue in dataRow:
                         floatRow.append(float(eachValue))
 
-                    # Leave out the values of those attributes that are not
-                    # selected
+                    # Leave out the values of those attributes that are not selected
                     newFloatRow = []
                     for attribute in s_data.AttributeList:
                         if attribute in activeAttributesList:
-                            newFloatRow.append(
-                                floatRow
-                                [s_data.AttributeList.index(attribute)])
+                            newFloatRow.append(floatRow[s_data.AttributeList.index(attribute)])
 
                     oneAssessorList.append(newFloatRow)
 
             # Convert to array and then append to list
             allAssessorsList.append(np.array(oneAssessorList))
 
-        # Now check each assessor for STD=0
-        # by calculating a matrix that contains the STD's for each
-        # assessor. Also averages for each assessor are calculated.
+        # Now check each assessor for STD=0 by calculating a matrix that contains the STDs for each assessor.
+        # Also averages for each assessor are calculated.
         STDmatrix = np.zeros((1, len(activeAttributesList)), float)
         meanMatrix = np.zeros((1, len(activeAttributesList)), float)
 
@@ -1518,8 +1176,7 @@ def average_data(s_data, plot_data, selection=0):
         STDarray = STDmatrix[1:, :].copy()
         meanMatrix = meanMatrix[1:, :].copy()
 
-        # Now that we know which attributes give STD=0 for at least
-        # one assessor we do the following:
+        # Now that we know which attributes give STD=0 for at least one assessor we do the following:
         # 1. Inform user about it with a message box
         # 2. Create a new array with STD's that has no STD=0
         #   dim (activeAssors x (activeAttributes - badAttributes))
@@ -1539,9 +1196,7 @@ def average_data(s_data, plot_data, selection=0):
 
             message = messagePart1 + messagePart2 + messagePart3
 
-            dlg = wx.MessageDialog(None, message,
-                                   'Important information',
-                                   wx.OK | wx.ICON_INFORMATION)
+            dlg = wx.MessageDialog(None, message, 'Important information', wx.OK | wx.ICON_INFORMATION)
             dlg.ShowModal()
             dlg.Destroy()
 
@@ -1554,7 +1209,6 @@ def average_data(s_data, plot_data, selection=0):
             checkCol2 = meanMatrix[:, attribute]
             # ipshell()
             if 0 in checkCol:
-                # print 'zero in column ', attribute
                 pass
 
             else:
@@ -1567,13 +1221,8 @@ def average_data(s_data, plot_data, selection=0):
         nextAssMeanArray = realAssMeanArray[1:, :].copy()
         finalAssMeanArray = np.transpose(nextAssMeanArray)
 
-        # print finalSTDarray
-        # print
-        # print finalAssMeanArray
-
         for attribute in leaveOutAttributes:
-            activeAttributesList.remove(attribute)
-        # print activeAttributesList
+            activeAttributesList.remove(attribute)  # print activeAttributesList
 
     elif selection == 0:
         print('do average')
@@ -1586,51 +1235,38 @@ def average_data(s_data, plot_data, selection=0):
     columns = len(activeAttributesList)
     replicates = len(s_data.ReplicateList)
 
-    rowsSampleAverageMatrix = replicates * len(activeAssessorsList)
     averageMatrix = np.zeros((rowsAverageMatrix, columns), float)
 
     for sample in activeSamplesList:
-
         constructSampleAverageMatrix = np.zeros((1, columns), float)
+
         for assessor in activeAssessorsList:
-
             for replicate in s_data.ReplicateList:
-
                 valueCollectionList = []
                 for attribute in activeAttributesList:
                     if selection == 1:
-                        value = float(s_data.SparseMatrix[(
-                            assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
-                        STDvalue = finalSTDarray[activeAssessorsList.index(
-                            assessor), activeAttributesList.index(attribute)]
-                        averValue = finalAssMeanArray[activeAssessorsList.index(
-                            assessor), activeAttributesList.index(attribute)]
-                        calc = (value - averValue) / STDvalue
-                        # print value, averValue,STDvalue, calc
+                        value = float(
+                            s_data.SparseMatrix[(assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
+                        STDvalue = finalSTDarray[
+                            activeAssessorsList.index(assessor), activeAttributesList.index(attribute)]
+                        averValue = finalAssMeanArray[
+                            activeAssessorsList.index(assessor), activeAttributesList.index(attribute)]
 
-                        # print
-                        # finalSTDarray[activeAssessorsList.index(assessor),
-                        # activeAttributesList.index(attribute)]
-                        valueCollectionList.append(
-                            (value - averValue) / STDvalue)
+                        calc = (value - averValue) / STDvalue
+                        valueCollectionList.append(calc)
 
                     elif selection == 0:
-                        value = float(s_data.SparseMatrix[(
-                            assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
+                        value = float(
+                            s_data.SparseMatrix[(assessor, sample, replicate)][s_data.AttributeList.index(attribute)])
                         valueCollectionList.append(value)
 
                 oneMatrixRow = np.array(valueCollectionList)
-                # print oneMatrixRow.shape
-
-                # print '*******************************'
-                constructSampleAverageMatrix = np.vstack(
-                    (constructSampleAverageMatrix, oneMatrixRow))
+                constructSampleAverageMatrix = np.vstack((constructSampleAverageMatrix, oneMatrixRow))
 
         # Remove first row that contains only zeros
         sampleAverageMatrix = constructSampleAverageMatrix[1:, :].copy()
 
-        # Now calculate average for that sample and copy values
-        # in to averageMatrix
+        # Now calculate average for that sample and copy values in to averageMatrix
         sampleAverage = np.average(sampleAverageMatrix, 0)
         averageMatrix[activeSamplesList.index(sample)] = sampleAverage.copy()
 
@@ -1662,40 +1298,30 @@ def Averaged_Data_Grid(s_data, plot_data, num_subplot=[1, 1, 1], selection=0):
     activeAssessorsList = plot_data.activeAssessorsList[:]
     activeAttributesList = plot_data.activeAttributesList[:]
     activeSamplesList = plot_data.activeSamplesList[:]
-    itemID = plot_data.tree_path
 
     if len(activeAssessorsList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeAttributesList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeSamplesList) < 1:  # no active samples
-        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox',
-                               'Error Message',
-                               wx.OK | wx.ICON_INFORMATION)
+        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox', 'Error Message', wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
 
-    averageMatrixForAnalysis, activeAttributes = average_data(
-        s_data, plot_data, selection=selection)
+    averageMatrixForAnalysis, activeAttributes = average_data(s_data, plot_data, selection=selection)
 
     resultList = []
 
-    numerical_data_add_average_mat(
-        resultList,
-        averageMatrixForAnalysis,
-        activeAttributes,
-        activeSamplesList)
+    numerical_data_add_average_mat(resultList, averageMatrixForAnalysis, activeAttributes, activeSamplesList)
 
     frameName = "Consensus Data (Original)"
     if selection == 1:
@@ -1703,7 +1329,7 @@ def Averaged_Data_Grid(s_data, plot_data, num_subplot=[1, 1, 1], selection=0):
     return frameName, resultList
 
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 # -------------------------------------------------------------------------------
 # Name:        statis.py
@@ -1743,8 +1369,7 @@ def statisX(f_assMatricesList, choice):
         centMat = center(ass)
         cent_assMatrices.append(centMat)
 
-    # Now calculate matrix holding COVARIANCES of each possible
-    # assessor-assessor combination and the total variance
+    # Now calculate matrix holding COVARIANCES of each possible assessor-assessor combination and the total variance
     allCovs = []
     oneRowCovs = []
     for ass1 in cent_assMatrices:
@@ -1757,8 +1382,7 @@ def statisX(f_assMatricesList, choice):
     allCovsMat = np.array(allCovs)
     totVar = np.diag(allCovsMat)
 
-    # Calculate matrix holding CORRELATIONS of each possible
-    # assessor-assessor combination
+    # Calculate matrix holding CORRELATIONS of each possible assessor-assessor combination
     newList = []
     for ass1 in range(len(cent_assMatrices)):
         new_ass = cent_assMatrices[ass1] / np.sqrt(totVar[ass1])
@@ -1775,16 +1399,14 @@ def statisX(f_assMatricesList, choice):
 
     allCorrsMat = np.array(allCorrs)
 
-    # Now compute eigenvectors according to users choice based on either
-    # the covariances or correlations
+    # Now compute eigenvectors according to users choice based on either the covariances or correlations
     if choice == 0:
         [U, S, V] = svd(allCovsMat)
 
     elif choice == 1:
         [U, S, V] = svd(allCorrsMat)
 
-    # Now get first eigenvector which holds eigenvalues that will be
-    # computed to weights
+    # Now get first eigenvector which holds eigenvalues that will be computed to weights
     eigVec1 = U[:, 0]
 
     # Check how many negative values are given in the first eigenvector
@@ -1799,8 +1421,7 @@ def statisX(f_assMatricesList, choice):
     # Now calculate weights
     weights = eigVec1 * eigVec1
 
-    # Now construct consensus by multiplying each assessor's data with its
-    # weight and then sum up all over all assessors
+    # Now construct consensus by multiplying each assessor's data with its weight and then sum up all over all assessors
     consensus = np.zeros((rows, cols), float)
     for ass in range(len(f_assMatricesList)):
         consensus = consensus + f_assMatricesList[ass] * weights[ass]
@@ -1810,34 +1431,25 @@ def statisX(f_assMatricesList, choice):
     return results
 
 
-def STATIS_AssWeight_Plotter(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], selection=0):
+def STATIS_AssWeight_Plotter(s_data, plot_data, num_subplot=[1, 1, 1], selection=0):
     activeAssessorsList = plot_data.activeAssessorsList[:]
     activeAttributesList = plot_data.activeAttributesList[:]
     activeSamplesList = plot_data.activeSamplesList[:]
-    itemID = plot_data.tree_path
-
-    # print itemID[0], ' was selected'
 
     if len(activeAssessorsList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeAttributesList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeSamplesList) < 1:  # no active samples
-        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox',
-                               'Error Message',
-                               wx.OK | wx.ICON_INFORMATION)
+        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox', 'Error Message', wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
@@ -1845,8 +1457,7 @@ def STATIS_AssWeight_Plotter(
     # Compute average matrix for each assessor and store it in list
     assMatricesList = []
     for assessor in plot_data.activeAssessorsList:
-        assSampAv = s_data.GetAssAverageMatrix(
-            assessor, activeAttributesList, activeSamplesList)
+        assSampAv = s_data.GetAssAverageMatrix(assessor, activeAttributesList, activeSamplesList)
         assMatricesList.append(assSampAv)
 
     # Use STATIS-X function
@@ -1855,8 +1466,7 @@ def STATIS_AssWeight_Plotter(
     # choice = 1: statis based on correlation
     results = statisX(assMatricesList, selection)
     if results is None:
-        dlg = wx.MessageDialog(None, 'Error in code. Wrong selection choice.',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'Error in code. Wrong selection choice.', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
@@ -1871,13 +1481,10 @@ def STATIS_AssWeight_Plotter(
     else:
         plot_data.fig = Figure(None)
     if subplot:  # is subplot
-        plot_data.ax = plot_data.fig.add_subplot(
-            num_subplot[0], num_subplot[1], num_subplot[2])
-        scatter_width = 15
+        plot_data.ax = plot_data.fig.add_subplot(num_subplot[0], num_subplot[1], num_subplot[2])
     else:
         plot_data.ax = axes_create(0, plot_data.fig)
     ax = plot_data.ax
-    fig = plot_data.fig
 
     ax.grid(plot_data.view_grid)
 
@@ -1888,8 +1495,7 @@ def STATIS_AssWeight_Plotter(
     y_lims = ax.get_ylim()
 
     # xmax = number of samples tested
-    limits = [0, len(plot_data.activeAssessorsList) +
-              1, 0, y_lims[1] + y_lims[1] * 0.05]
+    limits = [0, len(plot_data.activeAssessorsList) + 1, 0, y_lims[1] + y_lims[1] * 0.05]
 
     axes_setup(ax, "", "Weight", "STATIS: Assessor Weights", limits)
 
@@ -1920,16 +1526,7 @@ def STATIS_AssWeight_Plotter(
     return plot_data
 
 
-def STATIS_PCA_Plotter(
-        s_data,
-        plot_data,
-        num_subplot=[
-            1,
-            1,
-            1],
-    selection=0,
-    pc_x=0,
-        pc_y=1):
+def STATIS_PCA_Plotter(s_data, plot_data, num_subplot=[1, 1, 1], selection=0, pc_x=0, pc_y=1):
     """
     This is the PCA plot function. It plots the PCA scores of the averaged
     matrix (over assessors and replicates).
@@ -1974,26 +1571,20 @@ def STATIS_PCA_Plotter(
     activeSamplesList = plot_data.activeSamplesList[:]
     itemID = plot_data.tree_path
 
-    # print itemID[0], ' was selected'
-
     if len(activeAssessorsList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeAttributesList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeSamplesList) < 1:  # no active samples
-        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox',
-                               'Error Message',
-                               wx.OK | wx.ICON_INFORMATION)
+        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox', 'Error Message', wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
@@ -2001,11 +1592,8 @@ def STATIS_PCA_Plotter(
     # Compute average matrix for each assessor and store it in list
     assMatricesList = []
     for assessor in plot_data.activeAssessorsList:
-        assSampAv = s_data.GetAssAverageMatrix(
-            assessor, activeAttributesList, activeSamplesList)
+        assSampAv = s_data.GetAssAverageMatrix(assessor, activeAttributesList, activeSamplesList)
         assMatricesList.append(assSampAv)
-
-    # print assMatricesList
 
     # Use STATIS-X function
     # statisMethod(listHoldingMatrices, choice)
@@ -2013,56 +1601,33 @@ def STATIS_PCA_Plotter(
     # choice = 1: statis based on correlation
     results = statisX(assMatricesList, selection)
     if results is None:
-        dlg = wx.MessageDialog(None, 'Error in code. Wrong selection choice.',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'Error in code. Wrong selection choice.', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
 
-    # Construction of consensus matrix depending on which tab is active
-    numberOfAssessors = len(activeAssessorsList)
-    numberOfAttributes = len(activeAttributesList)
-    numberOfSamples = len(activeSamplesList)
-    numberOfReplicates = len(s_data.ReplicateList)
     pointAndLabelList = []
 
     averageMatrix = results[0]  # consensus
     averageMatrixForAnalysis = averageMatrix.copy()
 
     # Do PCA and get all results
-    #PCAanalysis = PCA(averageMatrixForAnalysis, 1)
-
-    #scores = PCAanalysis.GetScores()
-    #loadings = PCAanalysis.GetLoadings()
-    #corrLoadings = PCAanalysis.GetCorrelationLoadings()
-    #transCorrLoadings = np.transpose(corrLoadings)
-    #explVar = PCAanalysis.GetExplainedVariances()
-
     scores, loadings, explVar = PCA(averageMatrixForAnalysis)
     explVar = list(explVar)
     corrLoadings = CorrelationLoadings(averageMatrixForAnalysis, scores)
-    transCorrLoadings = np.transpose(corrLoadings)
 
-    font = {'family': 'sans-serif',
-            'color': 'k',
-            'weight': 'normal',
-            'size': 11,
-            }
+    font = {'family': 'sans-serif', 'color': 'k', 'weight': 'normal', 'size': 11, }
 
     # Starting generation of the list that contains the raw data
     # that is shown in "Raw Data" when pushing the button in the plot
-
     resultList = []
     emptyLine = ['']
 
     # Continue building resultList
     # Limiting PC's in 'Numeric Results' to 10
-    [PCs, activeAttributes] = np.shape(corrLoadings)
-    [Samples, PCs] = np.shape(scores)
-
     maxPCs = 10
-    [Samples, PCs] = np.shape(scores)
+    [_, PCs] = np.shape(scores)
     if PCs < maxPCs:
         maxPCs = PCs
 
@@ -2080,9 +1645,8 @@ def STATIS_PCA_Plotter(
         replot = True
     else:
         plot_data.fig = Figure(None)
-    if subplot:  # is subplot
-        plot_data.ax = plot_data.fig.add_subplot(
-            num_subplot[0], num_subplot[1], num_subplot[2], aspect=aspect)
+    if subplot:
+        plot_data.ax = plot_data.fig.add_subplot(num_subplot[0], num_subplot[1], num_subplot[2], aspect=aspect)
     else:
         plot_data.ax = axes_create(legend_on, plot_data.fig, aspect=aspect)
     ax = plot_data.ax
@@ -2095,23 +1659,15 @@ def STATIS_PCA_Plotter(
     if itemID[0] == u'PCA Scores':
         # This constructs the resultList that shows the sample scores
         # in 'Show Data'
-
         interact = True
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
-
-        matrixHeaderLine = ['']
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
         resultList.append(emptyLine)
 
-        numerical_data_add_scores(
-            scores, activeSamplesList, maxPCs, resultList)
+        numerical_data_add_scores(scores, activeSamplesList, maxPCs, resultList)
 
         explVarHeaderLine = ['']
 
@@ -2129,8 +1685,6 @@ def STATIS_PCA_Plotter(
         varianceLine = ['']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -2143,12 +1697,11 @@ def STATIS_PCA_Plotter(
 
         ax.grid(plot_data.view_grid)
 
-     # Get the first and second column from the scores matrix
+        # Get the first and second column from the scores matrix
         scoresXCoordinates = np.take(scores, (pc_x,), 1)
         scoresYCoordinates = np.take(scores, (pc_y,), 1)
 
-        # Catch max and min values in PC1 and PC2 scores
-        # for defining axis-limits in the common scores plot.
+        # Catch max and min values in PC1 and PC2 scores for defining axis-limits in the common scores plot.
         x_max = np.ceil(max(scoresXCoordinates))
         x_min = np.floor(min(scoresXCoordinates))
 
@@ -2157,27 +1710,19 @@ def STATIS_PCA_Plotter(
 
         # Defining the titles, axes names, etc
         myTitle = 'STATIS: PCA scores'
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
         axes_setup(ax, xAx, yAx, myTitle, [x_min, x_max, y_min, y_max])
 
         scores_x = []
         for element in scoresXCoordinates:
             scores_x.append(element[0])
-        # print scoresXCoordinates; print scores_x
         scores_y = []
         for element in scoresYCoordinates:
             scores_y.append(element[0])
-        # print scoresYCoordinates; print scores_y
 
         ax.scatter(scores_x, scores_y, s=25, c='b', marker='s')
-
-        #ax.plot([x_min, x_max], [0, 0], 'b--')
-        #ax.plot([0, 0], [y_min, y_max], 'b--')
-        #axes_setup(ax, xAx, yAx, myTitle, [x_min, x_max, y_min, y_max])
 
         lims = []
         xlims = ax.get_xlim()
@@ -2196,45 +1741,26 @@ def STATIS_PCA_Plotter(
         axes_setup(ax, xAx, yAx, myTitle, lims)
 
         for sample in range(len(activeSamplesList)):
+            textXCoord = scoresXCoordinates[sample] + (x_max + abs(x_min)) * 0.015
+            textYCoord = scoresYCoordinates[sample] - (y_max + abs(y_min)) * 0.01
 
-            textXCoord = scoresXCoordinates[sample] + \
-                (x_max + abs(x_min)) * 0.015
-            textYCoord = scoresYCoordinates[sample] - \
-                (y_max + abs(y_min)) * 0.01
-
-            # print activeSamplesList[sample], textXCoord, textYCoord
-
-            ax.text(
-                textXCoord[0],
-                textYCoord[0],
-                activeSamplesList[sample],
-                font)
+            ax.text(textXCoord[0], textYCoord[0], activeSamplesList[sample], font)
             pointAndLabelList.append(
-                [scoresXCoordinates[sample],
-                 scoresYCoordinates[sample],
-                 "PCA Scores: " + activeSamplesList[sample],
+                [scoresXCoordinates[sample], scoresYCoordinates[sample], "PCA Scores: " + activeSamplesList[sample],
                  [activeSamplesList[sample]]])
 
     # for choice: PCA Loadings
     # ************************
     elif itemID[0] == u'PCA Loadings':
-        # This constructs the resultList that shows the sample scores
-        # in 'Show Data'
+        # This constructs the resultList that shows the sample scores in 'Show Data'
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrix,
-            activeAttributesList,
-            activeSamplesList)
-
-        matrixHeaderLine = ['']
+        numerical_data_add_average_mat(resultList, averageMatrix, activeAttributesList, activeSamplesList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
         resultList.append(emptyLine)
 
-        numerical_data_add_loadings(
-            loadings, activeAttributesList, maxPCs, resultList)
+        numerical_data_add_loadings(loadings, activeAttributesList, maxPCs, resultList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -2253,8 +1779,6 @@ def STATIS_PCA_Plotter(
         varianceLine = ['']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -2271,8 +1795,7 @@ def STATIS_PCA_Plotter(
         loadingsXCoordinates = loadings[pc_x, :].copy()
         loadingsYCoordinates = loadings[pc_y, :].copy()
 
-        # Catch max and min values in PC1 and PC2 scores
-        # for defining axis-limits in the common scores plot.
+        # Catch max and min values in PC1 and PC2 scores for defining axis-limits in the common scores plot.
         x_max = np.ceil(max(loadingsXCoordinates))
         x_min = np.floor(min(loadingsXCoordinates))
 
@@ -2281,17 +1804,10 @@ def STATIS_PCA_Plotter(
 
         # Defining the titles, axes names, etc
         myTitle = 'STATIS: PCA loadings'
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
-        ax.scatter(
-            loadingsXCoordinates,
-            loadingsYCoordinates,
-            s=25,
-            c='r',
-            marker='s')
+        ax.scatter(loadingsXCoordinates, loadingsYCoordinates, s=25, c='r', marker='s')
 
         lims = []
         xlims = ax.get_xlim()
@@ -2310,23 +1826,12 @@ def STATIS_PCA_Plotter(
         axes_setup(ax, xAx, yAx, myTitle, lims)
 
         for attribute in range(len(activeAttributesList)):
+            textXCoord = loadingsXCoordinates[attribute] + (x_max + abs(x_min)) * 0.015
+            textYCoord = loadingsYCoordinates[attribute] - (y_max + abs(y_min)) * 0.01
 
-            textXCoord = loadingsXCoordinates[attribute] + \
-                (x_max + abs(x_min)) * 0.015
-            textYCoord = loadingsYCoordinates[attribute] - \
-                (y_max + abs(y_min)) * 0.01
-
-            # print activeAttributesList[attribute], textXCoord, textYCoord
-
-            ax.text(textXCoord, textYCoord,
-                    activeAttributesList[attribute],
-                    font)
-            pointAndLabelList.append(
-                [
-                    loadingsXCoordinates[attribute],
-                    loadingsYCoordinates[attribute],
-                    "PCA Loadings: " +
-                    activeAttributesList[attribute]])
+            ax.text(textXCoord, textYCoord, activeAttributesList[attribute], font)
+            pointAndLabelList.append([loadingsXCoordinates[attribute], loadingsYCoordinates[attribute],
+                                      "PCA Loadings: " + activeAttributesList[attribute]])
 
     # for choice: PCA correlation loadings
     # ************************************
@@ -2355,8 +1860,7 @@ def STATIS_PCA_Plotter(
         ax.plot(xcords50percent, ycords50percent, 'b-')
 
         # Plotting the correlation loadings
-        # Using 'scatter' instead of 'plot', np.since this allows sizable points
-        # in plot
+        # Using 'scatter' instead of 'plot', np.since this allows sizable points in plot
         xCorrLoadings = corrLoadings[pc_x]
         yCorrLoadings = corrLoadings[pc_y]
 
@@ -2365,44 +1869,27 @@ def STATIS_PCA_Plotter(
         textXCoord = xCorrLoadings + 0.02
         textYCoord = yCorrLoadings - 0.022
 
-        font = {'family': 'sans-serif',
-                'color': 'k',
-                'weight': 'normal',
-                'size': 13,
-                }
+        font = {'family': 'sans-serif', 'color': 'k', 'weight': 'normal', 'size': 13, }
 
         # Plot label of each variable
         for coords in range(len(activeAttributesList)):
-            # print activeAttributesList[coords]
-            ax.text(textXCoord[coords], textYCoord[coords],
-                    activeAttributesList[coords],
-                    font)
+            ax.text(textXCoord[coords], textYCoord[coords], activeAttributesList[coords], font)
 
         # Defining the titles, axes names, etc
         myTitle = 'STATIS: PCA Correlation loadings'
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
         axes_setup(ax, xAx, yAx, myTitle, [-1, 1, -1, 1])
-
-        matrixHeaderLine = ['']
 
         # for points and labels:
         xCorrs = corrLoadings[pc_x]
         yCorrs = corrLoadings[pc_y]
         for i in range(len(xCorrs)):
-            #pointAndLabelList.append([xCorrs[i],yCorrs[i], activeAttributesList[i+1]])
-            pointAndLabelList.append(
-                [xCorrs[i], yCorrs[i], activeAttributesList[i]])
+            pointAndLabelList.append([xCorrs[i], yCorrs[i], activeAttributesList[i]])
 
-        numerical_data_add_loadings(
-            corrLoadings,
-            activeAttributesList,
-            maxPCs,
-            resultList,
-            header_txt='CORRELATION LOADINGS:')
+        numerical_data_add_loadings(corrLoadings, activeAttributesList, maxPCs, resultList,
+                                    header_txt='CORRELATION LOADINGS:')
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -2421,8 +1908,6 @@ def STATIS_PCA_Plotter(
         varianceLine = ['']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -2458,12 +1943,7 @@ def STATIS_PCA_Plotter(
         ax.set_xticks(_range)
 
         # Construct resultList
-
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrixForAnalysis,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrixForAnalysis, activeAttributesList, activeSamplesList)
 
         resultList.append(emptyLine)
         resultList.append(emptyLine)
@@ -2483,8 +1963,6 @@ def STATIS_PCA_Plotter(
         varianceLine = ['expl. var']
 
         for variance in explVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if explVar.index(variance) == maxPCs:
                 break
             value = str(round(variance * 100, 1)) + '%'
@@ -2493,12 +1971,9 @@ def STATIS_PCA_Plotter(
         resultList.append(varianceLine)
 
         cumulativeLine = ['cumulative']
-        # Get rid of the zero-value in first position
-        # that has been used for plotting line (see above)
+        # Get rid of the zero-value in first position that has been used for plotting line (see above)
         del cumulativeExplVar[0]
         for variance in cumulativeExplVar:
-            # print type(explVar)
-            # print explVar.index(variance)
             if cumulativeExplVar.index(variance) == maxPCs:
                 break
             value = str(round(variance, 1)) + '%'
@@ -2507,48 +1982,29 @@ def STATIS_PCA_Plotter(
         resultList.append(cumulativeLine)
 
     elif itemID[0] == u'Spiderweb Plot':
-        spiderweb_plot_lim(
-            ax,
-            fig,
-            plot_data,
-            averageMatrixForAnalysis,
-            activeAttributesList,
-            selection,
-            pointAndLabelList,
-            _title="STATIS")
+        spiderweb_plot_lim(ax, fig, plot_data, averageMatrixForAnalysis, activeAttributesList, selection,
+                           pointAndLabelList, _title="STATIS")
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrixForAnalysis,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrixForAnalysis, activeAttributesList, activeSamplesList)
 
     elif itemID[0] == u'Bi-Plot':
 
-        xAx = 'PC' + str(pc_x + 1) + \
-            ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
-        yAx = 'PC' + str(pc_y + 1) + \
-            ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
+        xAx = 'PC' + str(pc_x + 1) + ' (' + str(round(explVar[pc_x] * 100, 1)) + '%)'
+        yAx = 'PC' + str(pc_y + 1) + ' (' + str(round(explVar[pc_y] * 100, 1)) + '%)'
 
         lims = [-1.2, 1.2, -1.2, 1.2]
         ax.plot([lims[0], lims[1]], [0, 0], 'b--')
         ax.plot([0, 0], [lims[2], lims[3]], 'b--')
         ax.grid(plot_data.view_grid)
 
-        scaled_scores_x, scaled_scores_y, scaled_loadings_x, scaled_loadings_y = biplot(
-            ax, fig, scores, loadings, pc_x=pc_x, pc_y=pc_y)
+        scaled_scores_x, scaled_scores_y, scaled_loadings_x, scaled_loadings_y = biplot(ax, fig, scores, loadings,
+                                                                                        pc_x=pc_x, pc_y=pc_y)
 
         axes_setup(ax, xAx, yAx, "STATIS: Bi-Plot", lims)
 
-        font1 = {'family': 'sans-serif',
-                 'color': 'b',
-                 'weight': 'normal',
-                 'size': 13}
+        font1 = {'family': 'sans-serif', 'color': 'b', 'weight': 'normal', 'size': 13}
 
-        font2 = {'family': 'sans-serif',
-                 'color': 'r',
-                 'weight': 'normal',
-                 'size': 13}
+        font2 = {'family': 'sans-serif', 'color': 'r', 'weight': 'normal', 'size': 13}
 
         scaled_scores_x_list = []
         scaled_scores_y_list = []
@@ -2556,44 +2012,28 @@ def STATIS_PCA_Plotter(
         scaled_loadings_y_list = []
 
         for sample in range(len(activeSamplesList)):
-
             textXCoord = scaled_scores_x[sample] + 0.02  # +1% of x length
             textYCoord = scaled_scores_y[sample]
 
             ax.text(textXCoord, textYCoord, activeSamplesList[sample], font1)
             pointAndLabelList.append(
-                [scaled_scores_x[sample],
-                 scaled_scores_y[sample],
-                 "Scaled PCA Scores: " + activeSamplesList[sample]])
+                [scaled_scores_x[sample], scaled_scores_y[sample], "Scaled PCA Scores: " + activeSamplesList[sample]])
 
             scaled_scores_x_list.append(num2str(scaled_scores_x[sample]))
             scaled_scores_y_list.append(num2str(scaled_scores_y[sample]))
 
         for attribute in range(len(activeAttributesList)):
-
             textXCoord = scaled_loadings_x[attribute] + 0.02  # +1% of x length
             textYCoord = scaled_loadings_y[attribute]
 
-            ax.text(textXCoord, textYCoord,
-                    activeAttributesList[attribute],
-                    font2)
-            pointAndLabelList.append(
-                [
-                    scaled_loadings_x[attribute],
-                    scaled_loadings_y[attribute],
-                    "Scaled PCA Loadings: " +
-                    activeAttributesList[attribute]])
+            ax.text(textXCoord, textYCoord, activeAttributesList[attribute], font2)
+            pointAndLabelList.append([scaled_loadings_x[attribute], scaled_loadings_y[attribute],
+                                      "Scaled PCA Loadings: " + activeAttributesList[attribute]])
 
-            scaled_loadings_x_list.append(
-                num2str(scaled_loadings_x[attribute]))
-            scaled_loadings_y_list.append(
-                num2str(scaled_loadings_y[attribute]))
+            scaled_loadings_x_list.append(num2str(scaled_loadings_x[attribute]))
+            scaled_loadings_y_list.append(num2str(scaled_loadings_y[attribute]))
 
-        numerical_data_add_average_mat(
-            resultList,
-            averageMatrixForAnalysis,
-            activeAttributesList,
-            activeSamplesList)
+        numerical_data_add_average_mat(resultList, averageMatrixForAnalysis, activeAttributesList, activeSamplesList)
 
         resultList.append([""])
         resultList.append([""])
@@ -2640,35 +2080,28 @@ def STATIS_PCA_Plotter(
     return plot_data
 
 
-def STATIS_Averaged_Data_Grid(
-    s_data, plot_data, num_subplot=[
-        1, 1, 1], selection=0):
+def STATIS_Averaged_Data_Grid(s_data, plot_data, num_subplot=[1, 1, 1], selection=0):
     """
 
     """
     activeAssessorsList = plot_data.activeAssessorsList[:]
     activeAttributesList = plot_data.activeAttributesList[:]
     activeSamplesList = plot_data.activeSamplesList[:]
-    itemID = plot_data.tree_path
 
     if len(activeAssessorsList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No assessors are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeAttributesList) < 1:  # no active assessors
-        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'No attributes are active in CheckBox', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
     if len(activeSamplesList) < 1:  # no active samples
-        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox',
-                               'Error Message',
-                               wx.OK | wx.ICON_INFORMATION)
+        dlg = wx.MessageDialog(None, 'No samples are active in CheckBox', 'Error Message', wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
@@ -2676,18 +2109,16 @@ def STATIS_Averaged_Data_Grid(
     # Compute average matrix for each assessor and store it in list
     assMatricesList = []
     for assessor in plot_data.activeAssessorsList:
-        assSampAv = s_data.GetAssAverageMatrix(
-            assessor, activeAttributesList, activeSamplesList)
+        assSampAv = s_data.GetAssAverageMatrix(assessor, activeAttributesList, activeSamplesList)
         assMatricesList.append(assSampAv)
 
     # Use STATIS-X function
     # statisMethod(listHoldingMatrices, choice)
     # choice = 0: statis based on covariance
-    # choice = 1: statis based on correlation
+    # choice = 1: sstatis based on correlation
     results = statisX(assMatricesList, selection)
     if results is None:
-        dlg = wx.MessageDialog(None, 'Error in code. Wrong selection choice.',
-                               'Error Message',
+        dlg = wx.MessageDialog(None, 'Error in code. Wrong selection choice.', 'Error Message',
                                wx.OK | wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
@@ -2697,11 +2128,7 @@ def STATIS_Averaged_Data_Grid(
 
     resultList = []
 
-    numerical_data_add_average_mat(
-        resultList,
-        averageMatrixForAnalysis,
-        activeAttributesList,
-        activeSamplesList)
+    numerical_data_add_average_mat(resultList, averageMatrixForAnalysis, activeAttributesList, activeSamplesList)
 
     frameName = "STATIS Consensus Data (Covariance)"
     if selection == 1:

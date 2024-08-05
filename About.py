@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import wx
 
 if wx.Platform == '__WXMSW__':

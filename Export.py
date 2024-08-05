@@ -3,15 +3,6 @@ import wx
 import re
 import math
 import glob
-# from PanelCheck_Tools import *
-# from matplotlib.figure import Figure
-# from matplotlib.backends.backend_agg import FigureCanvasAgg
-# from PanelCheck_Tools import *
-# import matplotlib.pyplot as plt
-# Plots
-# from PanelCheck_Plots import *
-
-# from PlotData import *
 
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
@@ -20,9 +11,13 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from PlotData import ANOVA_PlotData, MM_ANOVA_PlotData, PlotData, CollectionCalcPlotData, PCA_PlotData
 from Progress_Info import Progress
 
-from F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, FPlotter_Attribute_Specific
-from MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, MSEPlotter_Attribute_Specific
-from MM_ANOVA_Plot import MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, MixModel_ANOVA_Plotter_2way
+from F_Plot import FPlotter_Assessor_General, FPlotter_Assessor_Specific, FPlotter_Attribute_General, \
+    FPlotter_Attribute_Specific
+from MSE_Plot import MSEPlotter_Assessor_General, MSEPlotter_Assessor_Specific, MSEPlotter_Attribute_General, \
+    MSEPlotter_Attribute_Specific
+from MM_ANOVA_Plot import MixModel_ANOVA_Plotter_2way1rep, MixModel_ANOVA_LSD_Plotter_2way1rep, \
+    MixModel_ANOVA_Plotter_3way, MixModel_ANOVA_LSD_Plotter_2way, MixModel_ANOVA_LSD_Plotter_3way, \
+    MixModel_ANOVA_Plotter_2way
 from Tucker1_Plot import Tucker1Plotter
 from pmse_Plot import pmsePlotter
 from Eggshell_Plot import EggshellPlotter
@@ -32,6 +27,7 @@ from Manhattan_Plot import ManhattanPlotter
 from Consensus_Plot import STATIS_PCA_Plotter, STATIS_AssWeight_Plotter, PCA_plotter
 from Line_Plot import AssessorLinePlotter, SampleLinePlotter
 from Correlation_Plot import CorrelationPlotter
+
 
 class Export_Images_Dialog(wx.Dialog):
     def __init__(
@@ -54,8 +50,6 @@ class Export_Images_Dialog(wx.Dialog):
             size=wx.DefaultSize,
             style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
         self.progPathAbs = abspath
-        #pathname = os.path.dirname(sys.argv[0])
-        #self.progPath = os.path.abspath(pathname)
         figpath = self.progPathAbs + '/resources/fig.ico'
         self.SetIcon(wx.Icon(figpath, wx.BITMAP_TYPE_ICO))
 
@@ -108,18 +102,13 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Plots:',
             name=u'_text_Ass',
             parent=self._panel,
-            pos=wx.Point(
-                100,
-                12),
-            size=wx.Size(
-                67,
-                16),
+            pos=wx.Point(100, 12),
+            size=wx.Size(67, 16),
             style=0)
         _c_plots_id = wx.NewId()
         self._checkList_plots = wx.CheckListBox(
             choices=self.plots, id=_c_plots_id, parent=self._panel, pos=wx.Point(
-                8, 32), size=wx.Size(
-                240, 278), style=0)
+                8, 32), size=wx.Size(240, 278), style=0)
         self._checkList_plots.Bind(wx.EVT_LISTBOX,
                                    self.On_checkList_plots,
                                    id=_c_plots_id)
@@ -132,12 +121,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Assessors:',
             name=u'_text_Ass',
             parent=self._panel,
-            pos=wx.Point(
-                312,
-                38),
-            size=wx.Size(
-                67,
-                16),
+            pos=wx.Point(312, 38),
+            size=wx.Size(67, 16),
             style=0)
 
         _c_ass_id = wx.NewId()
@@ -149,12 +134,8 @@ class Export_Images_Dialog(wx.Dialog):
             id=_c_ass_id,
             name=u'_checkList_Ass',
             parent=self._panel,
-            pos=wx.Point(
-                280,
-                62),
-            size=wx.Size(
-                128,
-                248),
+            pos=wx.Point(280, 62),
+            size=wx.Size(128, 248),
             style=0)
         self._checkList_Ass.Bind(wx.EVT_LISTBOX,
                                  self.On_checkList_AssListbox,
@@ -165,12 +146,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Attributes:',
             name=u'_text_Att',
             parent=self._panel,
-            pos=wx.Point(
-                464,
-                38),
-            size=wx.Size(
-                58,
-                16),
+            pos=wx.Point(464, 38),
+            size=wx.Size(58, 16),
             style=0)
 
         self._checkList_Att = wx.CheckListBox(
@@ -178,12 +155,8 @@ class Export_Images_Dialog(wx.Dialog):
             id=_c_att_id,
             name=u'_checkList_Att',
             parent=self._panel,
-            pos=wx.Point(
-                432,
-                62),
-            size=wx.Size(
-                128,
-                248),
+            pos=wx.Point(432, 62),
+            size=wx.Size(128, 248),
             style=0)
         self._checkList_Att.Bind(wx.EVT_LISTBOX,
                                  self.On_checkList_AttListbox,
@@ -194,12 +167,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Samples:',
             name=u'_text_Samp',
             parent=self._panel,
-            pos=wx.Point(
-                616,
-                38),
-            size=wx.Size(
-                57,
-                16),
+            pos=wx.Point(616, 38),
+            size=wx.Size(57, 16),
             style=0)
 
         self._checkList_Samp = wx.CheckListBox(
@@ -207,12 +176,8 @@ class Export_Images_Dialog(wx.Dialog):
             id=_c_samp_id,
             name=u'_checkList_Samp',
             parent=self._panel,
-            pos=wx.Point(
-                584,
-                62),
-            size=wx.Size(
-                128,
-                248),
+            pos=wx.Point(584, 62),
+            size=wx.Size(128, 248),
             style=0)
         self._checkList_Samp.Bind(wx.EVT_LISTBOX,
                                   self.On_checkList_SampListbox,
@@ -230,12 +195,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Enable all',
             name=u'_button_Ass_EnableAll',
             parent=self._panel,
-            pos=wx.Point(
-                304,
-                318),
-            size=wx.Size(
-                80,
-                28),
+            pos=wx.Point(304, 318),
+            size=wx.Size(80, 28),
             style=0)
         self._button_Ass_EnableAll.Bind(wx.EVT_BUTTON,
                                         self.On_button_Ass_EnableAllButton,
@@ -246,12 +207,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Disable all',
             name=u'_button_Ass_DisableAll',
             parent=self._panel,
-            pos=wx.Point(
-                304,
-                350),
-            size=wx.Size(
-                80,
-                28),
+            pos=wx.Point(304, 350),
+            size=wx.Size(80, 28),
             style=0)
         self._button_Ass_DisableAll.Bind(wx.EVT_BUTTON,
                                          self.On_button_Ass_DisableAllButton,
@@ -262,12 +219,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Enable all',
             name=u'_button_Att_EnableAll',
             parent=self._panel,
-            pos=wx.Point(
-                456,
-                318),
-            size=wx.Size(
-                80,
-                28),
+            pos=wx.Point(456, 318),
+            size=wx.Size(80, 28),
             style=0)
         self._button_Att_EnableAll.Bind(wx.EVT_BUTTON,
                                         self.On_button_Att_EnableAllButton,
@@ -278,12 +231,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Disable all',
             name=u'_button_Att_DisableAll',
             parent=self._panel,
-            pos=wx.Point(
-                456,
-                350),
-            size=wx.Size(
-                80,
-                28),
+            pos=wx.Point(456, 350),
+            size=wx.Size(80, 28),
             style=0)
         self._button_Att_DisableAll.Bind(wx.EVT_BUTTON,
                                          self.On_button_Att_DisableAllButton,
@@ -294,12 +243,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Enable all',
             name=u'_button_Samp_EnableAll',
             parent=self._panel,
-            pos=wx.Point(
-                608,
-                318),
-            size=wx.Size(
-                80,
-                28),
+            pos=wx.Point(608, 318),
+            size=wx.Size(80, 28),
             style=0)
         self._button_Samp_EnableAll.Bind(wx.EVT_BUTTON,
                                          self.On_button_Samp_EnableAllButton,
@@ -310,12 +255,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Disable all',
             name=u'_button_Samp_DisableAll',
             parent=self._panel,
-            pos=wx.Point(
-                608,
-                350),
-            size=wx.Size(
-                80,
-                28),
+            pos=wx.Point(608, 350),
+            size=wx.Size(80, 28),
             style=0)
         self._button_Samp_DisableAll.Bind(wx.EVT_BUTTON,
                                           self.On_button_Samp_DisableAllButton,
@@ -326,12 +267,8 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Enable/Disable every:',
             name='choice_label',
             parent=self._panel,
-            pos=wx.Point(
-                480,
-                4),
-            size=wx.Size(
-                125,
-                16),
+            pos=wx.Point(480, 4),
+            size=wx.Size(125, 16),
             style=0)
         self.choice_label.SetBackgroundColour(
             wx.SystemSettings.GetColour(
@@ -353,12 +290,8 @@ class Export_Images_Dialog(wx.Dialog):
             id=wx.NewId(),
             name='choice',
             parent=self._panel,
-            pos=wx.Point(
-                610,
-                0),
-            size=wx.Size(
-                100,
-                24),
+            pos=wx.Point(610, 0),
+            size=wx.Size(100, 24),
             style=0)
         self.choice.SetSelection(0)
 
@@ -406,30 +339,25 @@ class Export_Images_Dialog(wx.Dialog):
             self.radio2 = wx.RadioButton(
                 self._panel, -1, ".EPS (Postscript type)", pos=wx.Point(4, 350), size=(-1, -1))
             self._text_dpi = wx.StaticText(
-                id=wx.NewId(), label=u'DPI:', parent=self._panel, pos=wx.Point(
-                    180, 325), size=wx.Size(
-                    30, 28), style=0)
+                id=wx.NewId(), label=u'DPI:', parent=self._panel, pos=wx.Point(180, 325),
+                size=wx.Size(30, 28), style=0)
             self._text_dpi.SetToolTipString(
                 u'DPI (Dots per inch) is the resolution of the images (128dpi: 1024x768p)')
             self.input_dpi = wx.TextCtrl(
-                id=wx.NewId(), parent=self._panel, pos=wx.Point(
-                    210, 320), size=wx.Size(
-                    40, 28), value="128")
+                id=wx.NewId(), parent=self._panel, pos=wx.Point(210, 320),
+                size=wx.Size(40, 28), value="128")
 
         # ------------------------------------------------------------------------------- #
         self.line = wx.StaticLine(
-            parent=self._panel, id=wx.NewId(), pos=wx.Point(
-                0, 400), size=wx.Size(
-                720, -1))
+            parent=self._panel, id=wx.NewId(), pos=wx.Point(0, 400),
+            size=wx.Size(720, -1))
 
         ok = wx.NewId()
         self.buttonOK = wx.Button(
             id=ok,
             label=u'Save File(s)',
             parent=self._panel,
-            pos=wx.Point(
-                4,
-                410))
+            pos=wx.Point(4, 410))
         self.buttonOK.Bind(wx.EVT_BUTTON, self.OnButtonOK, id=ok)
 
         self._text_out = wx.StaticText(
@@ -437,28 +365,19 @@ class Export_Images_Dialog(wx.Dialog):
             label=u'Output:',
             name=u'_text_Att',
             parent=self._panel,
-            pos=wx.Point(
-                104,
-                415),
-            size=wx.Size(
-                46,
-                16),
+            pos=wx.Point(104, 415),
+            size=wx.Size(46, 16),
             style=0)
         self.input_browse = wx.TextCtrl(
-            id=wx.NewId(), parent=self._panel, pos=wx.Point(
-                150, 410), size=wx.Size(
-                400, 28))
+            id=wx.NewId(), parent=self._panel, pos=wx.Point(150, 410),
+            size=wx.Size(400, 28))
         button_browse_id = wx.NewId()
         self.button_browse = wx.Button(
             id=button_browse_id,
             label=u'Browse...',
             parent=self._panel,
-            pos=wx.Point(
-                552,
-                410),
-            size=wx.Size(
-                80,
-                28))
+            pos=wx.Point(552, 410),
+            size=wx.Size(80, 28))
         self.button_browse.Bind(
             wx.EVT_BUTTON,
             self.onButtonBrowse,
@@ -478,9 +397,8 @@ class Export_Images_Dialog(wx.Dialog):
         self.input_browse.SetValue(_input)
         cancel = wx.NewId()
         self.buttonC = wx.Button(
-            id=cancel, label=u'Close', parent=self._panel, pos=wx.Point(
-                636, 410), size=wx.Size(
-                80, 28))
+            id=cancel, label=u'Close', parent=self._panel, pos=wx.Point(636, 410),
+            size=wx.Size(80, 28))
         self.buttonC.Bind(wx.EVT_BUTTON, self.OnButtonCancel, id=cancel)
         self.Bind(wx.EVT_CLOSE, self.OnButtonCancel, id=wx.NewId())
 
@@ -488,7 +406,6 @@ class Export_Images_Dialog(wx.Dialog):
         self.check_CheckBoxList(self.AssessorList, self._checkList_Ass, True)
         self.check_CheckBoxList(self.AttributeList, self._checkList_Att, True)
         self.check_CheckBoxList(self.SampleList, self._checkList_Samp, True)
-        #self.check_CheckBoxList(self.plots, self._checkList_plots, False)
 
         self.update_selection(selection_changes)
         self.update_selected_plots(active_plots)
@@ -505,14 +422,14 @@ class Export_Images_Dialog(wx.Dialog):
         """
         Opens browse dialog for setting output path
         """
-        dlg = wx.DirDialog(
-            self,
-            "Choose a directory:",
-            defaultPath=os.getcwd(),
-            style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
+        dlg = wx.DirDialog(self,
+                           "Choose a directory:",
+                           defaultPath=os.getcwd(),
+                           style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
 
         if dlg.ShowModal() == wx.ID_OK:
             self.input_browse.SetValue(dlg.GetPath())
+
         dlg.Destroy()
 
     def onButtonBrowse2(self, event):
@@ -520,13 +437,12 @@ class Export_Images_Dialog(wx.Dialog):
         Opens browse dialog
         """
         wildcard = "Presentation (*.ppt)|*.ppt||"
-        dlg = wx.FileDialog(
-            self,
-            message="Save As",
-            defaultDir=os.getcwd(),
-            defaultFile="presentation.ppt",
-            wildcard=wildcard,
-            style=wx.SAVE | wx.CHANGE_DIR)
+        dlg = wx.FileDialog(self,
+                            message="Save As",
+                            defaultDir=os.getcwd(),
+                            defaultFile="presentation.ppt",
+                            wildcard=wildcard,
+                            style=wx.SAVE | wx.CHANGE_DIR)
 
         if dlg.ShowModal() == wx.ID_OK:
             self.input_browse.SetValue(dlg.GetPath())
@@ -540,14 +456,14 @@ class Export_Images_Dialog(wx.Dialog):
         """
         Opens browse dialog for setting image path
         """
-        dlg = wx.DirDialog(
-            self,
-            "Choose a directory:",
-            defaultPath=os.getcwd(),
-            style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
+        dlg = wx.DirDialog(self,
+                           "Choose a directory:",
+                           defaultPath=os.getcwd(),
+                           style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
 
         if dlg.ShowModal() == wx.ID_OK:
             self.input_browse_images.SetValue(dlg.GetPath())
+
         dlg.Destroy()
 
     def OnButtonOK(self, event):
@@ -576,6 +492,7 @@ class Export_Images_Dialog(wx.Dialog):
                 wx.OK | wx.ICON_INFORMATION)
             dlg.ShowModal()
             dlg.Destroy()
+
             return
 
         in_im = ""
@@ -612,25 +529,24 @@ class Export_Images_Dialog(wx.Dialog):
                     wx.OK | wx.ICON_INFORMATION)
                 dlg.ShowModal()
                 dlg.Destroy()
-                return
-        ExportImages(
-            self.parent,
-            self.s_data,
-            active_plots,
-            self.plots,
-            self.input_browse.GetValue(),
-            in_im,
-            activeAssessors_List,
-            activeAttributes_List,
-            activeSamples_List,
-            self.view_grid,
-            self.view_legend,
-            saving_ppt_file=self.saving_ppt_file,
-            selection=selection,
-            dpi=dpi,
-            abspath=self.progPathAbs)
 
-        # self.EndModal(1)
+                return
+
+        ExportImages(self.parent,
+                     self.s_data,
+                     active_plots,
+                     self.plots,
+                     self.input_browse.GetValue(),
+                     in_im,
+                     activeAssessors_List,
+                     activeAttributes_List,
+                     activeSamples_List,
+                     self.view_grid,
+                     self.view_legend,
+                     saving_ppt_file=self.saving_ppt_file,
+                     selection=selection,
+                     dpi=dpi,
+                     abspath=self.progPathAbs)
 
     def On_button_Ass_EnableAllButton(self, event):
         self.check_CheckBoxList(self.AssessorList, self._checkList_Ass, True)
@@ -673,12 +589,14 @@ class Export_Images_Dialog(wx.Dialog):
                     obj.Check(j, False)
                 else:
                     obj.Check(j, True)
+
                 j += i  # index in choice list has the correct value
         else:
             if obj.IsChecked(j):
                 obj.Check(j, False)
             else:
                 obj.Check(j, True)
+
         self.parent.export_active_plots = self.get_ActiveIndicesFromCheckBoxList(
             self._checkList_plots)
 
@@ -706,6 +624,7 @@ class Export_Images_Dialog(wx.Dialog):
         for i in range(parent.GetCount()):
             if parent.IsChecked(i):
                 actives_list.append(i)
+
         return actives_list
 
     def get_ActivesFromCheckBoxList(self, _list, parent):
@@ -720,17 +639,19 @@ class Export_Images_Dialog(wx.Dialog):
         for element in _list:
             if parent.IsChecked(i):
                 actives_list.append(element)
+
             i += 1
+
         return actives_list
 
     def update_selected_plots(self, actives_list):
         self.check_CheckBoxList(self.plots, self._checkList_plots, False)
+
         for ind in actives_list:
             self._checkList_plots.Check(ind, True)
 
     # dict of "ass", "att" or "samp" with indices for update
     def update_selection(self, changes):
-
         if changes.__contains__("ass"):
             self.check_CheckBoxList(
                 self.AssessorList, self._checkList_Ass, False)
@@ -751,32 +672,29 @@ class Export_Images_Dialog(wx.Dialog):
 
 
 class ExportImages:
-    def __init__(
-            self,
-            parent,
-            s_data,
-            active_plots,
-            plots,
-            outputdir,
-            images_dir,
-            active_ass,
-            active_att,
-            active_samp,
-            grid,
-            legend,
-            saving_ppt_file=False,
-            selection=0,
-            dpi=128,
-            abspath=None):
+    def __init__(self,
+                 parent,
+                 s_data,
+                 active_plots,
+                 plots,
+                 outputdir,
+                 images_dir,
+                 active_ass,
+                 active_att,
+                 active_samp,
+                 grid,
+                 legend,
+                 saving_ppt_file=False,
+                 selection=0,
+                 dpi=128,
+                 abspath=None):
         print("saving images")
         self.s_data = s_data
 
         self.active_plots = active_plots  # plots for exporting
         self.outputdir = outputdir  # directory for saving all files
         self.plots = plots
-
         self.parent = parent
-
         self.summary = ""
 
         self.active_ass = active_ass
@@ -809,13 +727,9 @@ class ExportImages:
                 if selection == 0:
                     os.mkdir(self.im_out_dir)
 
-        # plot_data = PlotData(self.active_ass, self.active_att, self.active_samp, [self.active_samp[0], self.active_ass[0], self.s_data.ReplicateList[0]], False, False) # no legend
-        # plot_data.set_limits(self.s_data.scale_limits)
-        #plot_data = ReplicateLinePlotter(self.s_data, plot_data)
         self.canvas = FigureCanvasAgg(Figure(None))
         filename = self.im_out_dir + "_null_.png"
 
-        #filename = str(filename)
         self.canvas.print_figure(filename, dpi=dpi)
         os.remove(filename)
 
@@ -824,12 +738,14 @@ class ExportImages:
                 self.save_image_files(self.im_out_dir, dpi)
             else:
                 self.find_image_files(images_dir)
+
             self.save_ppt_file(self.image_files, self.outputdir)
+
         else:
             if selection == 0:
-                self.save_image_files(self.im_out_dir, dpi,abspath=abspath)
+                self.save_image_files(self.im_out_dir, dpi, abspath=abspath)
             else:
-                self.save_image_files(self.im_out_dir, dpi, ext=".eps",abspath=abspath)
+                self.save_image_files(self.im_out_dir, dpi, ext=".eps", abspath=abspath)
 
     def find_image_files(self, images_dir):
         files = glob.glob(images_dir + "/*.png")
@@ -843,9 +759,12 @@ class ExportImages:
         if hasattr(plot_data, "fig") and plot_data.fig is not None:
             self.canvas.figure = plot_data.fig
             self.canvas.figure.set_canvas(self.canvas)
+
             return True
+
         else:
             self.summary += "Plot method failed: " + str(plotter) + "\n"
+
             return False
 
     def plot_ok(self, tree_path, plotter, selection=0):
@@ -853,79 +772,80 @@ class ExportImages:
                 or plotter == MSEPlotter_Attribute_General or plotter == MSEPlotter_Attribute_Specific or plotter == MSEPlotter_Assessor_General or plotter == MSEPlotter_Assessor_Specific \
                 or plotter == pmsePlotter:
             if self.anova_plot_data is None:
-                self.anova_plot_data = ANOVA_PlotData(
-                    self.active_ass,
-                    self.active_att,
-                    self.active_samp,
-                    tree_path,
-                    self.view_grid,
-                    self.view_legend)
+                self.anova_plot_data = ANOVA_PlotData(self.active_ass,
+                                                      self.active_att,
+                                                      self.active_samp,
+                                                      tree_path,
+                                                      self.view_grid,
+                                                      self.view_legend)
                 self.anova_plot_data.set_limits(self.s_data.scale_limits)
-                self.anova_plot_data = plotter(
-                    self.s_data, self.anova_plot_data, selection=selection)
+                self.anova_plot_data = plotter(self.s_data, self.anova_plot_data, selection=selection)
+
                 return self.canvas_ok(self.anova_plot_data, plotter)
+
             else:
                 self.anova_plot_data.tree_path = tree_path
                 self.anova_plot_data.fig = None  # reset Figure
                 self.anova_plot_data = plotter(
                     self.s_data, self.anova_plot_data, selection=selection)
+
                 return self.canvas_ok(self.anova_plot_data, plotter)
 
         elif plotter == EggshellPlotter or plotter == profilePlotter or plotter == RawDataAttributePlotter:
             if self.coll_calc_plot_data is None:
-                self.coll_calc_plot_data = CollectionCalcPlotData(
-                    self.active_ass,
-                    self.active_att,
-                    self.active_samp,
-                    tree_path,
-                    self.view_grid,
-                    self.view_legend)
+                self.coll_calc_plot_data = CollectionCalcPlotData(self.active_ass,
+                                                                  self.active_att,
+                                                                  self.active_samp,
+                                                                  tree_path,
+                                                                  self.view_grid,
+                                                                  self.view_legend)
                 self.coll_calc_plot_data.set_limits(self.s_data.scale_limits)
-                self.coll_calc_plot_data = plotter(
-                    self.s_data, self.coll_calc_plot_data)
+                self.coll_calc_plot_data = plotter(self.s_data, self.coll_calc_plot_data)
+
                 return self.canvas_ok(self.coll_calc_plot_data, plotter)
+
             else:
                 self.coll_calc_plot_data.tree_path = tree_path
                 self.coll_calc_plot_data.fig = None  # reset Figure
                 self.coll_calc_plot_data = plotter(
                     self.s_data, self.coll_calc_plot_data)
+
                 return self.canvas_ok(self.coll_calc_plot_data, plotter)
 
         elif plotter == Tucker1Plotter:
             if self.pca_plot_data is None or self.pca_plot_data.selection != selection:
-                self.pca_plot_data = PCA_PlotData(
-                    self.active_ass,
-                    self.active_att,
-                    self.active_samp,
-                    tree_path,
-                    self.view_grid,
-                    self.view_legend)
+                self.pca_plot_data = PCA_PlotData(self.active_ass,
+                                                  self.active_att,
+                                                  self.active_samp,
+                                                  tree_path,
+                                                  self.view_grid,
+                                                  self.view_legend)
                 self.pca_plot_data.set_limits(self.s_data.scale_limits)
-                self.pca_plot_data = plotter(
-                    self.s_data, self.pca_plot_data, selection=selection)
+                self.pca_plot_data = plotter(self.s_data, self.pca_plot_data, selection=selection)
+
                 return self.canvas_ok(self.pca_plot_data, plotter)
+
             else:
                 self.pca_plot_data.tree_path = tree_path
                 self.pca_plot_data.fig = None  # reset Figure
-                self.pca_plot_data = plotter(
-                    self.s_data, self.pca_plot_data, selection=selection)
+                self.pca_plot_data = plotter(self.s_data, self.pca_plot_data, selection=selection)
+
                 return self.canvas_ok(self.pca_plot_data, plotter)
 
         elif plotter == ManhattanPlotter:
             if self.manhattan_plot_data is None or self.manhattan_plot_data.selection != selection:
-                self.manhattan_plot_data = CollectionCalcPlotData(
-                    self.active_ass,
-                    self.active_att,
-                    self.active_samp,
-                    tree_path,
-                    self.view_grid,
-                    self.view_legend)
+                self.manhattan_plot_data = CollectionCalcPlotData(self.active_ass,
+                                                                  self.active_att,
+                                                                  self.active_samp,
+                                                                  tree_path,
+                                                                  self.view_grid,
+                                                                  self.view_legend)
                 self.manhattan_plot_data.set_limits(self.s_data.scale_limits)
-                self.manhattan_plot_data.maxPCs = int(
-                    self.parent.manh_spin_txt.GetValue())
-                self.manhattan_plot_data = plotter(
-                    self.s_data, self.manhattan_plot_data, selection=selection)
+                self.manhattan_plot_data.maxPCs = int(self.parent.manh_spin_txt.GetValue())
+                self.manhattan_plot_data = plotter(self.s_data, self.manhattan_plot_data, selection=selection)
+
                 return self.canvas_ok(self.manhattan_plot_data, plotter)
+
             else:
                 self.manhattan_plot_data.tree_path = tree_path
                 self.manhattan_plot_data.fig = None  # reset Figure
@@ -933,58 +853,60 @@ class ExportImages:
                     self.parent.manh_spin_txt.GetValue())
                 self.manhattan_plot_data = plotter(
                     self.s_data, self.manhattan_plot_data, selection=selection)
+
                 return self.canvas_ok(self.manhattan_plot_data, plotter)
 
         elif plotter == MixModel_ANOVA_Plotter_2way or plotter == MixModel_ANOVA_LSD_Plotter_2way or plotter == MixModel_ANOVA_Plotter_3way or plotter == MixModel_ANOVA_LSD_Plotter_3way:
             if self.mm_anova2_plot_data is None:
-                self.mm_anova2_plot_data = MM_ANOVA_PlotData(
-                    self.active_ass,
-                    self.active_att,
-                    self.active_samp,
-                    tree_path,
-                    self.view_grid,
-                    self.view_legend)
+                self.mm_anova2_plot_data = MM_ANOVA_PlotData(self.active_ass,
+                                                             self.active_att,
+                                                             self.active_samp,
+                                                             tree_path,
+                                                             self.view_grid,
+                                                             self.view_legend)
                 self.mm_anova2_plot_data.set_limits(self.s_data.scale_limits)
-                self.mm_anova2_plot_data = plotter(
-                    self.s_data, self.mm_anova2_plot_data,abspath=self.progPathAbs)
+                self.mm_anova2_plot_data = plotter(self.s_data, self.mm_anova2_plot_data, abspath=self.progPathAbs)
+
                 return self.canvas_ok(self.mm_anova2_plot_data, plotter)
+
             else:
                 self.mm_anova2_plot_data.tree_path = tree_path
                 self.mm_anova2_plot_data.fig = None  # reset Figure
-                self.mm_anova2_plot_data = plotter(
-                    self.s_data, self.mm_anova2_plot_data, selection=selection,abspath=self.progPathAbs)
+                self.mm_anova2_plot_data = plotter(self.s_data, self.mm_anova2_plot_data, selection=selection,
+                                                   abspath=self.progPathAbs)
+
                 return self.canvas_ok(self.mm_anova2_plot_data, plotter)
 
         elif plotter == MixModel_ANOVA_Plotter_2way1rep or plotter == MixModel_ANOVA_LSD_Plotter_2way1rep:
             if self.mm_anova1_plot_data is None:
-                self.mm_anova1_plot_data = MM_ANOVA_PlotData(
-                    self.active_ass,
-                    self.active_att,
-                    self.active_samp,
-                    tree_path,
-                    self.view_grid,
-                    self.view_legend)
+                self.mm_anova1_plot_data = MM_ANOVA_PlotData(self.active_ass,
+                                                             self.active_att,
+                                                             self.active_samp,
+                                                             tree_path,
+                                                             self.view_grid,
+                                                             self.view_legend)
                 self.mm_anova1_plot_data.set_limits(self.s_data.scale_limits)
-                self.mm_anova1_plot_data = plotter(
-                    self.s_data, self.mm_anova1_plot_data, selection=selection)
+                self.mm_anova1_plot_data = plotter(self.s_data, self.mm_anova1_plot_data, selection=selection)
+
                 return self.canvas_ok(self.mm_anova1_plot_data, plotter)
+
             else:
                 self.mm_anova1_plot_data.tree_path = tree_path
                 self.mm_anova1_plot_data.fig = None  # reset Figure
-                self.mm_anova1_plot_data = plotter(
-                    self.s_data, self.mm_anova1_plot_data)
+                self.mm_anova1_plot_data = plotter(self.s_data, self.mm_anova1_plot_data)
+
                 return self.canvas_ok(self.mm_anova1_plot_data, plotter)
 
         else:
-            plot_data = PlotData(
-                self.active_ass,
-                self.active_att,
-                self.active_samp,
-                tree_path,
-                self.view_grid,
-                self.view_legend)
+            plot_data = PlotData(self.active_ass,
+                                 self.active_att,
+                                 self.active_samp,
+                                 tree_path,
+                                 self.view_grid,
+                                 self.view_legend)
             plot_data.set_limits(self.s_data.scale_limits)
             plot_data = plotter(self.s_data, plot_data, selection=selection)
+
             return self.canvas_ok(plot_data, plotter)
 
     def int2str(self, num, digits=3):
@@ -994,15 +916,14 @@ class ExportImages:
         while len_num < digits:
             _zeros += "0"
             len_num += 1
+
         return _zeros + str_num
 
-    def save_image_files(self, outputdir, dpi, ext=".png",abspath=None):
+    def save_image_files(self, outputdir, dpi, ext=".png", abspath=None):
         self.yes_to_all = False
         self.no_to_all = False
-        progress = Progress(None,abspath=abspath)
-        progress.set_gauge(
-            value=0,
-            text="Saving images...\nThis may take several minutes.\nPlease wait...\n")
+        progress = Progress(None, abspath=abspath)
+        progress.set_gauge(value=0, text="Saving images...\nThis may take several minutes.\nPlease wait...\n")
         _num = len(self.active_plots)
         part = 100 / _num
         _index = 0
@@ -1019,9 +940,12 @@ class ExportImages:
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             progress.set_gauge(value=current_value)
             _index += 1
 
@@ -1029,16 +953,21 @@ class ExportImages:
         # Line Assessor Plots
         if self.plots[plot_ind] in self.active_plots:
             _nr = 1
+
             for samp in self.active_samp:
                 for ass in self.active_ass:
                     if self.plot_ok([samp, ass], AssessorLinePlotter):
                         filename = outputdir + "/" + self.int2str(plot_ind) + "_line_samp_ass" + self.int2str(
-                            _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
+                            _nr) + "_" + re.sub(' ', '_', self.ascii_enc(samp)) + "_" + re.sub(' ', '_', self.ascii_enc(
+                            ass)) + ext
                         self.save_image_file(self.canvas, filename, dpi=dpi)
                         _nr += 1
+
                         if self.no_to_all:
                             progress.Destroy()
+
                             return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1053,18 +982,24 @@ class ExportImages:
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             for att in self.active_att:
                 if self.plot_ok([att], RawDataAttributePlotter):
                     filename = outputdir + "/" + self.int2str(plot_ind) + "_mean_std_att" + self.int2str(
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1077,12 +1012,16 @@ class ExportImages:
                 for att in self.active_att:
                     if self.plot_ok([ass, att], CorrelationPlotter):
                         filename = outputdir + "/" + self.int2str(plot_ind) + "_corr_ass_att" + self.int2str(
-                            _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
+                            _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + "_" + re.sub(' ', '_',
+                                                                                              self.ascii_enc(att)) + ext
                         self.save_image_file(self.canvas, filename, dpi=dpi)
                         _nr += 1
+
                         if self.no_to_all:
                             progress.Destroy()
+
                             return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1097,9 +1036,12 @@ class ExportImages:
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1108,15 +1050,19 @@ class ExportImages:
         # Eggshell Plots
         if self.plots[plot_ind] in self.active_plots:
             _nr = 1
+
             for att in self.active_att:
                 if self.plot_ok([att], EggshellPlotter):
                     filename = outputdir + "/" + self.int2str(plot_ind) + "_eggshell" + self.int2str(
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1125,23 +1071,29 @@ class ExportImages:
         # F Assessor Plots
         if self.plots[plot_ind] in self.active_plots:
             _nr = 1
-            if self.plot_ok(['F-values', 'General Plot'],
-                            FPlotter_Attribute_General):
+
+            if self.plot_ok(['F-values', 'General Plot'], FPlotter_Attribute_General):
                 filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_f_ass_general" + ext
+                           self.int2str(plot_ind) + "_f_ass_general" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
+
                 if self.no_to_all:
                     progress.Destroy()
+
                     return
+
             for att in self.active_att:
                 if self.plot_ok(['F-values', att], FPlotter_Assessor_Specific):
                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_f_ass" + self.int2str(
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1150,24 +1102,29 @@ class ExportImages:
         # F Attribute Plots
         if self.plots[plot_ind] in self.active_plots:
             _nr = 1
+
             if self.plot_ok(['F-values', 'General Plot'],
                             FPlotter_Attribute_General):
-                filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_f_att_general" + ext
+                filename = outputdir + "/" + self.int2str(plot_ind) + "_f_att_general" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
+
                 if self.no_to_all:
                     progress.Destroy()
+
                     return
+
             for ass in self.active_ass:
-                if self.plot_ok(['F-values', ass],
-                                FPlotter_Attribute_Specific):
+                if self.plot_ok(['F-values', ass], FPlotter_Attribute_Specific):
                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_f_att" + self.int2str(
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1176,23 +1133,28 @@ class ExportImages:
         # p Assessor Plots
         if self.plots[plot_ind] in self.active_plots:
             _nr = 1
-            if self.plot_ok(['p-values', 'General Plot'],
-                            FPlotter_Assessor_General):
-                filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_p_ass_general" + ext
+
+            if self.plot_ok(['p-values', 'General Plot'], FPlotter_Assessor_General):
+                filename = outputdir + "/" + self.int2str(plot_ind) + "_p_ass_general" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
+
                 if self.no_to_all:
                     progress.Destroy()
+
                     return
+
             for att in self.active_att:
                 if self.plot_ok(['p-values', att], FPlotter_Assessor_Specific):
                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_p_ass" + self.int2str(
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(att)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1201,24 +1163,28 @@ class ExportImages:
         # p Attribute Plots
         if self.plots[plot_ind] in self.active_plots:
             _nr = 1
-            if self.plot_ok(['p-values', 'General Plot'],
-                            FPlotter_Attribute_General):
-                filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_p_att_general" + ext
+
+            if self.plot_ok(['p-values', 'General Plot'], FPlotter_Attribute_General):
+                filename = outputdir + "/" + self.int2str(plot_ind) + "_p_att_general" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
+
                 if self.no_to_all:
                     progress.Destroy()
+
                     return
+
             for ass in self.active_ass:
-                if self.plot_ok(['p-values', ass],
-                                FPlotter_Attribute_Specific):
+                if self.plot_ok(['p-values', ass], FPlotter_Attribute_Specific):
                     filename = outputdir + "/" + self.int2str(plot_ind) + "b_p_att" + self.int2str(
                         _nr) + "_" + re.sub(' ', '_', self.ascii_enc(ass)) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
                     _nr += 1
+
                     if self.no_to_all:
                         progress.Destroy()
+
                         return
+
             current_value = int(math.ceil(part * _index))
             _index += 1
             progress.set_gauge(value=current_value)
@@ -1228,7 +1194,7 @@ class ExportImages:
         if self.plots[plot_ind] in self.active_plots:
             if self.plot_ok(['General Plot'], MSEPlotter_Assessor_General):
                 filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_mse_ass_general" + ext
+                           self.int2str(plot_ind) + "_mse_ass_general" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
             if self.no_to_all:
                 progress.Destroy()
@@ -1252,7 +1218,7 @@ class ExportImages:
         if self.plots[plot_ind] in self.active_plots:
             if self.plot_ok(['General Plot'], MSEPlotter_Attribute_General):
                 filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_mse_att_general" + ext
+                           self.int2str(plot_ind) + "_mse_att_general" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
                 if self.no_to_all:
                     progress.Destroy()
@@ -1310,7 +1276,7 @@ class ExportImages:
         if self.plots[plot_ind] in self.active_plots:
             if self.plot_ok(['Common Scores'], Tucker1Plotter, selection=0):
                 filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_tucker1_common_scores" + ext
+                           self.int2str(plot_ind) + "_tucker1_common_scores" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
                 if self.no_to_all:
                     progress.Destroy()
@@ -1382,11 +1348,12 @@ class ExportImages:
                 'Spiderweb Plot',
                 'Bi-Plot']
             type_ind = 1
+
             for type in _list:
                 if self.plot_ok([type], PCA_plotter, selection=0):
-                    filename = outputdir + "/" + self.int2str(
-                        plot_ind) + "_consensus_original" + str(type_ind) + ext
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_consensus_original" + str(type_ind) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
+
                     if self.no_to_all:
                         progress.Destroy()
                         return
@@ -1408,9 +1375,10 @@ class ExportImages:
             type_ind = 1
             for type in _list:
                 if self.plot_ok([type], PCA_plotter, selection=1):
-                    filename = outputdir + "/" + self.int2str(
-                        plot_ind) + "_consensus_standardized" + str(type_ind) + ext
+                    filename = outputdir + "/" + self.int2str(plot_ind) + "_consensus_standardized" + str(
+                        type_ind) + ext
                     self.save_image_file(self.canvas, filename, dpi=dpi)
+
                     if self.no_to_all:
                         progress.Destroy()
                         return
@@ -1441,11 +1409,11 @@ class ExportImages:
                         return
                 type_ind += 1
             if self.plot_ok(
-                [u'Assessor Weight'],
-                STATIS_AssWeight_Plotter,
+                    [u'Assessor Weight'],
+                    STATIS_AssWeight_Plotter,
                     selection):
                 filename = outputdir + "/" + \
-                    self.int2str(plot_ind) + "_statis5_cov_ass_weight" + ext
+                           self.int2str(plot_ind) + "_statis5_cov_ass_weight" + ext
                 self.save_image_file(self.canvas, filename, dpi=dpi)
                 if self.no_to_all:
                     progress.Destroy()
@@ -1672,7 +1640,7 @@ class ExportImages:
             self.image_files.append(file)
         elif os.path.isfile(file):  # does file exist?
             save = False
-            #splitted = split_path(file)
+            # splitted = split_path(file)
             string = file
             if len(string) > 55:
                 string = string[:15] + " ... " + string[-35:]
@@ -1716,8 +1684,8 @@ class SaveDialog(wx.Dialog):
             self,
             id=wx.NewId(),
             label=u'File exists:\n' +
-            file +
-            '\n\nDo you wish to overwrite?')
+                  file +
+                  '\n\nDo you wish to overwrite?')
 
         btnsizer = wx.BoxSizer(wx.HORIZONTAL)
 
