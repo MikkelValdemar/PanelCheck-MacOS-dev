@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-
-"""
-Plot tools module
-"""
-#from scripts.Math_Tools import *
-#from numpy import transpose
 from PlotData import CollectionCalcPlotData, MM_ANOVA_PlotData
 from Progress_Info import Progress
 from matplotlib.lines import Line2D
@@ -15,29 +8,6 @@ import wx
 import os
 import sys
 import numpy as np
-import pandas as pd
-
-
-#from rpy2.robjects import r, pandas2ri
-#import rpy2.robjects as ro
-#pandas2ri.activate()
-
-# TODO MVK: Outcommented R code
-# def save_rdata_file(df, filename):
-#     #r_data = ro.conversion.py2ri(transpose(df))
-#     r_data = ro.conversion.py2rpy(np.transpose(df))
-#     ro.r.assign("my_df", r_data)
-#     ro.r("save(my_df, file='{}')".format(filename))
-#     os.chmod(filename, 0o777)
-
-# TODO MVK: Outcommented R code
-# def data_frame(data):
-#     #data = pd.DataFrame(data)
-#     #    print(data)
-#     r_dataframe = ro.conversion.py2rpy(np.transpose(data))
-# #    save_rdata_file(data,'/Users/linder2411/Desktop/r_data.Rdata')
-#     return r_dataframe
-
 
 # custom colormap
 colormaps = {}
@@ -50,7 +20,6 @@ color_dict = {'red': ((0.0, 0.0, 0.0),
               'blue': ((0.0, 0.0, 0.0),
                        (0.5, 0.5, 0.5),
                        (1.0, 1.0, 1.0))}
-
 
 color_dict_green = {'red': ((0.0, 0.0, 0.0),
                             (0.5, 0.0, 0.0),
@@ -73,7 +42,6 @@ color_dict2 = {'red': ((0.0, 0.0, 0.0),
                         (0.7, 1.0, 0.0),
                         (1.0, 1.0, 1.0))}
 
-
 # manhattan sunset
 color_dict3 = {'red': ((0.0, 0.8, 0.8),
                        (0.7, 1.0, 0.0),
@@ -85,10 +53,8 @@ color_dict3 = {'red': ((0.0, 0.8, 0.8),
                         (0.7, 0.0, 0.0),
                         (1.0, 0.3, 0.3))}
 
-
 # Manhattan Colormap
 colormaps['manhattan'] = LinearSegmentedColormap('manhattan', color_dict, 256)
-
 
 # 14 colors:
 colors_hex_list = [
@@ -174,7 +140,7 @@ def assign_colors(assessorList, replicateList):
         '#016f28',
         '#840084',
         '#0082a2']
-    #all_colors = [(0.75,0.0,0.0), (1.0,0.33,0.33), (0.66,0.66,0.0), (1.0,0.5,0.0), (0.33,0.75,0.0), (0.33,1.0,0.33), (0.33,0.66,0.66), (0.0,0.9,0.9), (0.33,0.5,0.75), (0.5,0.33,1.0), (0.66,0.0,0.66), (0.9,0.0,0.75)]
+    # all_colors = [(0.75,0.0,0.0), (1.0,0.33,0.33), (0.66,0.66,0.0), (1.0,0.5,0.0), (0.33,0.75,0.0), (0.33,1.0,0.33), (0.33,0.66,0.66), (0.0,0.9,0.9), (0.33,0.5,0.75), (0.5,0.33,1.0), (0.66,0.0,0.66), (0.9,0.0,0.75)]
     """
           b  : blue
           g  : green
@@ -185,7 +151,7 @@ def assign_colors(assessorList, replicateList):
           k  : black
           w  : white
     """
-    #all_colors = []
+    # all_colors = []
     # for r in range(0,10):
     #    for g in range(0, 10):
     #        for b in range(0, 10):
@@ -287,26 +253,26 @@ def set_xlabeling_rotation(ax, rotation, fontsize=10):
     bboxes = []
     for xtick_label in ax.get_xticklabels():
         xtick_label._rotation = rotation
-        #bbox = xtick_label.get_window_extent()
+        # bbox = xtick_label.get_window_extent()
         # the figure transform goes from relative coords->pixels and we
         # want the inverse of that
-        #bboxi = bbox.inverse_transformed(fig.transFigure)
+        # bboxi = bbox.inverse_transformed(fig.transFigure)
         # bboxes.append(bboxi)
 
     # this is the bbox that bounds all the bboxes, again in relative
     # figure coords
-    #bbox = Bbox.union(bboxes)
+    # bbox = Bbox.union(bboxes)
     # if fig.subplotpars.bottom < bbox.height:
-        # we need to move it over
-        # fig.subplots_adjust(bottom=1.1*bbox.height) # pad a little
+    # we need to move it over
+    # fig.subplots_adjust(bottom=1.1*bbox.height) # pad a little
 
-        # xtick_label._fontproperties.set_size(fontsize)
+    # xtick_label._fontproperties.set_size(fontsize)
 
-        # cut label:
-        # print xtick_label.get_text()
-        # if num_of_chars > 0 and num_of_chars < len(xtick_label._text):
-        #    xtick_label.set_text(xtick_label.get_text()[0:num_of_chars] + "..")
-        #    print xtick_label.get_text()
+    # cut label:
+    # print xtick_label.get_text()
+    # if num_of_chars > 0 and num_of_chars < len(xtick_label._text):
+    #    xtick_label.set_text(xtick_label.get_text()[0:num_of_chars] + "..")
+    #    print xtick_label.get_text()
 
 
 def set_axis_labelsize(ax, fontsize):
@@ -324,7 +290,7 @@ def axes_create(legend, fig, aspect='auto'):
     @param legend: Whether legend is on or off.
     """
     ax = 0
-    if(legend):  # if legend to be drawn
+    if (legend):  # if legend to be drawn
         # [left, bottom, width, height]
         ax = fig.add_axes([0.1, 0.1, 0.65, 0.8], aspect=aspect)
     else:
@@ -385,8 +351,8 @@ def check_point(x, y, epsilon, pointAndLabelList, max):
 
 
 def equal_lists(listA, listB):
-    #import pdb
-    #pdb.set_trace()
+    # import pdb
+    # pdb.set_trace()
     a = len(listA)
     b = len(listB)
     if a != b:
@@ -575,7 +541,6 @@ def numerical_data_add_scores(
         maxPCs,
         numeric_data=[],
         header_txt='PCA scores:'):
-
     headerLine = [header_txt]
     numeric_data.append(headerLine)
 
@@ -596,6 +561,7 @@ def numerical_data_add_scores(
 
     return numeric_data
 
+
 ############### numerical data part PCA loadings ###############
 
 
@@ -605,7 +571,6 @@ def numerical_data_add_loadings(
         maxPCs,
         numeric_data=[],
         header_txt='PCA loadings:'):
-
     headerLine = [header_txt]
     numeric_data.append(headerLine)
 
@@ -673,17 +638,13 @@ def check_columns(X):
         return new_X, out_cols
 
 
-############### R script (attribute significance) ###############
-
-def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
+def attribute_significance(s_data, plot_data, one_rep=False, abspath=None):
     from MM_ANOVA_Plot import load_mm_anova_data
     activeAssessorsList = plot_data.activeAssessorsList
     activeAttributesList = plot_data.activeAttributesList
     activeSamplesList = plot_data.activeSamplesList
     new_active_attributes_list = activeAttributesList
 
-    matrix_num_labels = s_data.MatrixNumLables(
-        assessors=activeAssessorsList, samples=activeSamplesList)
     matrix_selected_scores = s_data.MatrixDataSelected(
         assessors=activeAssessorsList,
         attributes=activeAttributesList,
@@ -707,13 +668,6 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
             new_active_attributes_list.append(
                 plot_data.activeAttributesList[att_ind])
 
-        matrix_selected_scores = s_data.MatrixDataSelected(
-            assessors=activeAssessorsList,
-            attributes=new_active_attributes_list,
-            samples=activeSamplesList)
-
-        # show_info_msg(msg)
-
         labels = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
         for i in range(
                 s_data.value_index,
@@ -721,7 +675,6 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
                 s_data.value_index):
             labels.append(i)
 
-        # return None
     else:
         labels = [s_data.ass_index, s_data.samp_index, s_data.rep_index]
         for i in range(
@@ -735,72 +688,28 @@ def attribute_significance(s_data, plot_data, one_rep=False,abspath=None):
     else:
         plot_data.accepted_active_attributes = new_active_attributes_list
 
-    raw = np.hstack((matrix_num_labels, matrix_selected_scores))
-
     pathname = os.path.dirname(sys.argv[0])
     progPath = os.path.abspath(pathname)
-    # print(progPath)
+
     progress = Progress(None, progPath)
     progress.set_gauge(value=0, text="Using R...\n")
-    # Cannot use unicode-strings, np.since it causes rpy to crash.
-    # Need to convert unicode-strings to non-unicode strings
 
     # get program absolute-path:
     last_dir = os.getcwd()
     os.chdir(progPath)  # go to program path (for R script source)
 
-    # Need to transpose the raw data matrix np.since rpy transposes when transferring
-    # it to an R-data frame
-    #part = np.transpose(raw[:, :])
-    #frame = pd.DataFrame(part, columns=labels)
-
-    # Constructing the data frame in R:
-    # Switch to 'no conversion', such that everything that is created now
-    # is an R object and NOT Python object (in this case 'frame' and 'names').
-    # set_default_mode(NO_CONVERSION)
-    # TODO MVK: Outcommented R code
-    # names = r.get('names<-')
-    #
-    # frame = data_frame(part)
-    # frame = names(frame, labels)
-    # r.print_(frame)
-
-    # Switch back to basic conversion, so that variable res (see below) will be a
-    # python list and NOT a R object
-    # set_default_mode(BASIC_CONVERSION)
-
-    # Now running Per's R-function to analyse the constructed data frame. All
-    # calculation results are stored in python dictionary 'res'. The dictionary
-    # contains the matrices 'Fmatr' (res[0]), 'Pmatr' (res[1]) and
-    # 'LSDmatr' (res[2]).
-    # Each of them has dimension:(8 rows) x (no. of attributes).
-
-    # First initialise Per's function, then run it with our data-frame.
-    # if one_rep:
-    #     script_source = 'source(\"R_scripts/sensmixedNoRepVer1.1.R\")'
-    #     progress.set_gauge(value=7, text="Running R script...\n")
-    #     r(script_source)
-    #     res = r.sensmixedNoRep11(frame)
-    # else:
-    #     script_source = 'source(\"R_scripts/sensmixedVer4.2.R\")'
-    #     progress.set_gauge(value=7, text="Running R script...\n")
-    #     r(script_source)
-    #     res = r.sensmixedVer42(frame)
     res = load_mm_anova_data(s_data, plot_data, abspath=abspath)
     os.chdir(last_dir)  # go back
     progress.set_gauge(value=100, text="Done\n")
     progress.Destroy()
-    # print(res[1][1][0])
-    # print(res[2][6][0])
 
     if one_rep:
         return res[1][1]  # Product Effect p-matrix
     else:
         return res[2][6]  # Product Effect p-matrix
 
-#TODO MVK: Fix colored frame
-def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
 
+def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
     if len(s_data.ReplicateList) == 1:
         one_rep = True
     else:
@@ -811,21 +720,20 @@ def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
         # print("collection_calc")
         if not plot_data.collection_calc_data.__contains__("p_matr"):
             plot_data.collection_calc_data["p_matr"] = attribute_significance(
-                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+                s_data, plot_data, one_rep=one_rep, abspath=abspath)  # Product Effect p-matrix
         elif plot_data.collection_calc_data["p_matr"].size == 0:
             plot_data.collection_calc_data["p_matr"] = attribute_significance(
-                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+                s_data, plot_data, one_rep=one_rep, abspath=abspath)  # Product Effect p-matrix
         else:
             pass  # ok
         p_matr = plot_data.collection_calc_data["p_matr"]
     else:
-        #import pdb; pdb.set_trace()
         if not hasattr(plot_data, "p_matr"):
             plot_data.p_matr = attribute_significance(
-                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+                s_data, plot_data, one_rep=one_rep, abspath=abspath)  # Product Effect p-matrix
         elif 'None' in str(type(plot_data.p_matr)):
             plot_data.p_matr = attribute_significance(
-                s_data, plot_data, one_rep=one_rep,abspath=abspath)  # Product Effect p-matrix
+                s_data, plot_data, one_rep=one_rep, abspath=abspath)  # Product Effect p-matrix
         else:
             pass  # ok
         p_matr = plot_data.p_matr
@@ -836,7 +744,6 @@ def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
         2.0: '#FF8A00',
         3.0: '#E80B0B'}
 
-    # if index list
     if isinstance(active_att_list[0], (int)):
         temp = []
         for ind in active_att_list:
@@ -850,9 +757,6 @@ def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
     elif isinstance(plot_data, (MM_ANOVA_PlotData)):
         active_atts = plot_data.accepted_active_attributes
 
-    # print active_att
-    # print plot_data.ax.get_legend_handles_labels()
-    # print(p_matr)
     if p_matr.size == 0:
         print("Cannot set frame color: STD=0 for one or more attributes")
         return False
@@ -867,19 +771,12 @@ def colored_frame(s_data, plot_data, active_att_list, active_att, abspath):
 
     current_att_ind = active_atts.index(active_att)
 
-    # print(current_att_ind)
-
     # set frame coloring:
-    # ax.set_axis_bgcolor(lsd_colors[p_matr[current_att_ind]])
-    plot_data.ax.set_facecolor(lsd_colors[p_matr[current_att_ind]])
-
-    # if plot_data.overview_plot:
-    #    plot_data.ax.set_linewidth(3)
-    # else:
-    #    plot_data.ax.set_linewidth(3)
+    for spine in plot_data.ax.spines.values():
+        spine.set_edgecolor(lsd_colors[p_matr[current_att_ind]])
+        spine.set_linewidth(3)
 
     return True
-    # except: return
 
 
 def significance_legend(plot_data, pos='upper right'):
@@ -888,12 +785,12 @@ def significance_legend(plot_data, pos='upper right'):
     if plot_data.view_legend:
         plotList = []
         lables = ['', 'ns', 'p<0.05', 'p<0.01', 'p<0.001']
-        #lables = ['ns','p<0.05','p<0.01','p<0.001']
-        #i = 0
+        # lables = ['ns','p<0.05','p<0.01','p<0.001']
+        # i = 0
         for c in _colors:
             plotList.append(Line2D([], [], color=c, linewidth=5))
-            #i += 1
-        #import pdb; pdb.set_trace()
+            # i += 1
+        # import pdb; pdb.set_trace()
         figlegend = plot_data.fig.legend(
             plotList, lables, loc=pos, title='Prod. sign.\n (2-way ANOVA):')
 
@@ -935,7 +832,7 @@ def OverviewPlotter(
     part = int(np.floor(100 / num_plots))
     val = part
 
-    #import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     plot_data.tree_path = itemID_list[0]
     plot_data = plotter(
         s_data,
@@ -966,8 +863,8 @@ def OverviewPlotter(
             text_element._fontproperties.set_size(9)
         for text_element in ax.get_yticklabels():
             text_element._fontproperties.set_size(9)
-    #setp(ax.get_xticklabels(), fontsize=9)
-    #setp(ax.get_yticklabels(), fontsize=9)
+    # setp(ax.get_xticklabels(), fontsize=9)
+    # setp(ax.get_yticklabels(), fontsize=9)
     num = 2
     for c_plot in c_list:
         plot_data.tree_path = itemID_list[num - 1]
@@ -986,8 +883,8 @@ def OverviewPlotter(
                 text_element._fontproperties.set_size(9)
             for text_element in ax.get_yticklabels():
                 text_element._fontproperties.set_size(9)
-            #setp(ax.get_xticklabels(), fontsize=9)
-        #setp(ax.get_yticklabels(), fontsize=9)
+            # setp(ax.get_xticklabels(), fontsize=9)
+        # setp(ax.get_yticklabels(), fontsize=9)
 
         num += 1
         txt = c_plot + " done\n"
