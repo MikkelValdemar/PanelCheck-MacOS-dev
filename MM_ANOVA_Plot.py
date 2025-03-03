@@ -181,6 +181,7 @@ def load_mm_anova_data(s_data, plot_data, one_rep=False, abspath=None):
         return plot_data.sensmixed_data
 
 
+# TODO: Remove? Unused function
 def str_significance(values):
     str_values = []
     for value in values:
@@ -518,9 +519,7 @@ def MixModel_ANOVA_Plotter_2way1rep(
     return plot_data
 
 
-def MixModel_ANOVA_LSD_Plotter_2way1rep(
-        s_data, plot_data, num_subplot=[
-            1, 1, 1], **kwargs):
+def MixModel_ANOVA_LSD_Plotter_2way1rep(s_data, plot_data, num_subplot=[1, 1, 1], **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -748,13 +747,14 @@ def MixModel_ANOVA_LSD_Plotter_2way1rep(
             c_i += 1
     if c_i == len(colors):
         c_i = 0
-    plotList.append(None)
-    plotList.append(None)
-    plotList.append(None)
+
+    plotList.extend([Line2D([], [], linestyle=''), Line2D([], [], linestyle='')])
+    labels.extend(['', 'SIGNIFICANCE:'])
+
     #   colors:   grey       yellow     orange      red
     s_colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
-    labels.extend(['', '', 'SIGNIFICANCE:', 'ns',
-                   'p<0.05', 'p<0.01', 'p<0.001'])
+    labels.extend(['ns', 'p<0.05', 'p<0.01', 'p<0.001'])
+
     for c in s_colors:
         # p = Patch(facecolor = c)
         # plotList.append(p)
@@ -837,6 +837,7 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
         dlg.ShowModal()
         dlg.Destroy()
         return
+
     if len(s_data.ReplicateList) < 2:  # no active assessors
         dlg = wx.MessageDialog(
             None,
@@ -846,6 +847,7 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
         dlg.ShowModal()
         dlg.Destroy()
         return
+
     if len(activeAttributesList) < 1:  # no active assessors
         dlg = wx.MessageDialog(None, 'One or more Attributes must be active',
                                'Error Message',
@@ -853,6 +855,7 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
         dlg.ShowModal()
         dlg.Destroy()
         return
+
     if len(activeSamplesList) < 2:  # no active samples
         dlg = wx.MessageDialog(
             None,
@@ -873,45 +876,26 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
     # import pdb; pdb.set_trace()
     if itemID[0] == _types[0]:  # REP*SAMP vs ERROR
         _title = "Assessor Effect"
-        # f_matr = res[0].rx(8,True) # 7
         f_matr = res[0][7]
-        # p_matr = res[2].rx(8,True) # 7
-        p_matr = res[2][7]  # 7
-        # print 'Third if statement yields f_matr as: {} with type: {} and
-        # res[0]: with type {} and values \n
-        # {}'.format(f_matr,type(f_matr),type(res[0]),res[0])
+        p_matr = res[2][7]
     elif itemID[0] == _types[1]:  # SAMP*ASS vs ERROR
         _title = "Product Effect"
-        # f_matr = res[0].rx(7,True)
-        # p_matr = res[2].rx(7,True)
         f_matr = res[0][6]
         p_matr = res[2][6]
     elif itemID[0] == _types[2]:  # SAMP vs SAMP*ASS
         _title = "Assessor*Product Interaction"
-        # f_matr = res[0].rx(9,True)
-        # p_matr = res[2].rx(9,True)
         f_matr = res[0][8]
         p_matr = res[2][8]
     else:
         return  # error
     f_list = []
-    # f_list.append(res[0].rx(8,True))
-    # f_list.append(res[0].rx(7,True))
-    # f_list.append(res[0].rx(9,True))
     f_list.append(res[0][7])
     f_list.append(res[0][6])
     f_list.append(res[0][8])
     p_list = []  # 7,6,8
-    # p_list.append(res[1].rx(8,True))
-    # p_list.append(res[1].rx(7,True))
-    # p_list.append(res[1].rx(9,True))
     p_list.append(res[1][7])
     p_list.append(res[1][6])
     p_list.append(res[1][8])
-    # p_matr2
-    # p_list.append(res[2].rx(8,True))
-    # p_list.append(res[2].rx(7,True))
-    # p_list.append(res[2].rx(9,True))
     p_list.append(res[2][7])
     p_list.append(res[2][6])
     p_list.append(res[2][8])
@@ -920,6 +904,7 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
     # lsd_list.append(res[3].rx(3,True))
     lsd_list.append(res[3][2])
     lsd_list.append(res[3][3])
+
     # Figure
     replot = False
     subplot = plot_data.overview_plot
@@ -949,7 +934,6 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
         i = 0
         for att in s_data.AttributeList:
             if att in activeAttributesList:
-                # print("Index: {} and atrribute: {}".format(i, att))
                 ax.bar(att_indices[i] + (1 - _width) + (_width / 2),
                        f_matr[i],
                        _width,
@@ -977,8 +961,8 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
     if len(activeAttributesList) > 5:
         set_xlabeling_rotation(ax, 'vertical')
     if plot_data.view_legend:
-        plotList = [None]
-        lables = ['', 'ns', 'p<0.05', 'p<0.01', 'p<0.001']
+        plotList = []
+        lables = ['ns', 'p<0.05', 'p<0.01', 'p<0.001']
     i = 0
     for c in colors:
         # p = Patch(facecolor = c)
@@ -1006,9 +990,7 @@ def MixModel_ANOVA_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
     return plot_data
 
 
-def MixModel_ANOVA_LSD_Plotter_2way(
-        s_data, plot_data, num_subplot=[
-            1, 1, 1], abspath=None, **kwargs):
+def MixModel_ANOVA_LSD_Plotter_2way(s_data, plot_data, num_subplot=[1, 1, 1], abspath=None, **kwargs):
     """
     Mixed Modal ANOVA Plotter
 
@@ -1049,6 +1031,7 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         dlg.ShowModal()
         dlg.Destroy()
         return
+
     if len(s_data.ReplicateList) < 2:  # no active assessors
         dlg = wx.MessageDialog(
             None,
@@ -1058,6 +1041,7 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         dlg.ShowModal()
         dlg.Destroy()
         return
+
     if len(activeAttributesList) < 1:  # no active assessors
         dlg = wx.MessageDialog(None, 'One or more Attributes must be active',
                                'Error Message',
@@ -1084,10 +1068,10 @@ def MixModel_ANOVA_LSD_Plotter_2way(
     lsd_types_names = ['Sample means & LSD', 'Sample means & Bonferroni LSD']
     if itemID[0] == lsd_types[0]:
         _title = lsd_types_names[0]
-        lsd_matr = res[3][1]
+        lsd_matr = res[3][2]
     elif itemID[0] == lsd_types[1]:
         _title = lsd_types_names[1]
-        lsd_matr = res[3][2]
+        lsd_matr = res[3][3]
     else:
         return  # error
     f_list = []
@@ -1125,6 +1109,7 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         averages_samp = np.average(samp_scores_matrix, 0)
         # print averages_samp
         averages_matrix = np.vstack((averages_matrix, averages_samp))
+
     averages_matrix = averages_matrix[1:, :]
     colors = ['#FF0000', '#D3A400', '#009900', '#CC00EE', '#006CFF', '#00AD94', '#666666',
               '#A4A4A4', '#B7685D', '#BDAB65', '#6CB771', '#A0699F', '#6375B5', '#77A69F']
@@ -1138,13 +1123,13 @@ def MixModel_ANOVA_LSD_Plotter_2way(
     else:
         plot_data.fig = Figure(None)
     if subplot:  # is subplot
-        plot_data.ax = plot_data.fig.add_subplot(
-            num_subplot[0], num_subplot[1], num_subplot[2])
+        plot_data.ax = plot_data.fig.add_subplot(num_subplot[0], num_subplot[1], num_subplot[2])
         scatter_width = 15
     else:
         plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
     ax = plot_data.ax
     fig = plot_data.fig
+
     max_aver_list = []
     min_aver_list = []
     for i in range(len(activeAttributesList)):
@@ -1206,6 +1191,7 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         plotList = []
         labels = []
         samp_nr = 1
+
     for samp in activeSamplesList:
         labels.append(str(samp_nr) + ": " + samp)
         samp_nr += 1
@@ -1215,13 +1201,13 @@ def MixModel_ANOVA_LSD_Plotter_2way(
         if c_i == len(colors):
             c_i = 0
 
-    plotList.append(None)
-    plotList.append(None)
-    plotList.append(None)
+    plotList.extend([Line2D([], [], linestyle=''), Line2D([], [], linestyle='')])
+    labels.extend(['', 'SIGNIFICANCE:'])
+
     #   colors:   grey       yellow     orange      red
     s_colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
-    labels.extend(['', '', 'SIGNIFICANCE:', 'ns',
-                   'p<0.05', 'p<0.01', 'p<0.001'])
+    labels.extend(['ns', 'p<0.05', 'p<0.01', 'p<0.001'])
+
     for c in s_colors:
         plotList.append(Line2D([], [], color=c, linewidth=5))
         c_i += 1
@@ -1239,6 +1225,8 @@ def MixModel_ANOVA_LSD_Plotter_2way(
 
     if len(activeAttributesList) > 7:
         set_xlabeling_rotation(ax, 'vertical')
+
+    fig.legend(plotList, labels, loc='upper right')
 
     # One element in the pointAndLabelList will always contain 3 items [x, y, label]
     rawDataList, resultList = get_grid_data(s_data, plot_data, f_list, p_list, lsd_list, "2way")
@@ -1391,6 +1379,7 @@ def MixModel_ANOVA_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
         plot_data.ax = axes_create(plot_data.view_legend, plot_data.fig)
 
     ax = plot_data.ax
+    fig = plot_data.fig
     # colors:   grey       yellow     orange      red
     colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
     pointAndLabelList = []
@@ -1430,6 +1419,18 @@ def MixModel_ANOVA_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], abspat
 
     if len(activeAttributesList) > 7:
         set_xlabeling_rotation(ax, 'vertical')
+
+    if plot_data.view_legend:
+        plotList = []
+        labels = ['ns', 'p<0.05', 'p<0.01', 'p<0.001']
+
+    i = 0
+
+    for c in colors:
+        plotList.append(Line2D([], [], color=c, linewidth=5))
+        i += 1
+
+    fig.legend(plotList, labels, loc='upper right', title='SIGNIFICANCE:')
 
     if plot_data.view_legend:
         plotList = [None]
@@ -1634,7 +1635,7 @@ def MixModel_ANOVA_LSD_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], ab
 
     for i in range(len(activeAttributesList)):
         max_aver = max_aver_list[i]
-        lsd_color = lsd_colors[res[2][0][i]]
+        lsd_color = lsd_colors[res[2][1][i]]
         plot_data.lsd_lines.append(
             ax.plot(
                 [i + 0.5, i + 0.5],
@@ -1671,14 +1672,13 @@ def MixModel_ANOVA_LSD_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], ab
         if c_i == len(colors):
             c_i = 0
 
-    plotList.append(None)
-    plotList.append(None)
-    plotList.append(None)
+    plotList.extend([Line2D([], [], linestyle=''), Line2D([], [], linestyle='')])
+    labels.extend(['', 'SIGNIFICANCE:'])
 
     #   colors:   grey       yellow     orange      red
     s_colors = ['#999999', '#FFD800', '#FF8A00', '#E80B0B']
-    labels.extend(['', '', 'SIGNIFICANCE:', 'ns',
-                   'p<0.05', 'p<0.01', 'p<0.001'])
+    labels.extend(['ns', 'p<0.05', 'p<0.01', 'p<0.001'])
+
     for c in s_colors:
         plotList.append(Line2D([], [], color=c, linewidth=5))
         c_i += 1
@@ -1697,9 +1697,11 @@ def MixModel_ANOVA_LSD_Plotter_3way(s_data, plot_data, num_subplot=[1, 1, 1], ab
     if len(activeAttributesList) > 7:
         set_xlabeling_rotation(ax, 'vertical')
 
+    fig.legend(plotList, labels, loc='upper right')
+
     # One element in the pointAndLabelList will always contain 3 items [x, y, label]
     rawDataList, resultList = get_grid_data(s_data, plot_data, f_list, p_list, lsd_list, "3way")
-    
+
     # update plot-data variables:
     plot_data.point_lables = pointAndLabelList
     plot_data.raw_data = rawDataList

@@ -6,6 +6,28 @@ from statsmodels.formula.api import ols
 
 
 def sensmixed_ver42(frame):
+    '''
+    # Fmatr, row 1: 3-way: Ass VS Mixed error (Prod*Ass and Rep*Ass) (*1)
+    # Fmatr, row 2: 3-way: Prod vs Mixed error (Prod*Ass and Rep*Prod) (*2)
+    # Fmatr, row 3: 3-way: Rep vs Mixed error (Prod*Rep and Rep*Ass)
+    # Fmatr, row 4: 3-way: Prod*Ass vs. Error
+    # Fmatr, row 5: 3-way: Prod*Rep vs. Error
+    # Fmatr, row 6: 3-way: Rep*Ass  vs. Error
+
+    # Fmatr, row 7: 2-way: Prod vs Prod*Ass
+    # Fmatr, row 8: 2-way: Ass vs Prod*Ass
+    # Fmatr, row 9: 2-way: Prod*Ass vs. Error
+
+    # (*1) IF the MS(Rep*Ass) is smaller than MS(E) then MS(Prod*Ass) is used.
+    # (*2) IF the MS(Prod*Rep) is smaller than MS(E) then MS(Prod*Ass) is used.
+
+    # Pmatr and Pmatr2 has same structure
+
+    # LSDmatr, row 1: 3-way usual LSD
+    # LSDmatr, row 2: 3-way Bonferroni LSD
+    # LSDmatr, row 3: 2-way usual LSD
+    # LSDmatr, row 4: 2-way Bonferroni LSD
+    '''
     # Extract attribute names and number of attributes
     attnames = frame.columns[3:]
     natt = len(attnames)
@@ -47,7 +69,7 @@ def sensmixed_ver42(frame):
     Fmatr[6, :] = (aovSS[1, :] / aovDF[1]) / (aovSS[3, :] / aovDF[3])
     Fmatr[7, :] = (aovSS[0, :] / aovDF[0]) / (aovSS[3, :] / aovDF[3])
     Fmatr[8, :] = (aovSS[3, :] / aovDF[3]) / (
-                (aovSS[2, :] + aovSS[4, :] + aovSS[5, :] + aovSS[6, :]) / (aovDF[2] + aovDF[4] + aovDF[5] + aovDF[6]))
+            (aovSS[2, :] + aovSS[4, :] + aovSS[5, :] + aovSS[6, :]) / (aovDF[2] + aovDF[4] + aovDF[5] + aovDF[6]))
     Pmatr[6, :] = 1 - f.cdf(Fmatr[6, :], aovDF[1], aovDF[3])
     Pmatr[7, :] = 1 - f.cdf(Fmatr[7, :], aovDF[0], aovDF[3])
     Pmatr[8, :] = 1 - f.cdf(Fmatr[8, :], aovDF[3], aovDF[2] + aovDF[4] + aovDF[5] + aovDF[6])
@@ -57,17 +79,17 @@ def sensmixed_ver42(frame):
     for i in range(natt):
         if (aovSS[4, i] / aovDF[4]) > (aovSS[6, i] / aovDF[6]):
             Fmatr[0, i] = (aovSS[0, i] / aovDF[0]) / (
-                        (aovSS[3, i]) / (aovDF[3]) + aovSS[4, i] / aovDF[4] - aovSS[6, i] / aovDF[6])
+                    (aovSS[3, i]) / (aovDF[3]) + aovSS[4, i] / aovDF[4] - aovSS[6, i] / aovDF[6])
 
     Fmatr[1, :] = (aovSS[1, :] / aovDF[1]) / (aovSS[3, :] / aovDF[3])
     for i in range(natt):
         if (aovSS[5, i] / aovDF[5]) > (aovSS[6, i] / aovDF[6]):
             Fmatr[1, i] = (aovSS[1, i] / aovDF[1]) / (
-                        (aovSS[3, i]) / (aovDF[3]) + aovSS[5, i] / aovDF[5] - aovSS[6, i] / aovDF[6])
+                    (aovSS[3, i]) / (aovDF[3]) + aovSS[5, i] / aovDF[5] - aovSS[6, i] / aovDF[6])
 
     for i in range(natt):
         Fmatr[2, i] = (aovSS[2, i] / aovDF[2]) / (
-                    (aovSS[4, i]) / (aovDF[4]) + aovSS[5, i] / aovDF[5] - aovSS[6, i] / aovDF[6])
+                (aovSS[4, i]) / (aovDF[4]) + aovSS[5, i] / aovDF[5] - aovSS[6, i] / aovDF[6])
 
     Fmatr[3, :] = (aovSS[3, :] / aovDF[3]) / (aovSS[6, :] / aovDF[6])
     Fmatr[4, :] = (aovSS[4, :] / aovDF[4]) / (aovSS[6, :] / aovDF[6])
@@ -83,7 +105,7 @@ def sensmixed_ver42(frame):
         if (aovSS[4, i] / aovDF[4]) > (aovSS[6, i] / aovDF[6]):
             DFden1[i] = (aovSS[3, i] / aovDF[3] + aovSS[4, i] / aovDF[4] - aovSS[6, i] / aovDF[6]) ** 2 / (
                     (aovSS[3, i] ** 2 / aovDF[3] ** 3) + (aovSS[4, i] ** 2 / aovDF[4] ** 3) + (
-                        aovSS[6, i] ** 2 / aovDF[6] ** 3)
+                    aovSS[6, i] ** 2 / aovDF[6] ** 3)
             )
             Pmatr[0, i] = 1 - f.cdf(Fmatr[0, i], aovDF[0], DFden1[i])
 
@@ -93,7 +115,7 @@ def sensmixed_ver42(frame):
         if (aovSS[5, i] / aovDF[5]) > (aovSS[6, i] / aovDF[6]):
             DFden2[i] = (aovSS[3, i] / aovDF[3] + aovSS[5, i] / aovDF[5] - aovSS[6, i] / aovDF[6]) ** 2 / (
                     (aovSS[3, i] ** 2 / aovDF[3] ** 3) + (aovSS[5, i] ** 2 / aovDF[5] ** 3) + (
-                        aovSS[6, i] ** 2 / aovDF[6] ** 3)
+                    aovSS[6, i] ** 2 / aovDF[6] ** 3)
             )
             Pmatr[1, i] = 1 - f.cdf(Fmatr[1, i], aovDF[1], DFden2[i])
 
@@ -101,7 +123,7 @@ def sensmixed_ver42(frame):
     for i in range(natt):
         DFden3[i] = (aovSS[3, i] / aovDF[3] + aovSS[5, i] / aovDF[5] - aovSS[6, i] / aovDF[6]) ** 2 / (
                 (aovSS[3, i] ** 2 / aovDF[3] ** 3) + (aovSS[5, i] ** 2 / aovDF[5] ** 3) + (
-                    aovSS[6, i] ** 2 / aovDF[6] ** 3)
+                aovSS[6, i] ** 2 / aovDF[6] ** 3)
         )
         Pmatr[2, i] = 1 - f.cdf(Fmatr[2, i], aovDF[2], DFden3[i])
 
